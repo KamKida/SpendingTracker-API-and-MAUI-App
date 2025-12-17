@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36203.30 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpendingsManagementWebAPI", "SpendingsManagementWebAPI.csproj", "{D2493F08-54DA-43C8-9B61-A1016F17086C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2493F08-54DA-43C8-9B61-A1016F17086C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2493F08-54DA-43C8-9B61-A1016F17086C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2493F08-54DA-43C8-9B61-A1016F17086C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2493F08-54DA-43C8-9B61-A1016F17086C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {03379DDE-D6AA-46D3-A1E2-00D783EF654C}
+	EndGlobalSection
+EndGlobal

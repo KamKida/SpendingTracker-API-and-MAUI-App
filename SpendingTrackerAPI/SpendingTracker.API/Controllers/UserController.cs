@@ -1,0 +1,45 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SpendingTracker.Application.Interfaces.Services;
+using SpendingTracker.Contracts.Dtos.Requests;
+using SpendingTracker.Contracts.Dtos.Responses;
+
+namespace SpendingTracker.API.Controllers
+{
+    [Route("spending/account")]
+    [ApiController]
+    public class UserController : ControllerBase
+    {
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterUser([FromBody] UserRequest request)
+        {
+            await _userService.CreateUser(request);
+
+            return Ok();
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] UserRequest request)
+        {
+            UserResponse user = await _userService.LoginUser(request);
+
+            return Ok(user);
+        }
+
+        [HttpPut("resetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] UserEditRequest request)
+        {
+            await _userService.ResetPassword(request);
+
+            return Ok();
+        }
+
+    }
+}

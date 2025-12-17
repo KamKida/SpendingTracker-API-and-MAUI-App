@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SpendingTrackerApp.LoginPage"
+             Title="">
+
+
+    <Grid
+        RowDefinitions="*,Auto"
+        InputTransparent="{Binding BlockInteraction}"
+        Style="{StaticResource PrimaryTheme}">
+
+        <Grid
+            Grid.Row="0"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+            RowSpacing="10">
+
+            <Border Grid.Row="0"
+                Margin="10,10,10,70" 
+                HeightRequest="100">
+                <Image 
+                    Source="App_Logo.png"/>
+            </Border>
+
+            <Border
+                Grid.Row="1">
+                <Entry 
+                    Placeholder="Email"
+                    Text ="{Binding User.Email}"/>
+            </Border>
+
+
+            <Border
+                Grid.Row="2">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Entry 
+                        Grid.Column="0"
+                        Placeholder="Password"
+                        IsPassword="{Binding HidePassword}" 
+                        Text="{Binding User.Password}"/>
+
+                    <ImageButton 
+                        Grid.Column="1"
+                        HeightRequest="40"
+                        WidthRequest="40"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center"
+                        Source="{Binding PasswordIcon}"
+                        Command="{Binding TogglePasswordCommand}" />
+                </Grid>
+            </Border>
+
+
+            <Button 
+                Grid.Row="3"
+                Text="Zaloguj"
+                FontSize="20"
+                WidthRequest="200"
+                Command ="{Binding LoginUserCommand}"/>
+
+
+            <Border 
+                Grid.Row="4"
+            IsVisible="{Binding ShowErrorMessage}">
+                <Label 
+                Text="{Binding ErrorMessage}"
+                TextColor="Red"
+                FontSize="20"/>
+            </Border>
+        </Grid>
+
+
+        <Grid Grid.Row="1"
+              HeightRequest="75"
+              Padding="10"
+              ColumnDefinitions=".50*, .50*"
+              BackgroundColor="White">
+
+            <Button 
+                Grid.Column="0" 
+                Text="Utwórz konto" 
+                FontSize="17" 
+                WidthRequest="150"
+                Command="{Binding GoToCreateAccountPageCommand}"/>
+
+            <Button 
+                Grid.Column="1" 
+                Text="Resetuj hasło" 
+                FontSize="17" 
+                WidthRequest="150"
+                Command="{Binding GoToResePasswordPageComand}"/>
+        </Grid>
+        <Grid
+            Grid.RowSpan="2"
+            IsVisible="{Binding ShowLoadingIcon}"
+            BackgroundColor="#80000000"
+            ZIndex="999">
+
+        <ActivityIndicator
+                IsRunning="{Binding RunLoadingIcon}"
+                Color="DodgerBlue"
+                WidthRequest="80"
+                HeightRequest="80"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"/>
+
+    </Grid>
+
+    </Grid>
+
+</ContentPage>
