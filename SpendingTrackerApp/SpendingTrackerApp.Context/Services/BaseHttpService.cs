@@ -28,10 +28,10 @@ namespace SpendingTrackerApp.Infrastructure.Services
             };
         }
 
-        public void SetToken(User user)
+        public void SetToken(string token)
         {
             _httpClient.DefaultRequestHeaders.Authorization = 
-                new AuthenticationHeaderValue("Bearer", user.Token);
+                new AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

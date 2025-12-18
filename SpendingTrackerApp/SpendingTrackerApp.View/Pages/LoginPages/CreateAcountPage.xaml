@@ -6,23 +6,35 @@
     <Grid Style="{StaticResource PrimaryTheme}">
 
         <Grid
-        RowDefinitions="Auto,Auto,Auto,Auto"
+        RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto"
         RowSpacing="10">
 
             <Border Grid.Row="0">
+                <Entry 
+                Placeholder="Imię"
+                Text ="{Binding Request.FirstName}"/>
+            </Border>
+            
+            <Border Grid.Row="1">
+                <Entry 
+                Placeholder="Nazwisko"
+                Text ="{Binding Request.LastName}"/>
+            </Border>
+            
+            <Border Grid.Row="2">
             <Entry 
                         Placeholder="Email"
-                        Text ="{Binding User.Email}"/>
+                        Text ="{Binding Request.Email}"/>
         </Border>
 
 
-        <Border Grid.Row="1">
+        <Border Grid.Row="3">
             <Grid ColumnDefinitions="*,Auto">
                 <Entry 
                         Grid.Column="0"
                         Placeholder="Password"
                         IsPassword="{Binding HidePassword}" 
-                        Text="{Binding User.Password}"/>
+                        Text="{Binding Request.Password}"/>
 
                 <ImageButton 
                         Grid.Column="1"
@@ -39,11 +51,11 @@
         <Button Text="Utwórz kąto"
                     FontSize="20"
                     WidthRequest="200"
-                    Grid.Row="2"
+                    Grid.Row="4"
                     Command ="{Binding CreateAccountCommand}"/>
 
 
-            <Border Grid.Row="3">
+            <Border Grid.Row="5">
             <Label 
                         Text="{Binding Message}"
                         TextColor="{Binding MessageColor} "

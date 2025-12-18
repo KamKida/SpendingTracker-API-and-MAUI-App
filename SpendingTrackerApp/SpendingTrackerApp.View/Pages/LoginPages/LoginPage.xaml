@@ -26,7 +26,7 @@
                 Grid.Row="1">
                 <Entry 
                     Placeholder="Email"
-                    Text ="{Binding User.Email}"/>
+                    Text ="{Binding Request.Email}"/>
             </Border>
 
 
@@ -37,7 +37,7 @@
                         Grid.Column="0"
                         Placeholder="Password"
                         IsPassword="{Binding HidePassword}" 
-                        Text="{Binding User.Password}"/>
+                        Text="{Binding Request.Password}"/>
 
                     <ImageButton 
                         Grid.Column="1"

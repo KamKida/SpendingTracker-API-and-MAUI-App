@@ -10,13 +10,4 @@ public partial class CreateAcountPage : ContentPage
         BindingContext = vm;
     }
 
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-
-        if (BindingContext is CreateAccountViewModel vm)
-        {
-            vm.Reset();
-        }
-    }
 }

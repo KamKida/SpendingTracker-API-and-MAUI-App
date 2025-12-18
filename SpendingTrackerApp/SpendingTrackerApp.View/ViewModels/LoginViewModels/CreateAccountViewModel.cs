@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Domain.Models;
+using SpendingTrackerApp.Extensions;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -9,7 +10,7 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 {
     public class CreateAccountViewModel : INotifyPropertyChanged
     {
-        public User User { get; set; }
+        public UserRequest Request { get; set; }
 
         private readonly IUserService _service;
         private readonly IMapper _mapper;
@@ -118,11 +119,10 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
         public ICommand CreateAccountCommand { get; }
 
         public CreateAccountViewModel(
-            User user,
             IUserService service,
             IMapper mapper)
         {
-            User = user;
+            Request = new UserRequest();
             _service = service;
             _mapper = mapper;
 
@@ -138,12 +138,13 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 
         private async void CreateUser()
         {
+            KeyboardHelper.HideKeyboard();
+
             ShowLoadingIcon = true;
             RunLoadingIcon = true;
             BlockInteraction = true;
 
-            UserRequest request = _mapper.Map<UserRequest>(User);
-            var response = await _service.CreateUser(request);
+            var response = await _service.CreateUser(Request);
 
             if (response.StatusCode != 200)
             {
@@ -161,12 +162,6 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
             BlockInteraction = false;
         }
 
-        public void Reset()
-        {
-            ShowLoadingIcon = false;
-            RunLoadingIcon = false;
-            BlockInteraction = false;
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)

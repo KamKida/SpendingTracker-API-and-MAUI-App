@@ -28,13 +28,13 @@ namespace SpendingTracker.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] UserRequest request)
         {
-            UserResponse user = await _userService.LoginUser(request);
+            string token = await _userService.LoginUser(request);
 
-            return Ok(user);
+            return Ok(token);
         }
 
         [HttpPut("resetPassword")]
-        public async Task<IActionResult> ResetPassword([FromBody] UserEditRequest request)
+        public async Task<IActionResult> ResetPassword([FromBody] UserRequest request)
         {
             await _userService.ResetPassword(request);
 

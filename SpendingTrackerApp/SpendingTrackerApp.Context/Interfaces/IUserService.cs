@@ -4,10 +4,10 @@ namespace SpendingTrackerApp.Infrastructure.Interfaces
 {
     public interface IUserService
     {
-        Task<(int StatusCode, string Content)> GetUser(UserRequest request);
+        Task<(int StatusCode, string Content)> LoginUser(UserRequest request);
 
         Task<(int StatusCode, string Content)> CreateUser(UserRequest request);
 
-        Task<(int StatusCode, string Content)> ResetPassword(UserEditRequest request);
+        Task<(int StatusCode, string Content)> ResetPassword(UserRequest request);
     }
 }

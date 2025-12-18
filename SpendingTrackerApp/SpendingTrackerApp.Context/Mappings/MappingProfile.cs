@@ -12,8 +12,6 @@ namespace SpendingTrackerApp.Infrastructure.Mappings
             //User mapping
             CreateMap<User, UserRequest>();
             CreateMap<UserResponse, User>();
-            CreateMap<User, UserEditRequest>();
-            CreateMap<UserEditRequest, User>();
         }
     }
 }

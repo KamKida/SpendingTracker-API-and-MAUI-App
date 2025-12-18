@@ -7,9 +7,11 @@ namespace SpendingTracker.Application.Interfaces.Services
     {
         Task CreateUser(UserRequest request);
 
-        Task<UserResponse> LoginUser(UserRequest request);
+        Task<string> LoginUser(UserRequest request);
 
-        Task ResetPassword(UserEditRequest request);
+        Task ResetPassword(UserRequest request);
+
+        Task<UserResponse> GetUserBaseData();
 
         //Task EditUser(UserEditRequest request);
 

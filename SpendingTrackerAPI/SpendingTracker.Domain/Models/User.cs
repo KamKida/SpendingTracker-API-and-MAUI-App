@@ -1,11 +1,4 @@
-﻿using SpendingTracker.Contracts.Dtos.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpendingTracker.Domain.Models
+﻿namespace SpendingTracker.Domain.Models
 {
     public class User
     {
@@ -16,11 +9,8 @@ namespace SpendingTracker.Domain.Models
         public string? LastName { get; set; }
         public DateTime CreationDate { get; set; }
 
-        public void EditUser(UserEditRequest request)
-        {
-            Email = request.Email;
-            FirstName = request.FirstName;
-            LastName = request.LastName;
-        }
+        public List<Fund> Funds { get; set; } = new List<Fund>();
+        public List<FundCategory> FundCategories { get; set; } = new List<FundCategory>();
+
     }
 }

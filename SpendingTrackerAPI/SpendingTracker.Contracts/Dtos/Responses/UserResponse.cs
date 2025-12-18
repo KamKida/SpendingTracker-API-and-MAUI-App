@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpendingTracker.Contracts.Dtos.Responses
+﻿namespace SpendingTracker.Contracts.Dtos.Responses
 {
     public class UserResponse
     {

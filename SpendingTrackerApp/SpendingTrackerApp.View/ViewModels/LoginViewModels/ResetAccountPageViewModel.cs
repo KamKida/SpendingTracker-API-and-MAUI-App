@@ -2,6 +2,7 @@
 using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Contracts.Dtos.Responses;
 using SpendingTrackerApp.Domain.Models;
+using SpendingTrackerApp.Extensions;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using System.ComponentModel;
 using System.Text.Json;
@@ -13,7 +14,7 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
     {
         private readonly IUserService _service;
         private readonly IMapper _mapper;
-        public UserEditRequest Request { get; set; }
+        public UserRequest Request { get; set; }
 
         private bool _hidePassword = true;
         private string _passwordIcon = "hide_password.png";
@@ -119,11 +120,10 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
         public ICommand ResetAccountCommand { get;}
 
         public ResetAccountPageViewModel(
-            User user,
             IUserService service,
             IMapper mapper)
         {
-            Request = new UserEditRequest();
+            Request = new UserRequest();
 
             _service = service;
             _mapper = mapper;
@@ -134,6 +134,8 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 
         private async void ResetAccount()
         {
+            KeyboardHelper.HideKeyboard();
+
             ShowLoadingIcon = true;
             RunLoadingIcon = true;
             BlockInteraction = true;

@@ -66,10 +66,16 @@ namespace SpendingTracker.Application.Services
 
         }
 
-        public async Task<UserResponse> LoginUser(UserRequest request)
+        public async Task<string> LoginUser(UserRequest request)
         {
             User user = await _context.Users
                         .Where(u => u.Email == request.Email)
+                        .Select(u => new User()
+                        {
+                            Email = u.Email,
+                            Password = u.Password,
+                        })
+                        .AsNoTracking()
                         .FirstOrDefaultAsync();
 
             if (user is null)
@@ -104,11 +110,8 @@ namespace SpendingTracker.Application.Services
                 );
 
             var tokenHandler = new JwtSecurityTokenHandler();
-
-            UserResponse response = _mapper.Map<UserResponse>(user);
-            response.Token = $"{tokenHandler.WriteToken(token)}";
-
-            return response;
+;
+            return $"{tokenHandler.WriteToken(token)}";
         }
 
 
@@ -131,7 +134,7 @@ namespace SpendingTracker.Application.Services
             */
         }
 
-        public async Task ResetPassword(UserEditRequest request)
+        public async Task ResetPassword(UserRequest request)
         {
             var result = _userEditRequestValidator.Validate(request);
 
@@ -149,9 +152,6 @@ namespace SpendingTracker.Application.Services
                 throw new BadRequestException("Konto nie zostało znalezione. Podaj porawny e-mail.");
             }
 
-            userToReset.EditUser(request);
-
-
             var hashResult = _passwordHasher.VerifyHashedPassword(userToReset, userToReset.Password, request.Password);
 
             if (hashResult == PasswordVerificationResult.Failed)
@@ -161,6 +161,11 @@ namespace SpendingTracker.Application.Services
 
             await _context.SaveChangesAsync();
 
+        }
+
+        public async Task<UserResponse> GetUserBaseData()
+        {
+            return new UserResponse();
         }
 
     }

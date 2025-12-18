@@ -12,6 +12,12 @@ namespace SpendingTracker.Infrastructure.Mappings
             //User mapping
             CreateMap<UserRequest, User>();
             CreateMap<User, UserResponse>();
+
+            //Fund mapping
+            CreateMap<Fund, FundResponse>();
+
+            //Fund category map
+            CreateMap<FundCategory, FundCategoryResponse>();
         }
     }
 }

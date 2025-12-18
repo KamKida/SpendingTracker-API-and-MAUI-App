@@ -3,7 +3,7 @@ using SpendingTracker.Contracts.Dtos.Requests;
 
 namespace SpendingTracker.Infrastructure.Validators
 {
-    public class UserEditRequestValidator : AbstractValidator<UserEditRequest>
+    public class UserEditRequestValidator : AbstractValidator<UserRequest>
     {
         public UserEditRequestValidator()
         {

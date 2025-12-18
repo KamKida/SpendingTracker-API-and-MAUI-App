@@ -20,7 +20,7 @@ namespace SpendingTrackerApp.Infrastructure.Services
             
         }
 
-        public async Task<(int StatusCode, string Content)> GetUser(UserRequest request)
+        public async Task<(int StatusCode, string Content)> LoginUser(UserRequest request)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace SpendingTrackerApp.Infrastructure.Services
 
 
 
-        public async Task<(int StatusCode, string Content)> ResetPassword(UserEditRequest request)
+        public async Task<(int StatusCode, string Content)> ResetPassword(UserRequest request)
         {
             try
             {

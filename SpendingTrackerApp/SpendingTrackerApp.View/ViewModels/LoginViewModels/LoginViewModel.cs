@@ -13,9 +13,9 @@ using System.Windows.Input;
 public class LoginViewModel : INotifyPropertyChanged
 {
     private readonly IUserService _service;
-    private readonly IMapper _mapper;
-    public User User { get; set; }
     BaseHttpService Http {  get; set; }
+
+    public UserRequest Request {  get; set; }
 
     private bool _hidePassword = true;
     private string _passwordIcon = "hide_password.png";
@@ -125,15 +125,12 @@ public class LoginViewModel : INotifyPropertyChanged
     public ICommand GoToResePasswordPageComand {  get; }
 
     public LoginViewModel(
-        User user,
         BaseHttpService http,
-        IUserService service,
-        IMapper mapper)
+        IUserService service)
     {
-        User = user;
+        Request = new UserRequest();
         Http = http;
         _service = service;
-        _mapper = mapper;
 
         TogglePasswordCommand = new Command(TogglePassword);
         LoginUserCommand = new Command(LoginUser);
@@ -155,8 +152,7 @@ public class LoginViewModel : INotifyPropertyChanged
         RunLoadingIcon = true;
         BlockInteraction = true;
 
-        UserRequest request = _mapper.Map<UserRequest>(User);
-        var response = await _service.GetUser(request);
+        var response = await _service.LoginUser(Request);
 
         if (response.StatusCode != 200)
         {
@@ -169,15 +165,7 @@ public class LoginViewModel : INotifyPropertyChanged
         }
         else
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            UserResponse userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content, options);
-
-            User = _mapper.Map<User>(userResponse);
-            Http.SetToken(User);
+            Http.SetToken(response.Content);
 
             await Shell.Current.GoToAsync(nameof(LoadingDataPage));
         }

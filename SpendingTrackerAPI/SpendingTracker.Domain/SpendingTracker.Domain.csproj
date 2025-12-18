@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SpendingTracker.Contracts\SpendingTracker.Contracts.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -79,10 +79,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Resources\AppIcon\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\SpendingTrackerApp.Context\SpendingTrackerApp.Infrastructure.csproj" />
 	  <ProjectReference Include="..\SpendingTrackerApp.Contracts\SpendingTrackerApp.Contracts.csproj" />
 	  <ProjectReference Include="..\SpendingTrackerApp.Domain\SpendingTrackerApp.Domain.csproj" />
@@ -98,6 +94,10 @@
 	  <Compile Update="Pages\LoadingDataPage.xaml.cs">
 	    <DependentUpon>LoadingDataPage.xaml</DependentUpon>
 	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Resources\AppIcon\" />
 	</ItemGroup>
 
 </Project>
