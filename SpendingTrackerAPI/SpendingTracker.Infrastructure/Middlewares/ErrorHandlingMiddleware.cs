@@ -34,6 +34,11 @@ namespace SpendingTracker.Infrastructure.Middlewares
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(rex.Message);
             }
+            catch(GetDataExeption gex)
+            {
+                context.Response.StatusCode = 500;
+                await context.Response.WriteAsync(gex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);

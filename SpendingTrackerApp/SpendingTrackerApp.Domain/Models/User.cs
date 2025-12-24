@@ -9,6 +9,8 @@ namespace SpendingTrackerApp.Domain.Models
         private string _token;
         private string _firstName;
         private string _lastName;
+        private decimal _thisMonthFund;
+
 
         public string Email
         {
@@ -71,9 +73,22 @@ namespace SpendingTrackerApp.Domain.Models
             }
         }
 
+        public decimal ThisMonthFund
+        {
+            get => _thisMonthFund;
+            set
+            {
+                if (_thisMonthFund != value)
+                {
+                    _thisMonthFund = value;
+                    OnPropertyChanged(nameof(ThisMonthFund));
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged(string prop) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }
+    

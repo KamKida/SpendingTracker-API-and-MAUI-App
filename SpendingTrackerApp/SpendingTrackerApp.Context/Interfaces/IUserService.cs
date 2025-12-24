@@ -9,5 +9,7 @@ namespace SpendingTrackerApp.Infrastructure.Interfaces
         Task<(int StatusCode, string Content)> CreateUser(UserRequest request);
 
         Task<(int StatusCode, string Content)> ResetPassword(UserRequest request);
+
+        Task<(int StatusCode, string Content)> GetBaseInfo();
     }
 }

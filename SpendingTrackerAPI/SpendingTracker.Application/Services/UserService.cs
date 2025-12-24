@@ -72,6 +72,7 @@ namespace SpendingTracker.Application.Services
                         .Where(u => u.Email == request.Email)
                         .Select(u => new User()
                         {
+                            Id = u.Id,
                             Email = u.Email,
                             Password = u.Password,
                         })
@@ -93,7 +94,7 @@ namespace SpendingTracker.Application.Services
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Email ?? "UnknownUser")
+                new Claim(ClaimTypes.Email, user.Email ?? "UnknownUser")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
@@ -103,7 +104,7 @@ namespace SpendingTracker.Application.Services
 
             var token = new JwtSecurityToken(
                 _authenticationSettings.JwtIssuer,
-                _authenticationSettings.JwtIssuer,
+                _authenticationSettings.JwtAudience,
                 claims,
                 expires: expires,
                 signingCredentials: cred
@@ -111,7 +112,7 @@ namespace SpendingTracker.Application.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
 ;
-            return $"{tokenHandler.WriteToken(token)}";
+            return tokenHandler.WriteToken(token);
         }
 
 
@@ -165,7 +166,27 @@ namespace SpendingTracker.Application.Services
 
         public async Task<UserResponse> GetUserBaseData()
         {
-            return new UserResponse();
+            DateTime today = DateTime.UtcNow;
+
+			UserResponse response = await _context.Users
+                                .Where(u => u.Id == _userContextService.GetUserId())
+                                .Select(u => new UserResponse
+                                {
+                                    Email = u.Email,
+                                    FirstName = u.FirstName,
+                                    LastName = u.LastName,
+                                    ThisMonthFund = u.Funds
+                                    .Where(f => f.CreationDate.Month == today.Month
+                                            && f.CreationDate.Year == today.Year)
+                                    .Sum(f => f.Amount)
+                                }).FirstOrDefaultAsync();
+
+            if(response == null)
+            {
+                throw new GetDataExeption("Coś poszło nie tak podczas pobierania danych konta.");
+            }
+
+            return response;
         }
 
     }

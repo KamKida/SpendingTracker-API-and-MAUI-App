@@ -58,12 +58,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\Button_Icons\add.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\FundsPages\AddFundPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\LoginPages\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -76,6 +83,9 @@
 	  <MauiXaml Update="Pages\LoadingDataPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\MainPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -85,6 +95,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Pages\FundsPages\AddFundPage.xaml.cs">
+	    <DependentUpon>AddFundPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\LoginPages\CreateAcountPage.xaml.cs">
 	    <DependentUpon>CreateAcountPage.xaml</DependentUpon>
 	  </Compile>
@@ -94,10 +107,22 @@
 	  <Compile Update="Pages\LoadingDataPage.xaml.cs">
 	    <DependentUpon>LoadingDataPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Pages\MainPage.xaml.cs">
+	    <DependentUpon>MainPage.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Resources\AppIcon\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\App_Icons\app_icon.png" />
+	  <MauiImage Include="Resources\Images\App_Icons\app_logo.png" />
+	  <MauiImage Include="Resources\Images\Button_Icons\add.png" />
+	  <MauiImage Include="Resources\Images\Button_Icons\hide_password.png" />
+	  <MauiImage Include="Resources\Images\Button_Icons\history.png" />
+	  <MauiImage Include="Resources\Images\Button_Icons\show_password.png" />
 	</ItemGroup>
 
 </Project>

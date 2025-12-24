@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
 using SpendingTracker.Contracts.Dtos;
 using SpendingTracker.Infrastructure.Extensions;
 using SpendingTracker.Infrastructure.Middlewares;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,37 @@ AuthenticationSettings authenticationSettings = new AuthenticationSettings();
 builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
 builder.Services.AddSingleton(authenticationSettings);
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "My API", Version = "v1" });
+
+    // Dodaj definicjê bezpieczeñstwa
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Wpisz swój JWT w formacie: Bearer {token}"
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
 builder.Services.AddAuthentication(option =>
 {
     option.DefaultAuthenticateScheme = "Bearer";
@@ -35,13 +68,15 @@ builder.Services.AddAuthentication(option =>
 {
     cfg.RequireHttpsMetadata = false;
     cfg.SaveToken = true;
-    cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-    {
-        ValidIssuer = authenticationSettings.JwtIssuer,
-        ValidAudience = authenticationSettings.JwtIssuer,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
-    };
+    cfg.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidIssuer = authenticationSettings.JwtIssuer,
+        ValidAudience = authenticationSettings.JwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+	};
+
 });
+
 
 var app = builder.Build();
 
@@ -52,12 +87,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseMiddleware<ErrorHandlingMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
+
 
 app.Run();

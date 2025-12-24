@@ -17,6 +17,7 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddScoped<LoginViewModel>();
             services.AddScoped<CreateAccountViewModel>();
             services.AddScoped<ResetAccountPageViewModel>();
+            services.AddScoped<LoadingDataPageViewModel>();
 
             //Services
             services.AddScoped<IUserService, UserService>();

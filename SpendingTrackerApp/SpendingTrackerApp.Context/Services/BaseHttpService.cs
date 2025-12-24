@@ -30,8 +30,8 @@ namespace SpendingTrackerApp.Infrastructure.Services
 
         public void SetToken(string token)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = 
-                new AuthenticationHeaderValue("Bearer", token);
+            _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

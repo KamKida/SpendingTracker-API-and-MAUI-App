@@ -7,22 +7,39 @@
 
     <Grid 
         Style="{StaticResource PrimaryTheme}"
-        RowDefinitions="Auto ,Auto">
+        RowDefinitions="*,Auto">
+
+        <Grid 
+            Grid.Row="0"
+            RowDefinitions="Auto ,Auto, *"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+        <Border 
+            Grid.Row="1"
+                WidthRequest="150"
+                HeightRequest="150">
+            <Image 
+                Source="app_icon.png"
+                />
+        </Border>
 
 
-        
+        </Grid>
+
+        <Border
+            Grid.Row="1">
+            <Label
+           TextColor="{Binding TextColor}"
+           Text="{Binding Message}"
+           FontSize="17"
+           />
+        </Border>
         <ActivityIndicator 
-            IsRunning="True" 
+            Grid.Row="0"
+            Scale="4"
+            IsRunning="{Binding IsRunning}" 
             Color="White" 
             WidthRequest="100"
             HeightRequest="100"/>
-
-        <Label 
-           x:Name="MessageLabel"
-           Text="Ładowanie danych...."
-           FontSize="20"
-           HorizontalOptions="Center" />
-
-
     </Grid>
 </ContentPage>

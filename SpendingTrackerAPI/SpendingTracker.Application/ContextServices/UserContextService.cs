@@ -16,6 +16,7 @@ namespace SpendingTracker.Application.ContextServices
         public ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User;
 
         public Guid? GetUserId() =>
+            
             User is null ? null : Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
     }
 }

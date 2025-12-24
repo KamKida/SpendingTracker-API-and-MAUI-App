@@ -3,12 +3,13 @@
     x:Class="SpendingTrackerApp.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SpendingTrackerApp.Pages"
+    xmlns:local="clr-namespace:SpendingTrackerApp.Pages.FundsPages"
     Title="SpendingTrackerApp">
 
     <ShellContent
         Title="Home"
-        ContentTemplate="{DataTemplate local:LoadingDataPage}"
+        ContentTemplate="{DataTemplate local:AddFundPage}"
         Route="LoginPage" />
+
 
 </Shell>

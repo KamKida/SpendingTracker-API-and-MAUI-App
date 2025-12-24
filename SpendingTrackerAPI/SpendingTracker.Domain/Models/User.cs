@@ -8,7 +8,6 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTime CreationDate { get; set; }
-
         public List<Fund> Funds { get; set; } = new List<Fund>();
         public List<FundCategory> FundCategories { get; set; } = new List<FundCategory>();
 
