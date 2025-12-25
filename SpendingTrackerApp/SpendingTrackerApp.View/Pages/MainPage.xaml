@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SpendingTrackerApp.Pages.MainPage"
-             Title="Główna strona">
+             Title="{Binding Title}"
+             Shell.BackButtonBehavior="{BackButtonBehavior IsVisible=False}">
     
     <ScrollView
         BackgroundColor="White">
@@ -13,7 +14,7 @@
             RowSpacing="10">
 
             <Label
-            Text="0"
+            Text="{Binding User.ThisMonthFund, StringFormat='{}{0} zł'}"
             Grid.Row="0"
             Grid.Column="0"
             FontSize="45"
@@ -34,7 +35,8 @@
                 HeightRequest="35"
                 WidthRequest="35"
                 HorizontalOptions="End"
-                VerticalOptions="Center"/>
+                VerticalOptions="Center"
+                Command="{Binding AddFundCommand}"/>
 
             <ImageButton
                 Grid.Row="1"

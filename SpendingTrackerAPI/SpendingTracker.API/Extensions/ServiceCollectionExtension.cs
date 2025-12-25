@@ -26,12 +26,14 @@ namespace SpendingTracker.Infrastructure.Extensions
             //Validators
             services.AddScoped<UserRequestValidator>();
             services.AddScoped<UserEditRequestValidator>();
+            services.AddScoped<FundRequestValidator>();
            
             //Auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //Services
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFundService, FundService>();
 
             //Context services
             services.AddScoped<IUserContextService,UserContextService>();

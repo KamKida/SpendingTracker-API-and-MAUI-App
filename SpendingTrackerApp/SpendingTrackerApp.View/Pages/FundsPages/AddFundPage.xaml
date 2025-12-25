@@ -1,19 +1,102 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SpendingTrackerApp.Pages.FundsPages.AddFundPage"
-             Title="NewPage1">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="SpendingTrackerApp.Pages.FundsPages.AddFundPage"
+    Style="{StaticResource PrimaryTheme}"
+    Title="Dodaj fundusz">
 
-	<Grid 
-          RowDefinitions="*,*,*"
-          ColumnDefinitions="*,*"
-          RowSpacing="10">
+	<Grid RowDefinitions="Auto,Auto,Auto"
+          Margin="0,100,0,0">
 
-		<Entry
-          Keyboard="Numeric"
-          Placeholder="0.00"
-          TextChanged=""/>
+		<Grid Grid.Row="0"
+       
+              ColumnDefinitions="*,Auto"
+              RowDefinitions="Auto,Auto"
+              Padding="16"
+              VerticalOptions="Start">
 
+			<Border Grid.Row="0"
+                    Grid.ColumnSpan="2"
+                    Stroke="{Binding AmountColorBorder}"
+                    StrokeThickness="1">
+				<Entry
+                    Text="{Binding Text}"
+                    TextColor="{Binding AmountColorText}"
+                    Keyboard="Numeric"
+                    Placeholder="0.0"
+                    HorizontalTextAlignment="End"/>
+
+			</Border>
+
+			<Border Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,10,10,0">
+				<Label Text="placeholder dla listy kategorii" />
+			</Border>
+
+			<Button Grid.Row="1"
+                    Grid.Column="1"
+                    Text="Dodaj kategorię"
+                    Margin="0,10,0,0" />
+		</Grid>
+
+		<Border Grid.Row="1">
+			<Label 
+            Text= "{Binding Message}"
+            TextColor="{Binding MessageColor}"
+            FontSize="20"
+            LineBreakMode="WordWrap" />
+		</Border>
+
+
+		<Grid Grid.Row="2"
+              ColumnDefinitions="*,*"
+              Padding="16"
+              ColumnSpacing="12"
+              VerticalOptions="End">
+
+			<Button Text="Dodaj fundusz"
+                    BackgroundColor="#195700"
+                    TextColor="White"
+                    Command="{Binding AddFundCommand}">
+				<Button.Shadow>
+					<Shadow Brush="Black"
+                            Offset="0,4"
+                            Radius="8"
+                            Opacity="0.3" />
+				</Button.Shadow>
+			</Button>
+
+			<Button Grid.Column="1"
+                    Text="Anuluj"
+                    BackgroundColor="#C70000"
+                    TextColor="White"
+                    Command="{Binding CancelAddFundCommand}">
+				<Button.Shadow>
+					<Shadow Brush="Black"
+                            Offset="0,4"
+                            Radius="8"
+                            Opacity="0.3" />
+				</Button.Shadow>
+			</Button>
+
+		</Grid>
+		<Grid
+            Grid.RowSpan="2"
+            IsVisible="{Binding ShowLoadingIcon}"
+            BackgroundColor="#80000000"
+            ZIndex="999">
+
+			<ActivityIndicator
+                IsRunning="{Binding RunLoadingIcon}"
+                Color="DodgerBlue"
+                WidthRequest="80"
+                HeightRequest="80"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"/>
+
+		</Grid>
 
 	</Grid>
+
 </ContentPage>

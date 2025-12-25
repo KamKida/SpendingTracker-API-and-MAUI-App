@@ -1,14 +1,6 @@
-﻿using SpendingTrackerApp.Domain.Models;
-using SpendingTrackerApp.Infrastructure.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
+﻿using System.Net.Http.Headers;
 
-namespace SpendingTrackerApp.Infrastructure.Services
+namespace SpendingTrackerApp.Infrastructure.BaseServices
 {
     public class BaseHttpService
     {

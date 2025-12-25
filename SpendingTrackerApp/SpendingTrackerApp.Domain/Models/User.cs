@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace SpendingTrackerApp.Domain.Models
 {
@@ -10,6 +11,8 @@ namespace SpendingTrackerApp.Domain.Models
         private string _firstName;
         private string _lastName;
         private decimal _thisMonthFund;
+
+        private ObservableCollection<Fund> _funds = new ();
 
 
         public string Email
@@ -74,7 +77,7 @@ namespace SpendingTrackerApp.Domain.Models
         }
 
         public decimal ThisMonthFund
-        {
+		{
             get => _thisMonthFund;
             set
             {
@@ -86,7 +89,7 @@ namespace SpendingTrackerApp.Domain.Models
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged(string prop) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }

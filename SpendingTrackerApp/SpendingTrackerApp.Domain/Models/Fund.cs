@@ -9,6 +9,7 @@ namespace SpendingTrackerApp.Domain.Models
 {
 	public class Fund : INotifyPropertyChanged
 	{
+	    public Guid Id {  get; set; }
 		public decimal _amount { get; set; }
 		public DateTime _creationDate { get; set; }
 

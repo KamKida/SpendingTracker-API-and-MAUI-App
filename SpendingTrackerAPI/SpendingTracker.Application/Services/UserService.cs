@@ -167,7 +167,6 @@ namespace SpendingTracker.Application.Services
         public async Task<UserResponse> GetUserBaseData()
         {
             DateTime today = DateTime.UtcNow;
-
 			UserResponse response = await _context.Users
                                 .Where(u => u.Id == _userContextService.GetUserId())
                                 .Select(u => new UserResponse

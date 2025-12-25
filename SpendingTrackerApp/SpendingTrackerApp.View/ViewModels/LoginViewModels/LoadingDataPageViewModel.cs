@@ -1,13 +1,18 @@
 ﻿using AutoMapper;
+using SpendingTrackerApp.Contracts.Dtos.Responses;
 using SpendingTrackerApp.Domain.Models;
+using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
+using SpendingTrackerApp.Pages;
 using System.ComponentModel;
+using System.Text.Json;
 
 namespace SpendingTrackerApp.ViewModels.LoginViewModels
 {
     public class LoadingDataPageViewModel : INotifyPropertyChanged
     {
-        public User User { get; set; }
+        public User User { get;}
+		public JsonService JsonService { get; set;}
         private readonly IUserService Service;
         private readonly IMapper _mapper;
 
@@ -58,10 +63,12 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 
 		public LoadingDataPageViewModel(
             User user,
-            IUserService _service,
+			JsonService jsonService,
+			IUserService _service,
             IMapper mapper)
         {
             User = user;
+			JsonService = jsonService;
             Service = _service;
             _mapper = mapper;
 
@@ -80,8 +87,10 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 			}
             else
             {
-                User = _mapper.Map<User>(response);
-            }
+				UserResponse userResponse = JsonService.Deserialize<UserResponse>(response.Content);
+                _mapper.Map(userResponse, User);
+				await Shell.Current.GoToAsync(nameof(MainPage));
+			}
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

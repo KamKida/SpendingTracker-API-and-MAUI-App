@@ -1,7 +1,9 @@
 ﻿using SpendingTrackerApp.Domain.Models;
+using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Infrastructure.Services;
-using SpendingTrackerApp.Pages;
+using SpendingTrackerApp.ViewModels;
+using SpendingTrackerApp.ViewModels.FundViewModels;
 using SpendingTrackerApp.ViewModels.LoginViewModels;
 
 namespace SpendingTrackerApp.Infrastructure.Extensions
@@ -12,15 +14,21 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
         {
             services.AddSingleton<User>();
             services.AddSingleton<BaseHttpService>();
+            services.AddSingleton<JsonService>();
 
             //View models
             services.AddScoped<LoginViewModel>();
             services.AddScoped<CreateAccountViewModel>();
             services.AddScoped<ResetAccountPageViewModel>();
             services.AddScoped<LoadingDataPageViewModel>();
+            services.AddSingleton<AddFundPageViewModel>();
+
+			services.AddScoped<MainPageViewModel>();
+
 
             //Services
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFundService, FundService>();
 
             //Auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

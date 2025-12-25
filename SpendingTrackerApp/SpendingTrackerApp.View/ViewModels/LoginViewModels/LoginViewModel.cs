@@ -1,13 +1,9 @@
-﻿using AutoMapper;
-using SpendingTrackerApp.Contracts.Dtos.Requests;
-using SpendingTrackerApp.Contracts.Dtos.Responses;
-using SpendingTrackerApp.Domain.Models;
+﻿using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Extensions;
+using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
-using SpendingTrackerApp.Infrastructure.Services;
 using SpendingTrackerApp.Pages;
 using System.ComponentModel;
-using System.Text.Json;
 using System.Windows.Input;
 
 public class LoginViewModel : INotifyPropertyChanged
