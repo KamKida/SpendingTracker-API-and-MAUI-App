@@ -17,8 +17,10 @@ namespace SpendingTrackerApp.ViewModels
 			Title = $"Witaj {User.FirstName} {User.LastName}";
 
 			AddFundCommand = new Command(AddFund);
+			ShowHistoryCommand = new Command(ShowHistory);
 		}
 		public ICommand AddFundCommand { get; }
+		public ICommand ShowHistoryCommand { get; }
 
 
 		public async void AddFund()
@@ -26,6 +28,10 @@ namespace SpendingTrackerApp.ViewModels
 			await Shell.Current.GoToAsync(nameof(AddFundPage));
 		}
 
+		public async void ShowHistory()
+		{
+			await Shell.Current.GoToAsync(nameof(FundsHistoryPage), true);
+		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string name)

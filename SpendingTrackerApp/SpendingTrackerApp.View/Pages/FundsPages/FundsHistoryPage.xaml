@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:local="clr-namespace:SpendingTrackerApp.Pages.FundsPages"
+             x:Class="SpendingTrackerApp.Pages.FundsPages.FundsHistoryPage"
+             Title="Historia funduszy">
+	<ScrollView>
+	<Grid RowDefinitions="Auto, Auto, Auto, *"
+			RowSpacing="10"
+			BackgroundColor="White">
+
+		<Border Grid.Row="0">
+		<Grid>
+			
+			<Label Text="Placeholder na filter"/>
+		</Grid>
+		</Border>
+		<CollectionView 
+		ItemsSource="{Binding Funds}" 
+			Grid.Row="1"
+			 Style="{StaticResource PrimaryTheme}">
+				<CollectionView.Header>
+					<Grid HeightRequest="50"/>
+				</CollectionView.Header>
+				<CollectionView.Footer>
+					<Grid HeightRequest="50"/>
+				</CollectionView.Footer>
+				<CollectionView.ItemTemplate>
+			<DataTemplate>
+					<Border Margin="10,10,10,0">
+				<Grid RowDefinitions="Auto, Auto, Auto, Auto"
+					  ColumnDefinitions="*,Auto">
+							<Label Text="Dodano:" Grid.Row="0"
+							FontSize="20"/>
+							<Label Text="{Binding CreationDate}" Grid.Row="1" FontSize="18" Padding="0,0,0,10"/>
+
+							<Label Text="Kwota:" Grid.Row="2" FontSize="20"/>
+							<Label Text="{Binding Amount, StringFormat='{}{0} zł'}" Grid.Row="3" FontSize="18" TextColor="Green" Padding="0,0,0,10"/>
+
+							<ImageButton Grid.Column="1"
+							Grid.Row="1"
+							Grid.RowSpan="2"
+							HeightRequest="55"
+							WidthRequest="55"
+							HorizontalOptions="Center"
+							VerticalOptions="Center"
+							Source="delete.png"
+							Command="{Binding Source={RelativeSource AncestorType={x:Type local:FundsHistoryPage}}, Path=BindingContext.DeleteFundCommand}"
+							CommandParameter="{Binding .}"/>
+						</Grid>
+					</Border>
+			</DataTemplate>
+		</CollectionView.ItemTemplate>
+	</CollectionView>
+
+		<Button
+	Text="Wyświetl wiecej"
+	Grid.Row="2"
+			FontSize="20"
+WidthRequest="200"/>
+		</Grid>
+	</ScrollView>
+</ContentPage>

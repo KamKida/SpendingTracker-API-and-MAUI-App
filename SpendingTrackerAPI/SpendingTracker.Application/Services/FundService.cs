@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SpendingTracker.Application.Interfaces.ContextServices;
 using SpendingTracker.Application.Interfaces.Services;
 using SpendingTracker.Contracts.Dtos.Requests;
@@ -29,6 +30,25 @@ namespace SpendingTracker.Application.Services
 			_userContextService = userContextService;
 			_mapper = mapper;
 		}
+
+		public async Task<List<FundResponse>> GetTop10Funds()
+		{
+			var result = await _context.Funds
+				.Where(f => f.UserId == _userContextService.GetUserId())
+				.OrderByDescending(f => f.CreationDate)
+				.Take(10)
+				.Select(f => new FundResponse()
+				{
+					Id = f.Id,
+					Amount = f.Amount,
+					CreationDate = f.CreationDate,
+				})
+				.AsNoTracking()
+				.ToListAsync();
+
+			return result;
+		}
+
 		public async Task<FundResponse> AddFund(FundRequest request)
 		{
 			var result = _validator.Validate(request);
@@ -36,7 +56,7 @@ namespace SpendingTracker.Application.Services
 			if (!result.IsValid)
 			{
 				var error = result.Errors.FirstOrDefault();
-				throw new RegisterExeption(error?.ErrorMessage ?? "Dodanie funduszu nie powiodło się.");
+				throw new BadRequestException(error?.ErrorMessage ?? "Dodanie funduszu nie powiodło się.");
 			}
 
 			Fund newFund = _mapper.Map<Fund>(request);
@@ -46,6 +66,22 @@ namespace SpendingTracker.Application.Services
 
 			return _mapper.Map<FundResponse>(newFund);
 
+		}
+
+		public async Task DeleteFund(Guid fundId)
+		{
+			Fund fundToDelete = await _context.Funds
+			.Where(f => f.Id == fundId)
+			.FirstOrDefaultAsync();
+
+			if (fundToDelete == null)
+			{
+				throw new BadRequestException("Usunięcie funduszu nie powiodło się. Podany fundusz nie istnieje.");
+			}
+
+			_context.Funds.Remove(fundToDelete);
+
+			await _context.SaveChangesAsync();
 		}
 	}
 }

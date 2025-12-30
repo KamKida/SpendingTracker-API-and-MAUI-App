@@ -5,6 +5,8 @@ namespace SpendingTracker.Application.Interfaces.Services
 {
 	public interface IFundService
 	{
+		Task<List<FundResponse>> GetTop10Funds();
 		Task<FundResponse> AddFund(FundRequest request);
+		Task DeleteFund(Guid fundId);
 	}
 }

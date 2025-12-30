@@ -9,18 +9,24 @@
         BackgroundColor="White">
         <Grid
             RowDefinitions="Auto ,Auto ,Auto ,*"
-            ColumnDefinitions="Auto, *"
+            ColumnDefinitions="*, Auto"
+            ColumnSpacing="20"
             Padding="10"
             RowSpacing="10">
 
-            <Label
-            Text="{Binding User.ThisMonthFund, StringFormat='{}{0} zł'}"
+			<Border>
+			<ScrollView Orientation="Horizontal"
             Grid.Row="0"
-            Grid.Column="0"
-            FontSize="45"
+            Grid.Column="0">
+            
+				<Label
+            Text="{Binding User.ThisMonthFund, StringFormat='{}{0} zł'}"
+            FontSize="40"
             TextColor="Green"/>
+			</ScrollView>
+			</Border>
 
-            <Label
+			<Label
             Text="0"
             Grid.Row="1"
             FontSize="25"
@@ -45,7 +51,8 @@
                 HeightRequest="35"
                 WidthRequest="35"
                 HorizontalOptions="End"
-                VerticalOptions="Center"/>
+                VerticalOptions="Center"
+                Command="{Binding ShowHistoryCommand}"/>
 
         </Grid>
     </ScrollView>

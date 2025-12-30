@@ -9,4 +9,5 @@ public partial class AddFundPage : ContentPage
 		InitializeComponent();
 		BindingContext = vm;
 	}
+
 }

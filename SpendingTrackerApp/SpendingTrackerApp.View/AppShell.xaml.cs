@@ -14,6 +14,7 @@ namespace SpendingTrackerApp
             Routing.RegisterRoute(nameof(LoadingDataPage), typeof(LoadingDataPage));
             Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
             Routing.RegisterRoute(nameof(AddFundPage), typeof(AddFundPage));
+            Routing.RegisterRoute(nameof(FundsHistoryPage), typeof(FundsHistoryPage));
         }
     }
 }

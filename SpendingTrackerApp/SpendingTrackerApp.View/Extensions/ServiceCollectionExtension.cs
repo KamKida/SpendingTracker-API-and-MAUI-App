@@ -24,6 +24,7 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddSingleton<AddFundPageViewModel>();
 
 			services.AddScoped<MainPageViewModel>();
+            services.AddScoped<FundsHistoryPageViewModel>();
 
 
             //Services
