@@ -6,7 +6,7 @@ namespace SpendingTrackerApp.Domain.Models
 	{
 	    public Guid Id {  get; set; }
 		public decimal _amount { get; set; }
-		public string _creationDate { get; set; }
+		public DateTime _creationDate { get; set; }
 
 
 		public decimal Amount
@@ -23,7 +23,7 @@ namespace SpendingTrackerApp.Domain.Models
 			}
 		}
 
-		public string CreationDate
+		public DateTime CreationDate
 		{
 			get => _creationDate;
 			set

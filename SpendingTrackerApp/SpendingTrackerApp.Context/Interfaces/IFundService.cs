@@ -4,8 +4,10 @@ namespace SpendingTrackerApp.Infrastructure.Interfaces
 {
 	public interface IFundService
 	{
-		Task<(int StatusCode, string Content)> GetTop10();
+		Task<HttpResponseMessage> Get10(FundFilterRequest? request);
 		Task<(int StatusCode, string Content)> AddFund(FundRequest request);
 		Task<(int StatusCode, string Content)> DeleteFund(Guid id);
+		Task<HttpResponseMessage> EditFund(FundRequest request);
+
 	}
 }

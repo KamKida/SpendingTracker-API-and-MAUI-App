@@ -60,6 +60,7 @@
 	<ItemGroup>
 	  <None Remove="Resources\Images\Button_Icons\add.png" />
 	  <None Remove="Resources\Images\Button_Icons\delete.png" />
+	  <None Remove="Resources\Images\Button_Icons\edit.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -69,6 +70,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\FundsPages\EditFundPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\FundsPages\FundsHistoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -119,6 +123,7 @@
 	  <MauiImage Include="Resources\Images\App_Icons\app_logo.png" />
 	  <MauiImage Include="Resources\Images\Button_Icons\add.png" />
 	  <MauiImage Include="Resources\Images\Button_Icons\delete.png" />
+	  <MauiImage Include="Resources\Images\Button_Icons\edit.png" />
 	  <MauiImage Include="Resources\Images\Button_Icons\hide_password.png" />
 	  <MauiImage Include="Resources\Images\Button_Icons\history.png" />
 	  <MauiImage Include="Resources\Images\Button_Icons\show_password.png" />

@@ -20,7 +20,7 @@
             Grid.Column="0">
             
 				<Label
-            Text="{Binding User.ThisMonthFund, StringFormat='{}{0} zł'}"
+            Text="{Binding User.ThisMonthFund, StringFormat='{}+{0} zł'}"
             FontSize="40"
             TextColor="Green"/>
 			</ScrollView>

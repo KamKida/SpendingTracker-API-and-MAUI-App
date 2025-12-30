@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 
 namespace SpendingTrackerApp.Infrastructure.BaseServices
 {
@@ -17,6 +11,11 @@ namespace SpendingTrackerApp.Infrastructure.BaseServices
 				PropertyNameCaseInsensitive = true
 			};
 			return JsonSerializer.Deserialize<T>(json, options);
+		}
+
+		public string Serialize(object obj)
+		{
+			return JsonSerializer.Serialize(obj);
 		}
 	}
 }

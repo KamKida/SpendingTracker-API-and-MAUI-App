@@ -16,11 +16,11 @@ namespace SpendingTracker.API.Controllers
 			_fundService = fundService;
 		}
 
-		[HttpGet("top10")]
+		[HttpGet("get10")]
 		[Authorize]
-		public async Task<IActionResult> GetTop10Funds()
+		public async Task<IActionResult> Get10([FromQuery]FundFilterRequest request)
 		{
-			var response = await _fundService.GetTop10Funds();
+			var response = await _fundService.GetByFilter(request);
 
 			return Ok(response);
 		}
@@ -41,6 +41,14 @@ namespace SpendingTracker.API.Controllers
 		{
 			await _fundService.DeleteFund(fundId);
 
+			return Ok();
+		}
+
+		[HttpPut("edit")]
+		[Authorize]
+		public async Task<IActionResult> EditFund([FromBody] FundRequest request)
+		{
+			await _fundService.EditFund(request);
 			return Ok();
 		}
 	}

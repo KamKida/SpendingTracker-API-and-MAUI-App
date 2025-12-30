@@ -31,10 +31,14 @@ namespace SpendingTracker.Application.Services
 			_mapper = mapper;
 		}
 
-		public async Task<List<FundResponse>> GetTop10Funds()
+		public async Task<List<FundResponse>> GetByFilter(FundFilterRequest request)
 		{
-			var result = await _context.Funds
-				.Where(f => f.UserId == _userContextService.GetUserId())
+			var query = _context.Funds.Where(f => f.UserId == _userContextService.GetUserId());
+
+			query = AddFilter(query, request);
+
+
+			var result = await query
 				.OrderByDescending(f => f.CreationDate)
 				.Take(10)
 				.Select(f => new FundResponse()
@@ -83,5 +87,55 @@ namespace SpendingTracker.Application.Services
 
 			await _context.SaveChangesAsync();
 		}
+
+		public async Task EditFund(FundRequest fundRequest)
+		{
+			Fund fundToEdit = await _context.Funds
+			.Where(f => f.UserId == _userContextService.GetUserId()
+				&& f.Id == fundRequest.Id)
+				.FirstOrDefaultAsync();
+
+			if (fundToEdit == null)
+			{
+				throw new BadRequestException("Edycja funduszu nie powiodło się. Podany fundusz nie istnieje.");
+			}
+
+			fundToEdit.Amount = fundRequest.Amount;
+
+
+
+			await _context.SaveChangesAsync();
+		}
+
+		private IQueryable<Fund> AddFilter(IQueryable<Fund> query, FundFilterRequest request)
+		{
+			if (request.AmountFrom != null)
+			{
+				query = query.Where(f => f.Amount >= request.AmountFrom);
+			}
+
+			if (request.AmountTo != null)
+			{
+				query = query.Where(f => f.Amount <= request.AmountTo);
+			}
+
+			if (request.DateFrom != null)
+			{
+				query = query.Where(f => f.CreationDate.Date >= request.DateFrom);
+			}
+
+			if (request.DateTo != null)
+			{
+				query = query.Where(f => f.CreationDate.Date <= request.DateTo);
+			}
+
+			if (request.LastDate != null)
+			{
+				query = query.Where(f => f.CreationDate < request.LastDate);
+			}
+
+			return query;
+		}
+
 	}
 }

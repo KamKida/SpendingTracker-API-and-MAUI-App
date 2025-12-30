@@ -17,23 +17,28 @@ namespace SpendingTrackerApp.Infrastructure.Services
 
 		}
 
-		public async Task<(int StatusCode, string Content)> GetTop10()
+		public async Task<HttpResponseMessage> Get10(FundFilterRequest request)
 		{
 			try
 			{
-				var response = await Http._httpClient.GetAsync("fund/top10");
+				var url =
+				$"fund/get10" +
+				$"?dateFrom={request.DateFrom:O}" +
+				$"&dateTo={request.DateTo:O}" +
+				$"&amountFrom={request.AmountFrom}" +
+				$"&amountTo={request.AmountTo}" +
+				$"&lastDate={request.LastDate:O}";
 
-				var content = await response.Content.ReadAsStringAsync();
-				var statusCode = (int)response.StatusCode;
 
-				return (statusCode, content);
+				var response = await Http._httpClient.GetAsync(url);
+
+				return (response);
 			}
 			catch (Exception ex)
 			{
-				return (0, ex.Message);
+				return (null);
 			}
 		}
-
 
 		public async Task<(int StatusCode, string Content)> AddFund(FundRequest request)
 		{
@@ -66,6 +71,21 @@ namespace SpendingTrackerApp.Infrastructure.Services
 			catch (Exception ex)
 			{
 				return (0, ex.Message);
+			}
+		}
+
+		public async Task<HttpResponseMessage> EditFund(FundRequest request)
+		{
+			try
+			{
+				var response = await Http._httpClient.PutAsJsonAsync($"fund/edit", request);
+
+
+				return (response);
+			}
+			catch (Exception ex)
+			{
+				return (null);
 			}
 		}
 	}

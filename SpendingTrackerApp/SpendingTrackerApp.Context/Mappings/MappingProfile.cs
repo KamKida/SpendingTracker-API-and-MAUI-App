@@ -15,8 +15,7 @@ namespace SpendingTrackerApp.Infrastructure.Mappings
 
             //Fund mapping
             CreateMap<Fund, FundRequest>();
-            CreateMap<FundResponse, Fund>()
-                .ForMember(d => d.CreationDate, o => o.MapFrom(s => s.CreationDate.ToString("dd-MM-yyyy HH-mm")));
+            CreateMap<FundResponse, Fund>();
         }
     }
 }

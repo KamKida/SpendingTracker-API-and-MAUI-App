@@ -124,7 +124,7 @@ public class LoginViewModel : INotifyPropertyChanged
         BaseHttpService http,
         IUserService service)
     {
-        Request = new UserRequest();
+        Request = new UserRequest() { Email ="test@test.pl", Password="testte"};
         Http = http;
         _service = service;
 

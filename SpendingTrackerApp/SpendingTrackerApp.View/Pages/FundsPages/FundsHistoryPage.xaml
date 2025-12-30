@@ -5,17 +5,58 @@
              x:Class="SpendingTrackerApp.Pages.FundsPages.FundsHistoryPage"
              Title="Historia funduszy">
 	<ScrollView>
-	<Grid RowDefinitions="Auto, Auto, Auto, *"
+		<Grid RowDefinitions="Auto, Auto, Auto, *"
 			RowSpacing="10"
 			BackgroundColor="White">
 
-		<Border Grid.Row="0">
-		<Grid>
-			
-			<Label Text="Placeholder na filter"/>
-		</Grid>
-		</Border>
-		<CollectionView 
+			<Border Grid.Row="0">
+				<Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto"
+						ColumnDefinitions="Auto, Auto,Auto, Auto"
+						ColumnSpacing="0">
+					<Label Text="Data" Grid.Row="0" Grid.Column="0"/>
+
+					<Label Text="Od:" Grid.Row="1" Grid.Column="0"/>
+					<DatePicker
+					Grid.Row="1" Grid.Column="1"
+					Date="{Binding FilterRequest.DateFrom}"
+					Format="dd-MM-yyyy"/>
+
+					<Label Text="Do:" Grid.Row="1" Grid.Column="2"/>
+					<DatePicker
+					Grid.Row="1" Grid.Column="3"
+					Date="{Binding FilterRequest.DateTo}"
+					Format="dd-MM-yyyy"
+					MinimumDate="{Binding MinDate}"/>
+
+					<Label Text="Kwota" Grid.Row="2" Grid.Column="0"/>
+					<Label Text="Od:" Grid.Row="3" Grid.Column="0"/>
+					<Entry
+					Grid.Row="3"
+					Grid.Column="1"
+					Text="{Binding FilterRequest.AmountFrom}"
+					TextColor="{Binding AmountFrom}"
+					Keyboard="Numeric"
+					Placeholder="0.0"
+					HorizontalTextAlignment="End"/>
+
+					<Label Text="Do:" Grid.Row="3" Grid.Column="2"/>
+					<Entry
+					Grid.Row="3"
+					Grid.Column="3"
+					Text="{Binding FilterRequest.AmountTo}"
+					TextColor="{Binding AmountToo}"
+					Keyboard="Numeric"
+					Placeholder="0.0"
+					HorizontalTextAlignment="End"/>
+
+					<Label Text="Place" Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0"/>
+					<Button Text="Filtruj" WidthRequest="100" Grid.Row="5" Grid.Column="3" Command="{Binding GetTop10FilteredFundsCommand}"/>
+					<Button Text="resetuj filtry" WidthRequest="100" Grid.Row="5" Grid.Column="1" Command="{Binding ResetFilterCommand}" />
+					<Label Text="Błąd" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4" />
+
+				</Grid>
+			</Border>
+			<CollectionView 
 		ItemsSource="{Binding Funds}" 
 			Grid.Row="1"
 			 Style="{StaticResource PrimaryTheme}">
@@ -26,18 +67,27 @@
 					<Grid HeightRequest="50"/>
 				</CollectionView.Footer>
 				<CollectionView.ItemTemplate>
-			<DataTemplate>
-					<Border Margin="10,10,10,0">
-				<Grid RowDefinitions="Auto, Auto, Auto, Auto"
+					<DataTemplate>
+						<Border Margin="10,10,10,0">
+							<Border.GestureRecognizers>
+								<TapGestureRecognizer 
+            Command="{Binding Source={RelativeSource AncestorType={x:Type local:FundsHistoryPage}}, Path=BindingContext.SelectFundCommand}"
+            CommandParameter="{Binding .}" />
+							</Border.GestureRecognizers>
+							<Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto"
+							
 					  ColumnDefinitions="*,Auto">
-							<Label Text="Dodano:" Grid.Row="0"
+								<Label Text="Dodano:" Grid.Row="0"
 							FontSize="20"/>
-							<Label Text="{Binding CreationDate}" Grid.Row="1" FontSize="18" Padding="0,0,0,10"/>
+								<Label Text="{Binding CreationDate,  StringFormat='{0:dd-MM-yyyy HH:mm}'}" Grid.Row="1" FontSize="18" Padding="0,0,0,10"/>
 
-							<Label Text="Kwota:" Grid.Row="2" FontSize="20"/>
-							<Label Text="{Binding Amount, StringFormat='{}{0} zł'}" Grid.Row="3" FontSize="18" TextColor="Green" Padding="0,0,0,10"/>
+								<Label Text="Kwota:" Grid.Row="2" FontSize="20"/>
+								<Label Text="{Binding Amount, StringFormat='{}+{0} zł'}" Grid.Row="3" FontSize="18" TextColor="Green" Padding="0,0,0,10"/>
 
-							<ImageButton Grid.Column="1"
+								<Label Text="Kategoria:" Grid.Row="4" FontSize="20"/>
+								<Label Text="Kategoria placeholder" Grid.Row="5" FontSize="18" Padding="0,0,0,10"/>
+
+								<ImageButton Grid.Column="1"
 							Grid.Row="1"
 							Grid.RowSpan="2"
 							HeightRequest="55"
@@ -46,18 +96,23 @@
 							VerticalOptions="Center"
 							Source="delete.png"
 							Command="{Binding Source={RelativeSource AncestorType={x:Type local:FundsHistoryPage}}, Path=BindingContext.DeleteFundCommand}"
-							CommandParameter="{Binding .}"/>
-						</Grid>
-					</Border>
-			</DataTemplate>
-		</CollectionView.ItemTemplate>
-	</CollectionView>
+							CommandParameter="{Binding .}"
+							InputTransparent="False"/>
 
-		<Button
-	Text="Wyświetl wiecej"
-	Grid.Row="2"
-			FontSize="20"
-WidthRequest="200"/>
+
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</CollectionView.ItemTemplate>
+			</CollectionView>
+
+			<Button
+		Text="Wyświetl wiecej"
+		IsEnabled="{Binding IsMoreActive}"
+		Grid.Row="2"
+				FontSize="20"
+	WidthRequest="200"
+	Command="{Binding GetNext10FundCommand}"/>
 		</Grid>
 	</ScrollView>
 </ContentPage>
