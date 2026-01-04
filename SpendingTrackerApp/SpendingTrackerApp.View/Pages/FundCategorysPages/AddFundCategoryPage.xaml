@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SpendingTrackerApp.Pages.LoginPages.EditFundPage"
+             x:Class="SpendingTrackerApp.Pages.FundCategorysPages.AddFundCategoryPage"
              xmlns:converters="clr-namespace:SpendingTrackerApp.Converters"
-             Title="Edytuj fundusz">
+             Title="Dodaj kategorie fundusz">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
 			<converters:DecimalNullableConverter x:Key="DecimalNullableConverter"/>
 		</ResourceDictionary>
 	</ContentPage.Resources>
+
 	<Grid
     InputTransparent="{Binding BlockInteraction}">
 		<Grid
-        RowDefinitions="Auto ,Auto, Auto"
+        RowDefinitions="Auto, Auto, Auto"
         ColumnDefinitions="*, *"
         Padding="20"
         RowSpacing="20">
@@ -21,7 +22,7 @@
             Grid.Row="0"
             Grid.ColumnSpan="2">
 				<Grid 
-                    RowDefinitions="Auto ,Auto, Auto"
+                    RowDefinitions="Auto, Auto"
                     ColumnDefinitions="Auto, *"
                     ColumnSpacing="20"
                     RowSpacing="20">
@@ -29,19 +30,30 @@
 					<Label
                         Grid.Row="0"
                         Grid.Column="0"
-                        Text="Obecnie:"
-                        FontSize="33"/>
+                        Text="Nazwa:"
+                        VerticalOptions="Center"
+                        FontSize="35"
+                        TextColor="{StaticResource Positive}"/>
 
-					<ScrollView
-                        Margin="0,0,25,0"
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Orientation="Horizontal">
-						<Label Text="{Binding Fund.Amount}"
-                        FontSize="33"
-                        HorizontalTextAlignment="End"/>
+					<ScrollView 
+                                Orientation="Horizontal"
+                                Grid.Row="0"
+                                Grid.Column="1">
+
+						<Entry 
+                            Text="{Binding FundCategoryRequest.Name}"
+                            Placeholder="Nazwa"
+                            HorizontalTextAlignment="End"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            FontSize="35"
+                            TextColor="{Binding NameEntryColor}"
+                            BackgroundColor="Transparent"/>
 
 					</ScrollView>
+
+
+
 
 					<Label
                             Grid.Row="1"
@@ -57,23 +69,18 @@
                                 Grid.Column="1">
 
 						<Entry 
-                                Text="{Binding FundRequest.Amount, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
+                                Text="{Binding FundCategoryRequest.ShouldBe, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
                                 Placeholder="00.00"
                                 HorizontalTextAlignment="End"
                                 HorizontalOptions="Center"
                                 VerticalOptions="Center"
                                 Keyboard="Numeric"
                                 FontSize="35"
-                                TextColor="{Binding AmountEntryColor}"
+                                TextColor="{Binding  ShouldBeEntryColor}"
                                 BackgroundColor="Transparent"/>
 
 					</ScrollView>
 
-					<ListView
-                    Grid.Row="2"
-                    Grid.Column="0">
-
-					</ListView>
 
 
 
@@ -98,9 +105,9 @@
             WidthRequest="150"
             VerticalOptions="Center"
             Margin="0,20,0,0"
-            Text="Zapisz"
+            Text="Dodaj"
             BackgroundColor="{StaticResource Positive}"
-            Command="{Binding EditFundCommand}"/>
+            Command="{Binding AddFundCategoryCommand}"/>
 
 			<Button
             Grid.Row="2"
@@ -110,7 +117,7 @@
             Margin="0,20,0,0"
             Text="Anuluj"
             BackgroundColor="{StaticResource Negative}"
-            Command="{Binding CancelEditCommand}"/>
+            Command="{Binding CancelAddCommand}"/>
 
 		</Grid>
 
@@ -131,6 +138,5 @@
 		</Grid>
 
 	</Grid>
-
 
 </ContentPage>

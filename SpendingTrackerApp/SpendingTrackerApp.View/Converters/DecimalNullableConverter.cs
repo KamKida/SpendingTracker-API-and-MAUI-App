@@ -15,12 +15,12 @@ namespace SpendingTrackerApp.Converters
 			var str = value as string;
 
 			if (string.IsNullOrWhiteSpace(str))
-				return null; // <- puste Entry daje null
+				return null;
 
 			if (decimal.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture, out var result))
 				return result;
 
-			return null; // jeśli niepoprawna liczba
+			return null;
 		}
 	}
 }

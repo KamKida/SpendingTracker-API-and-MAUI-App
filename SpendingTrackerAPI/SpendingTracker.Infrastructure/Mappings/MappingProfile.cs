@@ -19,6 +19,7 @@ namespace SpendingTracker.Infrastructure.Mappings
 
             //Fund category map
             CreateMap<FundCategory, FundCategoryResponse>();
+            CreateMap<FundCategoryRequest, FundCategory>();
         }
     }
 }

@@ -4,6 +4,7 @@ using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Infrastructure.Services;
 using SpendingTrackerApp.ViewModels;
+using SpendingTrackerApp.ViewModels.FundCategoryViewModels;
 using SpendingTrackerApp.ViewModels.FundViewModels;
 using SpendingTrackerApp.ViewModels.LoginViewModels;
 
@@ -23,16 +24,21 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddScoped<CreateAccountViewModel>();
             services.AddScoped<ResetAccountPageViewModel>();
             services.AddScoped<LoadingDataPageViewModel>();
-            services.AddSingleton<AddFundPageViewModel>();
 
 			services.AddScoped<MainPageViewModel>();
             services.AddScoped<FundsHistoryPageViewModel>();
             services.AddScoped<EditFundPageViewModel>();
+			services.AddScoped<AddFundPageViewModel>();
+
+            services.AddScoped<FundCategoryListViewModel>();
+            services.AddScoped<AddFundCategoryPageViewModel>();
+            services.AddScoped<EditFundCategoryPageViewModel>();
 
 
-            //Services
-            services.AddScoped<IUserService, UserService>();
+			//Services
+			services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFundService, FundService>();
+            services.AddScoped<IFundCategotuService, FundCategotuService>();
 
             //Auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

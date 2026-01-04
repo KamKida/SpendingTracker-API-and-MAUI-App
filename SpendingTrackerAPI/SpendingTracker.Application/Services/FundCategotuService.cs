@@ -8,19 +8,23 @@ using SpendingTracker.Domain.Exeptions;
 using SpendingTracker.Domain.Models;
 using SpendingTracker.Infrastructure.Context;
 using SpendingTracker.Infrastructure.Validators;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SpendingTracker.Application.Services
 {
-	public class FundService : IFundService
+	public class FundCategotuService : IFundCategotuService
 	{
-
 		private readonly SpendingTrackerDbContext _context;
-		private readonly FundRequestValidator _validator;
+		private readonly FundCategoryRequestValidator _validator;
 		private readonly IUserContextService _userContextService;
 		private readonly IMapper _mapper;
-		public FundService(
+		public FundCategotuService(
 			SpendingTrackerDbContext context,
-			FundRequestValidator validator,
+			FundCategoryRequestValidator validator,
 			IUserContextService userContextService,
 			IMapper mapper
 		)
@@ -31,10 +35,10 @@ namespace SpendingTracker.Application.Services
 			_mapper = mapper;
 		}
 
-		public async Task<List<FundResponse>> GetByFilter(FundFilterRequest request)
+		public async Task<List<FundCategoryResponse>> GetByFilter(FundCategoryFilterRequest request)
 		{
 			//_userContextService.GetUserId()
-			var query = _context.Funds.Where(f => f.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42"));
+			var query = _context.FundCategories.Where(f => f.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42"));
 
 			query = AddFilter(query, request);
 
@@ -42,10 +46,11 @@ namespace SpendingTracker.Application.Services
 			var result = await query
 				.OrderByDescending(f => f.CreationDate)
 				.Take(10)
-				.Select(f => new FundResponse()
+				.Select(f => new FundCategoryResponse()
 				{
 					Id = f.Id,
-					Amount = f.Amount,
+					Name = f.Name,
+					ShouldBe = f.ShouldBe,
 					CreationDate = f.CreationDate,
 				})
 				.AsNoTracking()
@@ -54,73 +59,75 @@ namespace SpendingTracker.Application.Services
 			return result;
 		}
 
-		public async Task<FundResponse> AddFund(FundRequest request)
+		public async Task AddFundCategory(FundCategoryRequest request)
 		{
 			var result = _validator.Validate(request);
 
 			if (!result.IsValid)
 			{
 				var error = result.Errors.FirstOrDefault();
-				throw new BadRequestException(error?.ErrorMessage ?? "Dodanie funduszu nie powiodło się.");
+				throw new BadRequestException(error?.ErrorMessage ?? "Dodanie kategori funduszu nie powiodło się.");
 			}
-			
-			Fund newFund = _mapper.Map<Fund>(request);
 
-			newFund.UserId = Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42");
+			FundCategory newFundCategory = _mapper.Map<FundCategory>(request);
 
-			//newFund.UserId = (Guid)_userContextService.GetUserId();
-			await _context.Funds.AddAsync(newFund);
+			newFundCategory.UserId = Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42");
+
+			//newFundcategory.UserId = (Guid)_userContextService.GetUserId();
+			await _context.FundCategories.AddAsync(newFundCategory);
 			await _context.SaveChangesAsync();
-
-			return _mapper.Map<FundResponse>(newFund);
 
 		}
 
-		public async Task DeleteFund(Guid fundId)
+		public async Task DeleteFundCategory(Guid fundId)
 		{
-			Fund fundToDelete = await _context.Funds
+			FundCategory fundCategoryToDelete = await _context.FundCategories
 			.Where(f => f.Id == fundId)
 			.FirstOrDefaultAsync();
 
-			if (fundToDelete == null)
+			if (fundCategoryToDelete == null)
 			{
 				throw new BadRequestException("Usunięcie funduszu nie powiodło się. Podany fundusz nie istnieje.");
 			}
 
-			_context.Funds.Remove(fundToDelete);
+			_context.FundCategories.Remove(fundCategoryToDelete);
 
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task EditFund(FundRequest fundRequest)
+		public async Task EditFundCategory(FundCategoryRequest fundCategoryRequest)
 		{//_userContextService.GetUserId()
-			Fund fundToEdit = await _context.Funds
+			FundCategory fundToEdit = await _context.FundCategories
 			.Where(f => f.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42")
-				&& f.Id == fundRequest.Id)
+				&& f.Id == fundCategoryRequest.Id)
 				.FirstOrDefaultAsync();
 
 			if (fundToEdit == null)
 			{
-				throw new BadRequestException("Edycja funduszu nie powiodło się. Podany fundusz nie istnieje.");
+				throw new BadRequestException("Edycja kategori funduszu nie powiodło się. Podany fundusz nie istnieje.");
 			}
 
-			fundToEdit.Amount = fundRequest.Amount;
-
-
+			fundToEdit.Name = fundCategoryRequest.Name;
+			fundToEdit.ShouldBe = fundCategoryRequest.ShouldBe;
 
 			await _context.SaveChangesAsync();
 		}
 
-		private IQueryable<Fund> AddFilter(IQueryable<Fund> query, FundFilterRequest request)
+		private IQueryable<FundCategory> AddFilter(IQueryable<FundCategory> query, FundCategoryFilterRequest request)
 		{
-			if (request.AmountFrom != null)
+			if (!String.IsNullOrEmpty(request.Name))
 			{
-				query = query.Where(f => f.Amount >= request.AmountFrom);
+				query = query.Where(f => f.Name.Contains(request.Name));
 			}
 
-			if (request.AmountTo != null)
+			if (request.ShouldBeFrom != null)
 			{
-				query = query.Where(f => f.Amount <= request.AmountTo);
+				query = query.Where(f => f.ShouldBe >= request.ShouldBeFrom);
+			}
+
+			if (request.ShouldBeTo != null)
+			{
+				query = query.Where(f => f.ShouldBe <= request.ShouldBeTo);
 			}
 
 			if (request.DateFrom != null)
@@ -140,6 +147,5 @@ namespace SpendingTracker.Application.Services
 
 			return query;
 		}
-
 	}
 }

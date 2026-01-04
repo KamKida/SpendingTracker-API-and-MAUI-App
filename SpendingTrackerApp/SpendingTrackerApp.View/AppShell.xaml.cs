@@ -1,4 +1,5 @@
 ﻿using SpendingTrackerApp.Pages;
+using SpendingTrackerApp.Pages.FundCategorysPages;
 using SpendingTrackerApp.Pages.LoginPages;
 
 namespace SpendingTrackerApp
@@ -16,7 +17,10 @@ namespace SpendingTrackerApp
             Routing.RegisterRoute(nameof(AddFundPage), typeof(AddFundPage));
             Routing.RegisterRoute(nameof(FundsHistoryPage), typeof(FundsHistoryPage));
             Routing.RegisterRoute(nameof(EditFundPage), typeof(EditFundPage));
-
+            Routing.RegisterRoute(nameof(FundCategoryList), typeof(FundCategoryList));
+            Routing.RegisterRoute(nameof(AddFundCategoryPage), typeof(AddFundCategoryPage));
+            Routing.RegisterRoute(nameof(EditFundCategoryPage), typeof(EditFundCategoryPage));
+            
 		}
     }
 }

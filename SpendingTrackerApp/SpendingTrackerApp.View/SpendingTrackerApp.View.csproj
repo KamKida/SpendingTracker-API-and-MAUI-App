@@ -72,6 +72,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\FundCategorysPages\AddFundCategoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\FundCategorysPages\EditFundCategoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\FundCategorysPages\FundCategoryList.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\FundsPages\EditFundPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -127,6 +136,7 @@
 	  <MauiImage Include="Resources\Images\ButtonIcons\calendar.png" />
 	  <MauiImage Include="Resources\Images\ButtonIcons\delete.png" />
 	  <MauiImage Include="Resources\Images\ButtonIcons\hide_password.png" />
+	  <MauiImage Include="Resources\Images\ButtonIcons\funds_category.png" />
 	  <MauiImage Include="Resources\Images\ButtonIcons\show_password.png" />
 	</ItemGroup>
 

@@ -29,9 +29,9 @@ namespace SpendingTracker.API.Controllers
 		//[Authorize]
 		public async Task<IActionResult> AddFund([FromBody] FundRequest request)
 		{
-			var response = await _fundService.AddFund(request);
+			await _fundService.AddFund(request);
 
-			return Ok(response);
+			return Ok();
 
 		}
 

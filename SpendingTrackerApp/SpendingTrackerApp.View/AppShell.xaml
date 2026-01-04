@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SpendingTrackerApp.Pages"
     xmlns:funds="clr-namespace:SpendingTrackerApp.Pages.LoginPages"
+    xmlns:fundCat="clr-namespace:SpendingTrackerApp.Pages.FundCategorysPages"
     xmlns:start="clr-namespace:SpendingTrackerApp"
 
     Title="SpendingTrackerApp"
@@ -29,6 +30,14 @@
 		<ShellContent
             ContentTemplate="{DataTemplate funds:FundsHistoryPage}"
             Route="FundsHistoryPage"/>
+	</FlyoutItem>
+
+	<FlyoutItem
+    Icon="funds_category.png"
+    Title="Lista kategori funduszy">
+		<ShellContent
+        ContentTemplate="{DataTemplate fundCat:FundCategoryList}"
+        Route="FundCategoryList"/>
 	</FlyoutItem>
 
 </Shell>

@@ -17,7 +17,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		private User _user;
 		private FundRequest _fundRequest;
 		private IFundService _fundService;
-		private IMapper _mapper;
 		private ILogger<AddFundPageViewModel> _logger;
 
 		private string _message = "Format: 00.00. Do 15 przed piecinkiem, 2 po przecinku. Jedynie liczby pozytywne.";
@@ -128,7 +127,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		{
 			_user = user;
 			_fundService = fundService;
-			_mapper = mapper;
 			_logger = logger;
 			_fundRequest = new FundRequest();
 
@@ -193,7 +191,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 
 				Message = "Fundusz dodany pomyślnie.";
 				_user.ThisMonthFund += FundRequest.Amount;
-				Fund newFund = _mapper.Map<Fund>(FundRequest);
 
 				_logger.LogInformation(
 					"Fundusz dodany pomyślnie. Amount={Amount}",

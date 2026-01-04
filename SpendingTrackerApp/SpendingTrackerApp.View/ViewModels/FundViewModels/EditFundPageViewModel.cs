@@ -15,7 +15,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		private User _user;
 		private FundRequest _fundRequest;
 		private IFundService _fundService;
-		private IMapper _mapper;
 		private ILogger<AddFundPageViewModel> _logger;
 
 		private string _message = "Format: 00.00. Do 15 przed piecinkiem, 2 po przecinku. Jedynie liczby pozytywne.";
@@ -133,12 +132,10 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		public EditFundPageViewModel(
 		User user,
 		IFundService fundService,
-		IMapper mapper,
 		ILogger<AddFundPageViewModel> logger)
 		{
 			_user = user;
 			_fundService = fundService;
-			_mapper = mapper;
 			_logger = logger;
 			_fundRequest = new FundRequest();
 
