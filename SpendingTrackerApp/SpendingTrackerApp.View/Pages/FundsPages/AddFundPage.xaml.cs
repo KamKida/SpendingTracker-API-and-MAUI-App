@@ -1,6 +1,6 @@
 using SpendingTrackerApp.ViewModels.FundViewModels;
 
-namespace SpendingTrackerApp.Pages.FundsPages;
+namespace SpendingTrackerApp.Pages.LoginPages;
 
 public partial class AddFundPage : ContentPage
 {
@@ -8,6 +8,17 @@ public partial class AddFundPage : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = vm;
+	}
+
+	protected override async void OnAppearing()
+	{
+		base.OnAppearing();
+
+		var vm = BindingContext as AddFundPageViewModel;
+		if (vm != null)
+		{
+			await vm.Reset();
+		}
 	}
 
 }

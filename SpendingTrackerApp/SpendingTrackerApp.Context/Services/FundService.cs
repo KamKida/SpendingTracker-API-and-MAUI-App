@@ -1,5 +1,5 @@
-﻿using SpendingTrackerApp.Contracts.Dtos.Requests;
-using SpendingTrackerApp.Domain.Models;
+﻿using Microsoft.Extensions.Logging;
+using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using System.Net.Http.Json;
@@ -8,84 +8,200 @@ namespace SpendingTrackerApp.Infrastructure.Services
 {
 	public class FundService : IFundService
 	{
-		private readonly BaseHttpService Http;
+		private readonly BaseHttpService _httpService;
+		private readonly ILogger<FundService> _logger;
 
-		public FundService(User user,
-				BaseHttpService http)
+		public FundService(
+				BaseHttpService httpService,
+				ILogger<FundService> logger)
 		{
-			Http = http;
+			_httpService = httpService;
+			_logger = logger;
 
 		}
 
-		public async Task<HttpResponseMessage> Get10(FundFilterRequest request)
+		public async Task<HttpResponseMessage> Get10(FundFilterRequest request, bool useDatesFromToo = false)
 		{
+			_logger.LogInformation(
+				"Rozpoczynam pobieranie 10 funduszy z filtrem: DateFrom={DateFrom}, DateTo={DateTo}, AmountFrom={AmountFrom}, AmountTo={AmountTo}, LastDate={LastDate}",
+				request.DateFrom,
+				request.DateTo,
+				request.AmountFrom,
+				request.AmountTo,
+				request.LastDate
+			);
+
 			try
 			{
-				var url =
-				$"fund/get10" +
-				$"?dateFrom={request.DateFrom:O}" +
-				$"&dateTo={request.DateTo:O}" +
-				$"&amountFrom={request.AmountFrom}" +
-				$"&amountTo={request.AmountTo}" +
-				$"&lastDate={request.LastDate:O}";
+				var query = new List<string>();
 
+				if (useDatesFromToo)
+				{
 
-				var response = await Http._httpClient.GetAsync(url);
+					if (request.DateFrom.HasValue)
+						query.Add($"dateFrom={Uri.EscapeDataString(request.DateFrom.Value.ToString("O"))}");
 
-				return (response);
+					if (request.DateTo.HasValue)
+						query.Add($"dateTo={Uri.EscapeDataString(request.DateTo.Value.ToString("O"))}");
+				}
+				if (request.AmountFrom.HasValue)
+					query.Add($"amountFrom={request.AmountFrom.Value}");
+
+				if (request.AmountTo.HasValue)
+					query.Add($"amountTo={request.AmountTo.Value}");
+
+				if (request.LastDate.HasValue)
+					query.Add($"lastDate={Uri.EscapeDataString(request.LastDate.Value.ToString("O"))}");
+
+				var url = "fund/get10";
+
+				if (query.Any())
+					url += "?" + string.Join("&", query);
+
+				var response = await _httpService._httpClient.GetAsync(url);
+
+				_logger.LogInformation(
+					"Wynik pobierania 10 funduszy: StatusCode={StatusCode}",
+					response.StatusCode
+				);
+
+				return response;
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas pobierania 10 funduszy"
+				);
+				throw;
 			}
 			catch (Exception ex)
 			{
-				return (null);
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas pobierania 10 funduszy"
+				);
+				throw;
 			}
 		}
 
-		public async Task<(int StatusCode, string Content)> AddFund(FundRequest request)
+
+
+		public async Task<HttpResponseMessage> AddFund(FundRequest request)
 		{
+			_logger.LogInformation(
+				"Rozpoczynam dodawanie funduszu. Amount={Amount}",
+				request.Amount
+			);
+
 			try
 			{
-				var response = await Http._httpClient.PostAsJsonAsync("fund/add", request);
+				var response = await _httpService._httpClient.PostAsJsonAsync("fund/add", request);
 
-				var content = await response.Content.ReadAsStringAsync();
-				var statusCode = (int)response.StatusCode;
+				_logger.LogInformation(
+					"Wynik dodawania funduszu: StatusCode={StatusCode}",
+					response.StatusCode
+				);
 
-				return (statusCode, content);
+				return response;
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas dodawania funduszu. Amount={Amount}",
+					request.Amount
+				);
+				throw;
 			}
 			catch (Exception ex)
 			{
-				return (0, ex.Message);
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas dodawania funduszu. Amount={Amount}",
+					request.Amount
+				);
+				throw;
 			}
 		}
 
-		public async Task<(int StatusCode, string Content)> DeleteFund(Guid id)
+
+		public async Task<HttpResponseMessage> DeleteFund(Guid id)
 		{
+			_logger.LogInformation(
+				"Rozpoczynam usuwanie funduszu. FundId={FundId}",
+				id
+			);
+
 			try
 			{
-				var response = await Http._httpClient.DeleteAsync($"fund/delete/{id}");
+				var response = await _httpService._httpClient.DeleteAsync($"fund/delete/{id}");
 
-				var content = await response.Content.ReadAsStringAsync();
-				var statusCode = (int)response.StatusCode;
+				_logger.LogInformation(
+					"Wynik usuwania funduszu. FundId={FundId}, StatusCode={StatusCode}",
+					id,
+					response.StatusCode
+				);
 
-				return (statusCode, content);
+				return response;
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas usuwania funduszu. FundId={FundId}",
+					id
+				);
+				throw;
 			}
 			catch (Exception ex)
 			{
-				return (0, ex.Message);
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas usuwania funduszu. FundId={FundId}",
+					id
+				);
+				throw;
 			}
 		}
 
 		public async Task<HttpResponseMessage> EditFund(FundRequest request)
 		{
+			_logger.LogInformation(
+				"Rozpoczynam edycję funduszu. FundId={FundId}, Amount={Amount}",
+				request.Id,
+				request.Amount
+			);
+
 			try
 			{
-				var response = await Http._httpClient.PutAsJsonAsync($"fund/edit", request);
+				var response = await _httpService._httpClient.PutAsJsonAsync("fund/edit", request);
 
+				_logger.LogInformation(
+					"Wynik edycji funduszu. FundId={FundId}, StatusCode={StatusCode}",
+					request.Id,
+					response.StatusCode
+				);
 
-				return (response);
+				return response;
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas edycji funduszu. FundId={FundId}",
+					request.Id
+				);
+				throw;
 			}
 			catch (Exception ex)
 			{
-				return (null);
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas edycji funduszu. FundId={FundId}",
+					request.Id
+				);
+				throw;
 			}
 		}
 	}

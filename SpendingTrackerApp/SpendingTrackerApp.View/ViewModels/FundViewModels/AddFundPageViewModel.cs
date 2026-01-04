@@ -1,60 +1,42 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
+using SpendingTrackerApp.Domain.HelpModels;
 using SpendingTrackerApp.Domain.Models;
-using SpendingTrackerApp.Extensions;
 using SpendingTrackerApp.Infrastructure.Interfaces;
+using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Input;
 
 namespace SpendingTrackerApp.ViewModels.FundViewModels
 {
-
 	public class AddFundPageViewModel : INotifyPropertyChanged
 	{
-		public User User { get; }
-		private readonly IFundService _service;
-		private readonly IMapper _mapper;
+		private User _user;
+		private FundRequest _fundRequest;
+		private IFundService _fundService;
+		private IMapper _mapper;
+		private ILogger<AddFundPageViewModel> _logger;
 
-		private string _text = string.Empty;
-
-		private Color _amountColorBorder = Colors.AliceBlue;
-		private string _message = "Wprowadź kwotę funduszu w formacie 00.00.Przed kropką może być maksymalnie 15 cyfr, a po kropce 2.";
-		private Color _messageColor = Colors.Green;
-		private Color _amountColorText { get; set; } = Colors.Black;
-
-
+		private string _message = "Format: 00.00. Do 15 przed piecinkiem, 2 po przecinku. Jedynie liczby pozytywne.";
+		private Color _messageColor = (Color)Application.Current.Resources["Positive"];
+		private Color _amountEntryColor = Colors.White;
 		public bool _showLoadingIcon = false;
 		public bool _runLoadingIcon = false;
 
 		public bool _blockInteraction = false;
 
-		public bool _enableButtons = true;
-
-		public string Text
+		public FundRequest FundRequest
 		{
-			get => _text;
-
+			get => _fundRequest;
 			set
 			{
-				if (_text != value)
+				if (_fundRequest != null)
 				{
-					_text = value;
-					OnPropertyChanged(nameof(Text));
-
-				}
-
-			}
-		}
-
-		public Color MessageColor
-		{
-			get => _messageColor;
-			set
-			{
-				if (_messageColor != value)
-				{
-					_messageColor = value;
-					OnPropertyChanged(nameof(MessageColor));
+					_fundRequest = value;
+					OnPropertyChanged(nameof(FundFilterRequest));
 				}
 			}
 		}
@@ -72,28 +54,28 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			}
 		}
 
-		public Color AmountColorBorder
+		public Color MessageColor
 		{
-			get => _amountColorBorder;
+			get => _messageColor;
 			set
 			{
-				if (_amountColorBorder != value)
+				if (_messageColor != value)
 				{
-					_amountColorBorder = value;
-					OnPropertyChanged(nameof(AmountColorBorder));
+					_messageColor = value;
+					OnPropertyChanged(nameof(MessageColor));
 				}
 			}
 		}
 
-		public Color AmountColorText
+		public Color AmountEntryColor
 		{
-			get => _amountColorText;
+			get => _amountEntryColor;
 			set
 			{
-				if (_amountColorText != value)
+				if (_amountEntryColor != value)
 				{
-					_amountColorText = value;
-					OnPropertyChanged(nameof(AmountColorText));
+					_amountEntryColor = value;
+					OnPropertyChanged(nameof(AmountEntryColor));
 				}
 			}
 		}
@@ -137,105 +119,185 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			}
 		}
 
-		public bool EnableButtons
-		{
-			get => _enableButtons;
-			set
-			{
-				if (_enableButtons != value)
-					_enableButtons = value;
-				OnPropertyChanged(nameof(EnableButtons));
-			}
-		}
 
 		public AddFundPageViewModel(
-			User user,
-			IFundService service,
-			IMapper mapper)
+		User user,
+		IFundService fundService,
+		IMapper mapper,
+		ILogger<AddFundPageViewModel> logger)
 		{
-			User = user;
-			_service = service;
+			_user = user;
+			_fundService = fundService;
 			_mapper = mapper;
+			_logger = logger;
+			_fundRequest = new FundRequest();
 
-			AddFundCommand = new Command(AddFund);
-			CancelAddFundCommand = new Command(CancelAddFund);
+			AddFundCommand = new Command(async () => await AddFund());
+			CancelAddCommand = new Command(async () => await CancelAdd());
+		}
+		public ICommand AddFundCommand { get; }
+		public ICommand CancelAddCommand { get; }
+
+		public async Task Reset()
+		{
+			_logger.LogInformation("Rozpoczynam resetowanie stanu funduszu i błędów UI.");
+
+			FundRequest = new FundRequest();
+			Message = "Format: 00.00. Do 15 przed piecinkiem, 2 po przecinku. Jedynie liczby pozytywne.";
+			MessageColor = AmountEntryColor = (Color)Application.Current.Resources["Positive"];
+
+			_logger.LogInformation("Zakończono resetowanie stanu funduszu i błędów UI.");
 		}
 
-		public ICommand AddFundCommand { get; }
-		public ICommand CancelAddFundCommand { get; }
-
-		public async void AddFund()
+		public async Task AddFund()
 		{
-
-			KeyboardHelper.HideKeyboard();
+			_logger.LogInformation(
+				"Rozpoczynam dodawanie funduszu. Amount={Amount}",
+				FundRequest.Amount
+			);
 
 			ShowLoadingIcon = true;
 			RunLoadingIcon = true;
 			BlockInteraction = true;
 
-			bool goodAmount = CheckAmountValue();
-
-			if (!goodAmount)
+			try
 			{
-				MessageColor = Colors.Red;
-				AmountColorText = Colors.Red;
-				AmountColorBorder = Colors.Red;
+				bool goodAmount = CheckAmount();
+				if (!goodAmount)
+				{
+					_logger.LogWarning(
+						"Niepoprawna kwota funduszu. Amount={Amount}",
+						FundRequest.Amount
+					);
+
+					MessageColor = AmountEntryColor = (Color)Application.Current.Resources["Negative"];
+					return;
+				}
+
+				var response = await _fundService.AddFund(FundRequest);
+
+				if (!response.IsSuccessStatusCode)
+				{
+					var content = await response.Content.ReadAsStringAsync();
+
+					_logger.LogWarning(
+						"Dodawanie funduszu nie powiodło się. StatusCode={StatusCode}, Content={Content}",
+						response.StatusCode,
+						content
+					);
+
+					MessageColor = (Color)Application.Current.Resources["Negative"];
+					Message = "Coś poszło nie tak, zresetuj aplikację i spróbuj ponownie.";
+					return;
+				}
+
+				Message = "Fundusz dodany pomyślnie.";
+				_user.ThisMonthFund += FundRequest.Amount;
+				Fund newFund = _mapper.Map<Fund>(FundRequest);
+
+				_logger.LogInformation(
+					"Fundusz dodany pomyślnie. Amount={Amount}",
+					FundRequest.Amount
+				);
 			}
-			else
+			catch (HttpRequestException httpEx)
 			{
-				FundRequest newFund = new FundRequest()
-				{
-					Amount = Decimal.Parse(_text)
-				};
-
-				var result = await _service.AddFund(newFund);
-
-				if (result.StatusCode != 200)
-				{
-					MessageColor = Colors.Red;
-					AmountColorText = Colors.Red;
-					AmountColorBorder = Colors.Red;
-					Message = "Coś poszło nie tak. Spróbuj później.";
-
-
-				}
-				else
-				{
-
-					MessageColor = Colors.Green;
-					AmountColorText = Colors.Green;
-					AmountColorBorder = Colors.Green;
-					Message = "Fundusz został dodany.";
-
-					User.ThisMonthFund += newFund.Amount;
-				}
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas dodawania funduszu. Amount={Amount}",
+					FundRequest.Amount
+				);
+				MessageColor = (Color)Application.Current.Resources["Negative"];
+				Message = "Błąd sieci. Spróbuj ponownie.";
+				throw;
 			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas dodawania funduszu. Amount={Amount}",
+					FundRequest.Amount
+				);
+				MessageColor = (Color)Application.Current.Resources["Negative"];
+				Message = "Wystąpił nieoczekiwany błąd.";
+				throw;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
 
-			ShowLoadingIcon = false;
-			RunLoadingIcon = false;
-			BlockInteraction = false;
+				_logger.LogInformation("Zakończono proces dodawania funduszu.");
+			}
 		}
 
-		private async void CancelAddFund()
+
+		private bool CheckAmount()
 		{
-			await Shell.Current.GoToAsync("..");
-		}
+			_logger.LogInformation(
+				"Rozpoczynam sprawdzanie kwoty funduszu. Amount={Amount}",
+				FundRequest.Amount
+			);
 
-		private bool CheckAmountValue()
-		{
-			if (string.IsNullOrWhiteSpace(_text))
-				return true;
-
-			var parts = _text.Split('.');
-
-			if (parts[0].Length > 15)
+			if (FundRequest.Amount <= 0)
+			{
+				_logger.LogWarning(
+					"Kwota funduszu jest mniejsza lub równa zero. Amount={Amount}",
+					FundRequest.Amount
+				);
 				return false;
+			}
 
-			if (parts.Length > 1 && parts[1].Length > 2)
+			string amountStr = FundRequest.Amount.ToString(CultureInfo.InvariantCulture);
+			var amountParts = amountStr.Split('.');
+
+			if (amountParts[0].Length > 15)
+			{
+				_logger.LogWarning(
+					"Kwota funduszu przekracza 15 cyfr przed przecinkiem. Amount={Amount}",
+					FundRequest.Amount
+				);
 				return false;
+			}
+
+			if (amountParts.Length == 2 && amountParts[1].Length > 2)
+			{
+				_logger.LogWarning(
+					"Kwota funduszu przekracza 2 miejsca po przecinku. Amount={Amount}",
+					FundRequest.Amount
+				);
+				return false;
+			}
+
+			_logger.LogInformation(
+				"Kwota funduszu jest poprawna. Amount={Amount}",
+				FundRequest.Amount
+			);
 
 			return true;
 		}
+
+		public async Task CancelAdd()
+		{
+			_logger.LogInformation("Rozpoczynam anulowanie dodawania funduszu (powrót do histori funduszy).");
+
+			try
+			{
+				await Shell.Current.GoToAsync("..");
+
+				_logger.LogInformation("Nawigacja po anulowaniu dodawania funduszu zakończona sukcesem.");
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas anulowania dodawania funduszu."
+				);
+				throw;
+			}
+		}
+
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string name)

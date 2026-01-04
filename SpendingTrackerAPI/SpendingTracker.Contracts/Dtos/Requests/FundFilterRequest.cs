@@ -8,12 +8,12 @@ namespace SpendingTracker.Contracts.Dtos.Requests
 {
 	public class FundFilterRequest
 	{
-	public decimal? AmountFrom { get; set; }
-	public decimal? AmountTo { get; set; }
-	public DateTime? DateFrom { get; set; }
-	public DateTime? DateTo { get; set; }
+		public decimal? AmountFrom { get; set; }
+		public decimal? AmountTo { get; set; }
 
-	public DateTime? LastDate { get; set; }
+		public DateTimeOffset? DateFrom { get; set; }
+		public DateTimeOffset? DateTo { get; set; }
+		public DateTimeOffset? LastDate { get; set; }
 
 	}
 }

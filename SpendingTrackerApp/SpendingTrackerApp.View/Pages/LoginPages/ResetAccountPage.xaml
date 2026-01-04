@@ -1,60 +1,91 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SpendingTrackerApp.Pages.EditPasswordPage"
+             x:Class="SpendingTrackerApp.Pages.ResetPasswordPage"
              Title="Resetuj hasło">
-    <Grid Style="{StaticResource PrimaryTheme}">
 
-        <Grid
-            RowDefinitions="Auto,Auto,Auto,Auto"
-            RowSpacing="10">
+	<Grid
+        RowDefinitions="*,Auto"
+        InputTransparent="{Binding BlockInteraction}">
 
-        <Border Grid.Row="0">
-            <Entry 
-                Placeholder="Email"
-                Text ="{Binding Request.Email}"/>
-        </Border>
+		<Grid
+			Grid.Row="0"
+            RowDefinitions="Auto,Auto,Auto"
+            RowSpacing="30"
+            Padding="30">
+
+			<Border
+                Grid.Row="0">
+				<Entry 
+                Placeholder="email@email.com"
+                Text ="{Binding Request.Email}"
+                TextColor="White"
+                HorizontalTextAlignment="End"
+                FontSize="25"/>
+			</Border>
+
+			<Border
+                    
+                Grid.Row="1">
+				<Entry 
+                    Placeholder="hasło"
+                    Text="{Binding Request.Password}"
+                    BackgroundColor="Transparent"
+                    TextColor="White"
+                    HorizontalTextAlignment="End"
+                    FontSize="25"/>
+
+			</Border>
+
+			<Grid
+                Grid.Row="2"
+                RowDefinitions="Auto, Auto, *"
+                ColumnSpacing="30"
+                RowSpacing="30">
+
+				<Button
+                    
+                    Grid.Row="0"
+                    Text="Resetuj hasło"
+                    FontSize="20"
+                    WidthRequest="200"
+                    Command ="{Binding ResetAccountCommand}"/>
+
+				<Border 
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    IsVisible="{Binding ShowErrorMessage}"
+                    Background="White"
+                    Padding="10">
+
+					<Label 
+                        Text="{Binding Message}"
+                        TextColor="{Binding MessageColor}"
+                        FontSize="30"
+                        LineBreakMode="WordWrap" />
+				</Border>
+
+			</Grid>
 
 
-        <Border Grid.Row="1">
-            <Entry 
-                Grid.Column="0"
-                Placeholder="Password"
-                Text="{Binding Request.Password}"/>
-        </Border>
 
-
-        <Button 
-            Grid.Row="2"
-            Text="Resetuj hasło"
-            FontSize="20"
-            WidthRequest="200"
-            Command ="{Binding ResetAccountCommand}"/>
-
-
-        <Border
-            Grid.Row="3">
-            <Label 
-                Text="{Binding Message}"
-                TextColor="{Binding MessageColor}"
-                IsVisible="{Binding ShowMessage}"
-                FontSize="20"/>
-        </Border>
-
-
-        </Grid>
-        <Grid
+		</Grid>
+		<Grid
             IsVisible="{Binding ShowLoadingIcon}"
             BackgroundColor="#80000000"
             ZIndex="999">
 
-            <ActivityIndicator
+			<ActivityIndicator
                 IsRunning="{Binding RunLoadingIcon}"
-                Color="DodgerBlue"
+                Color="White"
                 WidthRequest="80"
                 HeightRequest="80"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"/>
-        </Grid>
-    </Grid>
+
+		</Grid>
+
+	</Grid>
+
+
 </ContentPage>

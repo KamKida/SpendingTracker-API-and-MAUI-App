@@ -33,7 +33,8 @@ namespace SpendingTracker.Application.Services
 
 		public async Task<List<FundResponse>> GetByFilter(FundFilterRequest request)
 		{
-			var query = _context.Funds.Where(f => f.UserId == _userContextService.GetUserId());
+			//_userContextService.GetUserId()
+			var query = _context.Funds.Where(f => f.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42"));
 
 			query = AddFilter(query, request);
 
@@ -62,9 +63,12 @@ namespace SpendingTracker.Application.Services
 				var error = result.Errors.FirstOrDefault();
 				throw new BadRequestException(error?.ErrorMessage ?? "Dodanie funduszu nie powiodło się.");
 			}
-
+			
 			Fund newFund = _mapper.Map<Fund>(request);
-			newFund.UserId = (Guid)_userContextService.GetUserId();
+
+			newFund.UserId = Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42");
+
+			//newFund.UserId = (Guid)_userContextService.GetUserId();
 			await _context.Funds.AddAsync(newFund);
 			await _context.SaveChangesAsync();
 
@@ -89,9 +93,9 @@ namespace SpendingTracker.Application.Services
 		}
 
 		public async Task EditFund(FundRequest fundRequest)
-		{
+		{//_userContextService.GetUserId()
 			Fund fundToEdit = await _context.Funds
-			.Where(f => f.UserId == _userContextService.GetUserId()
+			.Where(f => f.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42")
 				&& f.Id == fundRequest.Id)
 				.FirstOrDefaultAsync();
 

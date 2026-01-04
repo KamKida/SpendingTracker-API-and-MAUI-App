@@ -4,108 +4,137 @@
              x:Class="SpendingTrackerApp.LoginPage"
              Title="">
 
-
-    <Grid
+	<Grid
         RowDefinitions="*,Auto"
-        InputTransparent="{Binding BlockInteraction}"
-        Style="{StaticResource PrimaryTheme}">
+        InputTransparent="{Binding BlockInteraction}">
 
-        <Grid
-            Grid.Row="0"
-            RowDefinitions="Auto,Auto,Auto,Auto,Auto"
-            RowSpacing="10">
+		<Grid
+			Grid.Row="0"
+            RowDefinitions="Auto,Auto,Auto"
+            RowSpacing="30"
+            Padding="30">
 
-            <Border Grid.Row="0"
-                Margin="10,10,10,70" 
-                HeightRequest="100">
-                <Image 
-                    Source="App_Logo.png"/>
-            </Border>
+			<Border
+                Grid.Row="0">
+			<Entry 
+                Placeholder="email@email.com"
+                Text ="{Binding Request.Email}"
+                TextColor="White"
+                HorizontalTextAlignment="End"
+                FontSize="25"/>
+			</Border>
 
-            <Border
+			<Border
+                    
                 Grid.Row="1">
-                <Entry 
-                    Placeholder="Email"
-                    Text ="{Binding Request.Email}"/>
-            </Border>
+				<Entry 
+                    Placeholder="hasło"
+                    IsPassword="{Binding HidePassword}" 
+                    Text="{Binding Request.Password}"
+                    TextColor="White"
+                    HorizontalTextAlignment="End"
+                    FontSize="25"/>
 
+			</Border>
 
-            <Border
-                Grid.Row="2">
-                <Grid ColumnDefinitions="*,Auto">
-                    <Entry 
-                        Grid.Column="0"
-                        Placeholder="Password"
-                        IsPassword="{Binding HidePassword}" 
-                        Text="{Binding Request.Password}"/>
+			<Grid
+                Grid.Row="2"
+                RowDefinitions="Auto, Auto, *"
+                ColumnDefinitions="*, *"
+                ColumnSpacing="30"
+                RowSpacing="30">
 
-                    <ImageButton 
-                        Grid.Column="1"
-                        HeightRequest="40"
-                        WidthRequest="40"
-                        HorizontalOptions="End"
+				<Button
+                    
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Start"
+                    Text="Zaloguj"
+                    FontSize="20"
+                    WidthRequest="200"
+                    Command ="{Binding LoginUserCommand}"/>
+
+				<Border
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HeightRequest="75"
+                    WidthRequest="75"
+                    Padding="0"
+                    StrokeShape="RoundRectangle 50,50,50,50" >
+					<ImageButton
+                        HeightRequest="50"
+                        WidthRequest="50"
+                        HorizontalOptions="Center"
                         VerticalOptions="Center"
                         Source="{Binding PasswordIcon}"
-                        Command="{Binding TogglePasswordCommand}" />
-                </Grid>
-            </Border>
+                        Command="{Binding TogglePasswordCommand}"/>
+				</Border>
+
+				<Border 
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    IsVisible="{Binding ShowErrorMessage}"
+                    Background="White"
+                    Padding="10">
+
+					<Label 
+                        Text="{Binding ErrorMessage}"
+                        TextColor="Red"
+                        FontSize="30"
+                        LineBreakMode="WordWrap" />
+				</Border>
 
 
-            <Button 
-                Grid.Row="3"
-                Text="Zaloguj"
-                FontSize="20"
-                WidthRequest="200"
-                Command ="{Binding LoginUserCommand}"/>
+				<Grid
+                    Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    ColumnDefinitions="Auto, Auto"
+                    ColumnSpacing="20">
+					<Button 
+                    
+                        Grid.Column="0"
+                        Text="Utwórz konto" 
+                        FontSize="17" 
+                        WidthRequest="150"
+                        Command="{Binding GoToCreateAccountPageCommand}"/>
 
 
-            <Border 
-                Grid.Row="4"
-            IsVisible="{Binding ShowErrorMessage}">
-                <Label 
-                Text="{Binding ErrorMessage}"
-                TextColor="Red"
-                FontSize="20"/>
-            </Border>
-        </Grid>
+					<Button
+                        Grid.Column="1"
+                        Text="Resetuj hasło" 
+                        FontSize="17" 
+                        WidthRequest="150"
+                        Command="{Binding GoToResetPasswordPageCommand}"/>
 
 
-        <Grid Grid.Row="1"
-              HeightRequest="75"
-              Padding="10"
-              ColumnDefinitions=".50*, .50*"
-              BackgroundColor="White">
 
-            <Button 
-                Grid.Column="0" 
-                Text="Utwórz konto" 
-                FontSize="17" 
-                WidthRequest="150"
-                Command="{Binding GoToCreateAccountPageCommand}"/>
 
-            <Button 
-                Grid.Column="1" 
-                Text="Resetuj hasło" 
-                FontSize="17" 
-                WidthRequest="150"
-                Command="{Binding GoToResePasswordPageComand}"/>
-        </Grid>
-        <Grid
-            Grid.RowSpan="1"
+				</Grid>
+
+
+				
+			</Grid>
+
+
+
+		</Grid>
+		<Grid
             IsVisible="{Binding ShowLoadingIcon}"
             BackgroundColor="#80000000"
             ZIndex="999">
 
-        <ActivityIndicator
+			<ActivityIndicator
                 IsRunning="{Binding RunLoadingIcon}"
-                Color="DodgerBlue"
+                Color="White"
                 WidthRequest="80"
                 HeightRequest="80"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"/>
 
-    </Grid>
+		</Grid>
 
-    </Grid>
+	</Grid>
+
 
 </ContentPage>

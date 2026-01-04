@@ -3,13 +3,32 @@
     x:Class="SpendingTrackerApp.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SpendingTrackerApp"
-    Title="SpendingTrackerApp">
+    xmlns:local="clr-namespace:SpendingTrackerApp.Pages"
+    xmlns:funds="clr-namespace:SpendingTrackerApp.Pages.LoginPages"
+    xmlns:start="clr-namespace:SpendingTrackerApp"
 
-    <ShellContent
+    Title="SpendingTrackerApp"
+    FlyoutBehavior="Flyout">
+
+	<ShellContent
         Title="Home"
-        ContentTemplate="{DataTemplate local:LoginPage}"
+        ContentTemplate="{DataTemplate funds:FundsHistoryPage}"
         Route="LoginPage" />
 
+	<FlyoutItem
+        Icon="home.png"
+        Title="Meny główne">
+		<ShellContent
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Route="MainPage"/>
+	</FlyoutItem>
+
+	<FlyoutItem
+        Icon="funds.png"
+        Title="Historia funduszy">
+		<ShellContent
+            ContentTemplate="{DataTemplate funds:FundsHistoryPage}"
+            Route="FundsHistoryPage"/>
+	</FlyoutItem>
 
 </Shell>

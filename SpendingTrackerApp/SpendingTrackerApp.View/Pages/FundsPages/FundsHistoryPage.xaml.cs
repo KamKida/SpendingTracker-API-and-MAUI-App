@@ -1,6 +1,6 @@
 using SpendingTrackerApp.ViewModels.FundViewModels;
 
-namespace SpendingTrackerApp.Pages.FundsPages;
+namespace SpendingTrackerApp.Pages.LoginPages;
 
 public partial class FundsHistoryPage : ContentPage
 {
@@ -10,15 +10,16 @@ public partial class FundsHistoryPage : ContentPage
 		BindingContext = vm;
 	}
 
-
-	protected override async void OnAppearing()
+	protected async override void OnAppearing()
 	{
 		base.OnAppearing();
 
 		var vm = BindingContext as FundsHistoryPageViewModel;
-		if(vm != null)
+		if (vm != null)
 		{
-			await vm.GetTop10Funds();
+			await vm.SetBaseInfo();
 		}
 	}
+
 }
+

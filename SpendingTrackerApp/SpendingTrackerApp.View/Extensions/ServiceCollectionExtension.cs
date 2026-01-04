@@ -1,4 +1,5 @@
-﻿using SpendingTrackerApp.Domain.Models;
+﻿using SpendingTrackerApp.Domain.HelpModels;
+using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Infrastructure.Services;
@@ -15,6 +16,7 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddSingleton<User>();
             services.AddSingleton<BaseHttpService>();
             services.AddSingleton<JsonService>();
+            services.AddSingleton<FundsList>();
 
             //View models
             services.AddScoped<LoginViewModel>();

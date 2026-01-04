@@ -1,6 +1,5 @@
-﻿using AutoMapper;
+﻿using Microsoft.Extensions.Logging;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
-using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Extensions;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using System.ComponentModel;
@@ -10,16 +9,16 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 {
     public class CreateAccountViewModel : INotifyPropertyChanged
     {
-        public UserRequest Request { get; set; }
+        public UserRequest _userRequest { get; set; }
 
         private readonly IUserService _service;
-        private readonly IMapper _mapper;
+        private readonly ILogger<CreateAccountViewModel> _logger;
 
         private bool _hidePassword = true;
         private string _passwordIcon = "hide_password.png";
 
         private string _message = "Wypełnij wymagane pola.";
-        private string _messageColor = "Green";
+        private Color _messageColor = Colors.Green;
 
         public bool _showLoadingIcon = false;
         public bool _runLoadingIcon = false;
@@ -64,7 +63,7 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
             }
         }
 
-        public string MessageColor
+        public Color MessageColor
         {
             get => _messageColor;
             set
@@ -120,50 +119,113 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 
         public CreateAccountViewModel(
             IUserService service,
-            IMapper mapper)
+			ILogger<CreateAccountViewModel> logger)
         {
-            Request = new UserRequest();
+            _userRequest = new UserRequest();
             _service = service;
-            _mapper = mapper;
+            _logger = logger;
 
-            TogglePasswordCommand = new Command(TogglePassword);
-            CreateAccountCommand = new Command(CreateUser);
+            TogglePasswordCommand = new Command(async () => await TogglePassword());
+            CreateAccountCommand = new Command(async () => await CreateUser());
         }
 
-        private void TogglePassword()
-        {
-            HidePassword = !HidePassword;
-            PasswordIcon = HidePassword ? "hide_password.png" : "show_password.png";
-        }
+		private async Task TogglePassword()
+		{
+			_logger.LogInformation(
+				"Rozpoczynam przełączanie widoczności hasła. HidePassword: {HidePassword}",
+				HidePassword
+			);
 
-        private async void CreateUser()
-        {
-            KeyboardHelper.HideKeyboard();
+			HidePassword = !HidePassword;
+			PasswordIcon = HidePassword ? "hide_password.png" : "show_password.png";
 
-            ShowLoadingIcon = true;
-            RunLoadingIcon = true;
-            BlockInteraction = true;
-
-            var response = await _service.CreateUser(Request);
-
-            if (response.StatusCode != 200)
-            {
-                Message = response.Content;
-                MessageColor = "Red";
-            }
-            else
-            {
-                MessageColor = "Green";
-                Message = "Konto zostało utworzone.";
-            }
-
-            ShowLoadingIcon = false;
-            RunLoadingIcon = false;
-            BlockInteraction = false;
-        }
+			_logger.LogInformation(
+				"Zakończono przełączanie widoczności hasła. HidePassword: {HidePassword}, Ikona: {Icon}",
+				HidePassword,
+				PasswordIcon
+			);
+		}
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+		private async Task CreateUser()
+		{
+			_logger.LogInformation(
+				"Rozpoczynam tworzenie konta użytkownika (UI). Email: {Email}",
+				_userRequest.Email
+			);
+
+			KeyboardHelper.HideKeyboard();
+
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
+
+			try
+			{
+				var response = await _service.CreateUser(_userRequest);
+
+				_logger.LogInformation(
+					"Wynik tworzenia konta użytkownika (UI) {Email}: {StatusCode}",
+					_userRequest.Email,
+					response.StatusCode
+				);
+
+				if (!response.IsSuccessStatusCode)
+				{
+					_logger.LogWarning(
+						"Tworzenie konta użytkownika (UI) nie powiodło się. Email: {Email}, StatusCode: {StatusCode}, Content: {Content}",
+						_userRequest.Email,
+						response.StatusCode,
+						response.Content
+					);
+
+					Message = "Tworzenie konta nie powiodło się. Spróbuj później.";
+					MessageColor = Colors.Red;
+					return;
+				}
+
+				_logger.LogInformation(
+					"Tworzenie konta użytkownika (UI) zakończone sukcesem. Email: {Email}",
+					_userRequest.Email
+				);
+
+				MessageColor = Colors.Green;
+				Message = "Konto zostało utworzone.";
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas tworzenia konta użytkownika (UI). Email: {Email}",
+					_userRequest.Email
+				);
+				throw;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas tworzenia konta użytkownika (UI). Email: {Email}",
+					_userRequest.Email
+				);
+				throw;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+
+				_logger.LogInformation(
+					"Zakończono proces tworzenia konta użytkownika (UI). Email: {Email}",
+					_userRequest.Email
+				);
+			}
+		}
+
+
+
+		public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 

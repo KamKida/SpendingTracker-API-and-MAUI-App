@@ -1,6 +1,6 @@
 using SpendingTrackerApp.ViewModels.FundViewModels;
 
-namespace SpendingTrackerApp.Pages.FundsPages;
+namespace SpendingTrackerApp.Pages.LoginPages;
 
 public partial class EditFundPage : ContentPage
 {
@@ -16,7 +16,7 @@ public partial class EditFundPage : ContentPage
 		var vm = BindingContext as EditFundPageViewModel;
 		if (vm != null)
 		{
-			await vm.SetFund();
+			await vm.Reset();
 		}
 	}
 }

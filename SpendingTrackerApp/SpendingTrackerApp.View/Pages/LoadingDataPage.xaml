@@ -6,32 +6,16 @@
              Shell.BackButtonBehavior="{BackButtonBehavior IsVisible=False}">
 
     <Grid 
-        Style="{StaticResource PrimaryTheme}"
         RowDefinitions="*,Auto">
 
-        <Grid 
-            Grid.Row="0"
-            RowDefinitions="Auto ,Auto, *"
-            HorizontalOptions="Center"
-            VerticalOptions="Center">
-        <Border 
-            Grid.Row="1"
-                WidthRequest="150"
-                HeightRequest="150">
-            <Image 
-                Source="app_icon.png"
-                />
-        </Border>
-
-
-        </Grid>
 
         <Border
-            Grid.Row="1">
+            Grid.Row="1"
+            Background="White">
             <Label
-           TextColor="{Binding TextColor}"
-           Text="{Binding Message}"
-           FontSize="17"
+               TextColor="{Binding TextColor}"
+               Text="{Binding Message}"
+               FontSize="25"
            />
         </Border>
         <ActivityIndicator 

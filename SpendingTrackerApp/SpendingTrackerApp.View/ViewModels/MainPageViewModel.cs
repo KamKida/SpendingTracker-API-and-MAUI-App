@@ -1,5 +1,6 @@
-﻿using SpendingTrackerApp.Domain.Models;
-using SpendingTrackerApp.Pages.FundsPages;
+﻿using Microsoft.Extensions.Logging;
+using SpendingTrackerApp.Domain.Models;
+using SpendingTrackerApp.Pages.LoginPages;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -7,31 +8,101 @@ namespace SpendingTrackerApp.ViewModels
 {
 	public class MainPageViewModel : INotifyPropertyChanged
 	{
-		public User User { get; }
+		public User _user { get; }
+		private readonly ILogger<MainPageViewModel> _logger;
+
+		private bool _showLoadingIcon = false;
+		private bool _runLoadingIcon = false;
+		private bool _blockInteraction = false;
+
+
 		public string Title { get; set; }
 
+		public bool ShowLoadingIcon
+		{
+			get => _showLoadingIcon;
+			set
+			{
+				if (_showLoadingIcon != value)
+				{
+					_showLoadingIcon = value;
+					OnPropertyChanged(nameof(ShowLoadingIcon));
+				}
+			}
+		}
+
+		public bool RunLoadingIcon
+		{
+			get => _runLoadingIcon;
+			set
+			{
+				if (_runLoadingIcon != value)
+				{
+					_runLoadingIcon = value;
+					OnPropertyChanged(nameof(RunLoadingIcon));
+				}
+			}
+		}
+
+		private bool BlockInteraction
+		{
+			get => _blockInteraction;
+			set
+			{
+				if (_blockInteraction != value)
+				{
+					_blockInteraction = value;
+					OnPropertyChanged(nameof(BlockInteraction));
+				}
+			}
+		}
+
 		public MainPageViewModel(
-		User user)
+		User user,
+		ILogger<MainPageViewModel> logger)
 		{
-			User = user;
-			Title = $"Witaj {User.FirstName} {User.LastName}";
+			_user = user;
+			_logger = logger;
+			Title = $"Witaj {_user.FirstName} {_user.LastName}";
 
-			AddFundCommand = new Command(AddFund);
-			ShowHistoryCommand = new Command(ShowHistory);
+			GoToFundsHistoryCommand = new Command(async () => await GoToFundsHistory());
 		}
-		public ICommand AddFundCommand { get; }
-		public ICommand ShowHistoryCommand { get; }
+		public ICommand GoToFundsHistoryCommand { get; }
 
-
-		public async void AddFund()
+		public async Task GoToFundsHistory()
 		{
-			await Shell.Current.GoToAsync(nameof(AddFundPage));
+			_logger.LogInformation("Rozpoczynam nawigację do historii środków.");
+
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
+
+			try
+			{
+				await Shell.Current.GoToAsync(nameof(FundsHistoryPage), true);
+
+				_logger.LogInformation(
+					"Nawigacja do historii środków zakończona sukcesem."
+				);
+
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Błąd podczas nawigacji do historii środków."
+				);
+				throw;
+			}
+			finally
+			{
+
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+			}
 		}
 
-		public async void ShowHistory()
-		{
-			await Shell.Current.GoToAsync(nameof(FundsHistoryPage), true);
-		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string name)

@@ -58,9 +58,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Images\Button_Icons\add.png" />
-	  <None Remove="Resources\Images\Button_Icons\delete.png" />
-	  <None Remove="Resources\Images\Button_Icons\edit.png" />
+	  <None Remove="Resources\Images\ButtonIcons\add.png" />
+	  <None Remove="Resources\Images\ButtonIcons\calendar.png" />
+	  <None Remove="Resources\Images\ButtonIcons\delete.png" />
+	  <None Remove="Resources\Images\MenuIcons\funds.png" />
+	  <None Remove="Resources\Images\MenuIcons\home.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -119,14 +121,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiImage Include="Resources\Images\App_Icons\app_icon.png" />
-	  <MauiImage Include="Resources\Images\App_Icons\app_logo.png" />
-	  <MauiImage Include="Resources\Images\Button_Icons\add.png" />
-	  <MauiImage Include="Resources\Images\Button_Icons\delete.png" />
-	  <MauiImage Include="Resources\Images\Button_Icons\edit.png" />
-	  <MauiImage Include="Resources\Images\Button_Icons\hide_password.png" />
-	  <MauiImage Include="Resources\Images\Button_Icons\history.png" />
-	  <MauiImage Include="Resources\Images\Button_Icons\show_password.png" />
+	  <MauiImage Include="Resources\Images\AppIcons\app_icon.png" />
+	  <MauiImage Include="Resources\Images\AppIcons\app_logo.png" />
+	  <MauiImage Include="Resources\Images\ButtonIcons\add.png" />
+	  <MauiImage Include="Resources\Images\ButtonIcons\calendar.png" />
+	  <MauiImage Include="Resources\Images\ButtonIcons\delete.png" />
+	  <MauiImage Include="Resources\Images\ButtonIcons\hide_password.png" />
+	  <MauiImage Include="Resources\Images\ButtonIcons\show_password.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\MenuIcons\funds.png" />
+	  <MauiImage Include="Resources\Images\MenuIcons\home.png" />
 	</ItemGroup>
 
 </Project>

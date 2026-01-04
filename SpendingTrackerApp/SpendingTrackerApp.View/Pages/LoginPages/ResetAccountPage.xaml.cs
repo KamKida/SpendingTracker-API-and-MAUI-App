@@ -2,9 +2,9 @@ using SpendingTrackerApp.ViewModels.LoginViewModels;
 
 namespace SpendingTrackerApp.Pages;
 
-public partial class EditPasswordPage : ContentPage
+public partial class ResetPasswordPage : ContentPage
 {
-	public EditPasswordPage(ResetAccountPageViewModel vm)
+	public ResetPasswordPage(ResetAccountPageViewModel vm)
 	{
 		InitializeComponent();
         BindingContext = vm;

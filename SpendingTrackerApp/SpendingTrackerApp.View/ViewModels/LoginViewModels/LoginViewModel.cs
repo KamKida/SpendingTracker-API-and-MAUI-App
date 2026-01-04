@@ -1,4 +1,5 @@
-﻿using SpendingTrackerApp.Contracts.Dtos.Requests;
+﻿using Microsoft.Extensions.Logging;
+using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Extensions;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
@@ -8,10 +9,11 @@ using System.Windows.Input;
 
 public class LoginViewModel : INotifyPropertyChanged
 {
-    private readonly IUserService _service;
-    BaseHttpService Http {  get; set; }
+    private readonly IUserService _userService;
+    private readonly ILogger<LoginViewModel> _logger;
+    BaseHttpService _htttp {  get; set; }
 
-    public UserRequest Request {  get; set; }
+    public UserRequest _userRequest {  get; set; }
 
     private bool _hidePassword = true;
     private string _passwordIcon = "hide_password.png";
@@ -118,66 +120,166 @@ public class LoginViewModel : INotifyPropertyChanged
     public ICommand TogglePasswordCommand { get; }
     public ICommand LoginUserCommand { get; }
     public ICommand GoToCreateAccountPageCommand {  get; }
-    public ICommand GoToResePasswordPageComand {  get; }
+    public ICommand GoToResetPasswordPageCommand {  get; }
 
     public LoginViewModel(
         BaseHttpService http,
-        IUserService service)
+        IUserService userService,
+		ILogger<LoginViewModel> logger)
     {
-        Request = new UserRequest() { Email ="test@test.pl", Password="testte"};
-        Http = http;
-        _service = service;
+        _userRequest = new UserRequest() { Email ="test@test.pl", Password="testte"};
+        _htttp = http;
+        _userService = userService;
+        _logger = logger;
 
-        TogglePasswordCommand = new Command(TogglePassword);
-        LoginUserCommand = new Command(LoginUser);
-        GoToCreateAccountPageCommand = new Command(GoToCreateAccountPage);
-        GoToResePasswordPageComand = new Command(GoToResePasswordPage);
+        TogglePasswordCommand = new Command(async () => await TogglePassword());
+		LoginUserCommand = new Command(async () => await LoginUser());
+        GoToCreateAccountPageCommand = new Command(async () => await GoToCreateAccountPage());
+        GoToResetPasswordPageCommand = new Command(async () => await GoToResetPasswordPage());
     }
 
-    private void TogglePassword()
-    {
-        HidePassword = !HidePassword;
-        PasswordIcon = HidePassword ? "hide_password.png" : "show_password.png";
-    }
+	private async Task TogglePassword()
+	{
+		_logger.LogInformation(
+			"Rozpoczynam przełączanie widoczności hasła. HidePassword: {HidePassword}",
+			HidePassword
+		);
 
-    private async void LoginUser()
-    {
-        KeyboardHelper.HideKeyboard();
+		HidePassword = !HidePassword;
+		PasswordIcon = HidePassword ? "hide_password.png" : "show_password.png";
 
-        ShowLoadingIcon = true;
-        RunLoadingIcon = true;
-        BlockInteraction = true;
+		_logger.LogInformation(
+			"Zakończono przełączanie widoczności hasła. HidePassword: {HidePassword}, Icon: {Icon}",
+			HidePassword,
+			PasswordIcon
+		);
+	}
 
-        var response = await _service.LoginUser(Request);
 
-        if (response.StatusCode != 200)
-        {
-            ErrorMessage = response.Content;
-            ShowErrorMessage = true;
+	private async Task LoginUser()
+	{
+		_logger.LogInformation(
+			"Rozpoczynam logowanie użytkownika (UI). Email: {Email}",
+			_userRequest.Email
+		);
 
-            ShowLoadingIcon = false;
-            RunLoadingIcon = false;
-            BlockInteraction = false;
-        }
-        else
-        {
-            Http.SetToken(response.Content);
+		KeyboardHelper.HideKeyboard();
 
-            await Shell.Current.GoToAsync(nameof(LoadingDataPage));
-        }
-    }
+		ShowLoadingIcon = true;
+		RunLoadingIcon = true;
+		BlockInteraction = true;
 
-    public async void GoToCreateAccountPage()
-    {
-        await Shell.Current.GoToAsync(nameof(CreateAcountPage));
-    }
+		try
+		{
+			var response = await _userService.LoginUser(_userRequest);
 
-    public async void GoToResePasswordPage()
-    {
-        await Shell.Current.GoToAsync(nameof(EditPasswordPage));
-    }
+			_logger.LogInformation(
+				"Wynik logowania użytkownika (UI) {Email}: {StatusCode}",
+				_userRequest.Email,
+				response.StatusCode
+			);
 
-    public event PropertyChangedEventHandler PropertyChanged;
+			if (!response.IsSuccessStatusCode)
+			{
+				_logger.LogWarning(
+					"Logowanie użytkownika (UI) nie powiodło się. Email: {Email}, StatusCode: {StatusCode}",
+					_userRequest.Email,
+					response.StatusCode
+				);
+
+				ErrorMessage = "Coś poszło nie tak podczas logowania. Spróbuj później.";
+				ShowErrorMessage = true;
+				return;
+			}
+
+			_logger.LogInformation(
+				"Logowanie użytkownika (UI) zakończone sukcesem. Ustawiam token. Email: {Email}",
+				_userRequest.Email
+			);
+
+			_htttp.SetToken(await response.Content.ReadAsStringAsync());
+
+			await Shell.Current.GoToAsync(nameof(LoadingDataPage));
+		}
+		catch (HttpRequestException httpEx)
+		{
+			_logger.LogError(
+				httpEx,
+				"Błąd HTTP podczas logowania użytkownika (UI). Email: {Email}",
+				_userRequest.Email
+			);
+			throw;
+		}
+		catch (Exception ex)
+		{
+			_logger.LogError(
+				ex,
+				"Nieoczekiwany błąd podczas logowania użytkownika (UI). Email: {Email}",
+				_userRequest.Email
+			);
+			throw;
+		}
+		finally
+		{
+			ShowLoadingIcon = false;
+			RunLoadingIcon = false;
+			BlockInteraction = false;
+
+			_logger.LogInformation(
+				"Zakończono proces logowania użytkownika (UI). Email: {Email}",
+				_userRequest.Email
+			);
+		}
+	}
+
+
+
+	public async Task GoToCreateAccountPage()
+	{
+		_logger.LogInformation("Rozpoczynam nawigację do strony tworzenia konta.");
+
+		try
+		{
+			await Shell.Current.GoToAsync(nameof(CreateAcountPage));
+
+			_logger.LogInformation(
+				"Nawigacja do strony tworzenia konta zakończona sukcesem."
+			);
+		}
+		catch (Exception ex)
+		{
+			_logger.LogError(
+				ex,
+				"Błąd podczas nawigacji do strony tworzenia konta."
+			);
+			throw;
+		}
+	}
+
+	public async Task GoToResetPasswordPage()
+	{
+		_logger.LogInformation("Rozpoczynam nawigację do strony resetu hasła.");
+
+		try
+		{
+			await Shell.Current.GoToAsync(nameof(ResetPasswordPage));
+
+			_logger.LogInformation(
+				"Nawigacja do strony resetu hasła zakończona sukcesem."
+			);
+		}
+		catch (Exception ex)
+		{
+			_logger.LogError(
+				ex,
+				"Błąd podczas nawigacji do strony resetu hasła."
+			);
+			throw;
+		}
+	}
+
+
+	public event PropertyChangedEventHandler PropertyChanged;
     protected void OnPropertyChanged(string name)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }

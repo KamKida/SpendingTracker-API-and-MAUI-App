@@ -3,79 +3,132 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SpendingTrackerApp.Pages.CreateAcountPage"
              Title="Utwórz konto">
-    <Grid Style="{StaticResource PrimaryTheme}">
 
-        <Grid
-        RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto"
-        RowSpacing="10">
 
-            <Border Grid.Row="0">
-                <Entry 
-                Placeholder="Imię"
-                Text ="{Binding Request.FirstName}"/>
-            </Border>
-            
-            <Border Grid.Row="1">
-                <Entry 
+	<Grid 
+                RowDefinitions="*,Auto"
+                InputTransparent="{Binding BlockInteraction}">
+		<Grid
+	        Grid.Row="0"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+            RowSpacing="30"
+            Padding="30">
+
+			<Border
+                    Grid.Row="0">
+				<Entry
+                        Placeholder="Imię"
+                        BackgroundColor="Transparent"
+                        Text ="{Binding Request.FirstName}"
+                        FontSize="20"
+                        HorizontalTextAlignment="End"/>
+
+
+			</Border>
+
+			<Border
+            Grid.Row="1">
+				<Entry
                 Placeholder="Nazwisko"
-                Text ="{Binding Request.LastName}"/>
-            </Border>
-            
-            <Border Grid.Row="2">
-            <Entry 
-                        Placeholder="Email"
-                        Text ="{Binding Request.Email}"/>
-        </Border>
+                BackgroundColor="Transparent"
+                Text ="{Binding Request.LastName}"
+                FontSize="20"
+                HorizontalTextAlignment="End"/>
 
 
-        <Border Grid.Row="3">
-            <Grid ColumnDefinitions="*,Auto">
-                <Entry 
-                        Grid.Column="0"
-                        Placeholder="Password"
-                        IsPassword="{Binding HidePassword}" 
-                        Text="{Binding Request.Password}"/>
+			</Border>
 
-                <ImageButton 
-                        Grid.Column="1"
-                        HeightRequest="40"
-                        WidthRequest="40"
-                        HorizontalOptions="End"
-                        VerticalOptions="Center"
-                        Source="{Binding PasswordIcon}"
-                        Command="{Binding TogglePasswordCommand}" />
-            </Grid>
-        </Border>
+			<Border
+            Grid.Row="2">
+				<Entry
+                Placeholder="email@email.com"
+                BackgroundColor="Transparent"
+                Text ="{Binding Request.Email}"
+                FontSize="20"
+                HorizontalTextAlignment="End"/>
 
 
-        <Button Text="Utwórz kąto"
-                    FontSize="20"
-                    WidthRequest="200"
-                    Grid.Row="4"
-                    Command ="{Binding CreateAccountCommand}"/>
+			</Border>
 
+			<Border
+        
+            Grid.Row="3">
+				<Entry 
+                Placeholder="hasło"
+                IsPassword="{Binding HidePassword}" 
+                Text="{Binding Request.Password}"
+                BackgroundColor="Transparent"
+                TextColor="White"
+                HorizontalTextAlignment="End"
+                FontSize="25"/>
 
-            <Border Grid.Row="5">
-            <Label 
-                        Text="{Binding Message}"
-                        TextColor="{Binding MessageColor} "
-                        FontSize="20"/>
-        </Border>
+			</Border>
 
-        </Grid>
-        <Grid
-            IsVisible="{Binding ShowLoadingIcon}"
-            BackgroundColor="#80000000"
-            ZIndex="999">
+			<Grid
+        Grid.Row="4"
+        RowDefinitions="Auto, Auto, *"
+        ColumnDefinitions="*, *"
+        ColumnSpacing="30"
+        RowSpacing="30">
 
-            <ActivityIndicator
+				<Button
+        
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalOptions="Center"
+                HorizontalOptions="Start"
+                Text="Utwórz kąto"
+                FontSize="20"
+                WidthRequest="200"
+                Command ="{Binding CreateAccountCommand}"/>
+
+				<Border
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HeightRequest="75"
+                    WidthRequest="75"
+                    Padding="0"
+                    StrokeShape="RoundRectangle 50,50,50,50" >
+
+					<ImageButton
+                    HeightRequest="50"
+                    WidthRequest="50"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Source="{Binding PasswordIcon}"
+                    Command="{Binding TogglePasswordCommand}"/>
+				</Border>
+
+				<Border 
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Background="White"
+                    Padding="10">
+
+					<Label 
+                    Text="{Binding Message}"
+                    TextColor="{Binding MessageColor}"
+                    FontSize="30"
+                    LineBreakMode="WordWrap" />
+				</Border>
+			</Grid>
+
+		</Grid>
+
+		<Grid
+        IsVisible="{Binding ShowLoadingIcon}"
+        BackgroundColor="#80000000"
+        ZIndex="999">
+
+			<ActivityIndicator
                 IsRunning="{Binding RunLoadingIcon}"
-                Color="DodgerBlue"
+                Color="White"
                 WidthRequest="80"
                 HeightRequest="80"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"/>
-        </Grid>
-        </Grid>
+
+		</Grid>
+	</Grid>
 
 </ContentPage>

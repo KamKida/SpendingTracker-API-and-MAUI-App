@@ -4,56 +4,122 @@
              x:Class="SpendingTrackerApp.Pages.MainPage"
              Title="{Binding Title}"
              Shell.BackButtonBehavior="{BackButtonBehavior IsVisible=False}">
+
+	<ScrollView
+        Padding="20"
+        InputTransparent="{Binding BlockInteraction}">
+		    <Grid 
+            RowDefinitions="Auto, Auto, Auto, Auto"
+            RowSpacing="20">
+			    <Border
+                    Grid.Row="0">
+				    <Border.GestureRecognizers>
+					    <TapGestureRecognizer 
+                                Command="{Binding GoToFundsHistoryCommand}"/>
+				    </Border.GestureRecognizers>
+
+				    <Grid
+                        RowDefinitions="Auto, Auto, Auto,Auto, Auto"
+                        ColumnDefinitions="* ,Auto"
+                        RowSpacing="10"
+                        ColumnSpacing="20">
+
+
+					    <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Text="Zł."
+                            FontSize="35"
+                            TextColor="{StaticResource Positive}"/>
+
+					    <ScrollView 
+                            Orientation="Horizontal"
+                            Grid.Row="0"
+                            Grid.Column="1">
+
+						    <Label 
+                                Text="1013122"
+                                HorizontalTextAlignment="Center"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                FontSize="35"
+                                TextColor="{StaticResource Positive}"/>
+
+					    </ScrollView>
+
+
+					    <Label Grid.Row="1"
+                               Grid.Column="0"
+                               Text="Wydatki:"
+                               TextColor="{StaticResource Negative}"/>
+
+					    <Label
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Text="Zł."
+                            TextColor="{StaticResource Negative}"/>
+
+					    <ScrollView 
+                                        Orientation="Horizontal"
+                                        Grid.Row="2"
+                                        Grid.Column="1">
+
+						    <Label 
+                                        Text="1013122"
+                                        HorizontalTextAlignment="Center"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        TextColor="{StaticResource Negative}"/>
+
+					    </ScrollView>
+
+					    <Label Grid.Row="3"
+                           Grid.Column="0"
+                           Text="Różnica:"/>
+
+					    <Label
+                            Grid.Row="5"
+                            Grid.Column="0"
+                            Text="Zł."
+                            TextColor="{StaticResource Negative}"/>
+
+					    <ScrollView 
+                                Orientation="Horizontal"
+                                Grid.Row="5"
+                                Grid.Column="1">
+
+						    <Label 
+                                Text="1013122"
+                                HorizontalTextAlignment="Center"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                TextColor="{StaticResource Negative}"/>
+
+					    </ScrollView>
+
+				    </Grid>
+            
+            
+                </Border>
+
+			    <Grid
+                    IsVisible="{Binding ShowLoadingIcon}"
+                    BackgroundColor="#80000000"
+                    ZIndex="999">
+
+				    <ActivityIndicator
+                        IsRunning="{Binding RunLoadingIcon}"
+                        Color="White"
+                        WidthRequest="80"
+                        HeightRequest="80"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"/>
+
+			    </Grid>
+
+
+		    </Grid>
     
-    <ScrollView
-        BackgroundColor="White">
-        <Grid
-            RowDefinitions="Auto ,Auto ,Auto ,*"
-            ColumnDefinitions="*, Auto"
-            ColumnSpacing="20"
-            Padding="10"
-            RowSpacing="10">
-
-			<Border>
-			<ScrollView Orientation="Horizontal"
-            Grid.Row="0"
-            Grid.Column="0">
-            
-				<Label
-            Text="{Binding User.ThisMonthFund, StringFormat='{}+{0} zł'}"
-            FontSize="40"
-            TextColor="Green"/>
-			</ScrollView>
-			</Border>
-
-			<Label
-            Text="0"
-            Grid.Row="1"
-            FontSize="25"
-            Grid.Column="0"/>
-
-            
-            
-            <ImageButton
-                Grid.Row="0"
-                Grid.Column="1"
-                Source="add.png"
-                HeightRequest="35"
-                WidthRequest="35"
-                HorizontalOptions="End"
-                VerticalOptions="Center"
-                Command="{Binding AddFundCommand}"/>
-
-            <ImageButton
-                Grid.Row="1"
-                Grid.Column="1"
-                Source="history.png"
-                HeightRequest="35"
-                WidthRequest="35"
-                HorizontalOptions="End"
-                VerticalOptions="Center"
-                Command="{Binding ShowHistoryCommand}"/>
-
-        </Grid>
     </ScrollView>
+    
 </ContentPage>

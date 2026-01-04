@@ -15,44 +15,38 @@
 
     <Style TargetType="Border">
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
-        <Setter Property="StrokeShape" Value="RoundRectangle 40,40,40,40"/>
-        <Setter Property="Background" Value="White"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 20,20,20,20"/>
+		<Setter Property="Background" Value="{StaticResource MainControllsBackground}"/>
         <Setter Property="StrokeThickness" Value="1"/>
-        <Setter Property="Padding" Value="30,10,30,10"/>
-        <Setter Property="Margin" Value="10"/>
-    </Style>
+		<Setter Property="Padding" Value="20,10,30,10"/>
+	</Style>
 
-    <Style x:Key="PrimaryTheme" TargetType="Grid">
-        <Setter Property="Background">
-            <Setter.Value>
-                <AppThemeBinding 
-        Light="{StaticResource MainTheme}" 
-        Dark="{StaticResource MainTheme}" />
-            </Setter.Value>
-        </Setter>
-    </Style>
+    <Style TargetType="Grid">
+		<Setter Property="BackgroundColor" Value="Transparent"/>
+	</Style>
     
     <Style TargetType="BoxView">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
     </Style>
 
-    <Style TargetType="Button">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryDarkText}}" />
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+
+	<Style TargetType="Button">
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="BackgroundColor" Value="{StaticResource Button}" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="25"/>
         <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="CornerRadius" Value="50"/>
         <Setter Property="Padding" Value="14,10"/>
-        <Setter Property="MinimumHeightRequest" Value="44"/>
-        <Setter Property="MinimumWidthRequest" Value="44"/>
+        <Setter Property="MinimumHeightRequest" Value="50"/>
+        <Setter Property="MinimumWidthRequest" Value="50"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
+							<Setter Property="TextColor" Value="White" />
                             <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
                         </VisualState.Setters>
                     </VisualState>
@@ -168,7 +162,7 @@
     </Style>
 
     <Style TargetType="Label">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+        <Setter Property="TextColor" Value="{StaticResource White}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
         <Setter Property="FontSize" Value="24" />
@@ -420,8 +414,8 @@
     -->
 
     <Style TargetType="Page" ApplyToDerivedTypes="True">
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource OffBlack}}" />
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
     </Style>
 
     <Style TargetType="Shell" ApplyToDerivedTypes="True">

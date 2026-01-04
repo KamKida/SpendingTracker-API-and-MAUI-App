@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using SpendingTrackerApp.Infrastructure.Extensions;
 
 namespace SpendingTrackerApp
@@ -9,6 +10,7 @@ namespace SpendingTrackerApp
 		{
 			var builder = MauiApp.CreateBuilder();
 
+
 			builder
 				.UseMauiApp<App>()
 				.ConfigureFonts(fonts =>
@@ -16,6 +18,12 @@ namespace SpendingTrackerApp
 					fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				});
 			builder.Services.AddServices();
+
+
+			builder.Logging.ClearProviders();
+			builder.Logging.SetMinimumLevel(LogLevel.Trace);
+
+			builder.Logging.AddNLog();
 #if DEBUG
 			builder.Logging.AddDebug();
 #endif
