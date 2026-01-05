@@ -9,6 +9,7 @@
 			<converters:DecimalNullableConverter x:Key="DecimalNullableConverter"/>
 		</ResourceDictionary>
 	</ContentPage.Resources>
+
 	<ScrollView>
 	<Grid
 InputTransparent="{Binding BlockInteraction}">

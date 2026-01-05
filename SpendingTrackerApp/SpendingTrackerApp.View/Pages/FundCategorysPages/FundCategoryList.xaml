@@ -80,7 +80,7 @@
 					   Keyboard="Numeric"
 					   HorizontalTextAlignment="End"
 					   Placeholder="00.00"
-					   Text="{Binding FundCategoryFilterRequest.ShouldBeTo, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
+					   Text="{Binding FundCategoryFilterRequest.ShouldBeFrom, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
 					   TextColor="{Binding FilterEntryColorFrom}"
 					   BackgroundColor="Transparent"/>
 					<Label Grid.Row="5" Grid.Column="2" Text="zł." FontSize="25" VerticalOptions="Center"/>
@@ -91,7 +91,7 @@
                    Keyboard="Numeric"
                    HorizontalTextAlignment="End"
                    Placeholder="00.00"
-                   Text="{Binding FundCategoryFilterRequest.ShouldBeFrom, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
+                   Text="{Binding FundCategoryFilterRequest.ShouldBeTo, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
                    TextColor="{Binding FilterEntryColorTo}"
                    BackgroundColor="Transparent"/>
 						<Label Grid.Row="6" Grid.Column="2" Text="zł." FontSize="25" VerticalOptions="Center"/>

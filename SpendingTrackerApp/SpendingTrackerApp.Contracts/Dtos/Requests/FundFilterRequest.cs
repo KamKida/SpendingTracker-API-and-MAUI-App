@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace SpendingTrackerApp.Contracts.Dtos.Requests
 {
@@ -82,6 +81,18 @@ namespace SpendingTrackerApp.Contracts.Dtos.Requests
 			AmountTo = null;
 			DateFrom = DateTime.Now;
 			DateTo = DateTime.Now;
+		}
+
+		public FundFilterRequest Clone()
+		{
+			return new FundFilterRequest
+			{
+				DateFrom = this.DateFrom,
+				DateTo = this.DateTo,
+				AmountFrom = this.AmountFrom,
+				AmountTo = this.AmountTo,
+				LastDate = this.LastDate
+			};
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

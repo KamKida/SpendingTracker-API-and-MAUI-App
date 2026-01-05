@@ -445,11 +445,10 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 					return;
 				}
 
-				FundFilterRequest.LastDate = Funds.Last().CreationDate;
+				var request = FundFilterRequest.Clone();
+				request.LastDate = Funds.Last().CreationDate;
 
-				var response = await _fundService.Get10(FundFilterRequest);
-
-				FundFilterRequest.LastDate = null;
+				var response = await _fundService.Get10(request);
 
 				_logger.LogInformation(
 					"Wynik pobierania kolejnych funduszy: StatusCode={StatusCode}",
@@ -614,8 +613,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			});
 		}
 
-
-
 		private async Task Filter()
 		{
 			ShowLoadingIcon = true;
@@ -691,8 +688,9 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
 				FiltersVisible = false;
 
-				var response = await _fundService.Get10(FundFilterRequest, useDatesFromToo: UseDateFilter);
-				FundFilterRequest.Reset();
+				var request = FundFilterRequest.Clone();
+
+				var response = await _fundService.Get10(request, useDatesFromToo: UseDateFilter);
 				if (!response.IsSuccessStatusCode)
 				{
 					var content = await response.Content.ReadAsStringAsync();

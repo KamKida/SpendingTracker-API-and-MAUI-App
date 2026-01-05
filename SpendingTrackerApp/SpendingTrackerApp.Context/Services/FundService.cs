@@ -39,10 +39,10 @@ namespace SpendingTrackerApp.Infrastructure.Services
 				{
 
 					if (request.DateFrom.HasValue)
-						query.Add($"dateFrom={Uri.EscapeDataString(request.DateFrom.Value.ToString("O"))}");
+						query.Add($"dateFrom={Uri.EscapeDataString(request.DateFrom.Value.ToString("yyyy-MM-ddTHH:mm:ss.fff"))}");
 
 					if (request.DateTo.HasValue)
-						query.Add($"dateTo={Uri.EscapeDataString(request.DateTo.Value.ToString("O"))}");
+						query.Add($"dateTo={Uri.EscapeDataString(request.DateTo.Value.ToString("yyyy-MM-ddTHH:mm:ss.fff"))}");
 				}
 				if (request.AmountFrom.HasValue)
 					query.Add($"amountFrom={request.AmountFrom.Value}");
@@ -51,7 +51,7 @@ namespace SpendingTrackerApp.Infrastructure.Services
 					query.Add($"amountTo={request.AmountTo.Value}");
 
 				if (request.LastDate.HasValue)
-					query.Add($"lastDate={Uri.EscapeDataString(request.LastDate.Value.ToString("O"))}");
+					query.Add($"lastDate={Uri.EscapeDataString(request.LastDate.Value.ToString("yyyy-MM-ddTHH:mm:ss.fff"))}");
 
 				var url = "fund/get10";
 

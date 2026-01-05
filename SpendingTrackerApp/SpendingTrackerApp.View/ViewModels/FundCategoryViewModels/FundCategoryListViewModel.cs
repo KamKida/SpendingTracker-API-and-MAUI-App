@@ -24,23 +24,27 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 		private ILogger<FundCategoryListViewModel> _logger;
 
 		private bool _filtersVisible = false;
+
 		private bool _showErrorMessage = false;
 		private bool _enableFilters = true;
 		private bool _enableShowMore = true;
 
 		private bool _useDateFilter = false;
+
 		private bool _showFilterErrorMessage = false;
 		private string _filterErrorText;
 
 		private Color _filterEntryColorFrom = Colors.White;
 		private Color _filterEntryColorTo = Colors.White;
 
-		public bool _showLoadingIcon = false;
-		public bool _runLoadingIcon = false;
+		private bool _showLoadingIcon = false;
+		private bool _runLoadingIcon = false;
 
-		public bool _blockInteraction = false;
+		private bool _blockInteraction = false;
 
-		public Color _dateColor = Colors.White;
+		private Color _dateColor = Colors.White;
+
+		private bool _showCategories = false;
 
 		public ObservableCollection<FundCategory> FundCategories
 		{
@@ -160,6 +164,7 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 		}
 
 		public bool EnableShowMore
+
 		{
 			get => _enableShowMore;
 			set
@@ -233,6 +238,19 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 				{
 					_filterEntryColorTo = value;
 					OnPropertyChanged(nameof(FilterEntryColorTo));
+				}
+			}
+		}
+
+		public bool ShowCategories
+		{
+			get => _showCategories;
+			set
+			{
+				if (_showCategories != value)
+				{
+					_showCategories = value;
+					OnPropertyChanged(nameof(ShowCategories));
 				}
 			}
 		}
@@ -454,11 +472,11 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 					return;
 				}
 
-				FundCategoryFilterRequest.LastDate = FundCategories.Last().CreationDate;
+				var request = FundCategoryFilterRequest.Clone();
+				request.LastDate = FundCategories.Last().CreationDate;
 
-				var response = await _fundService.Get10(FundCategoryFilterRequest);
+				var response = await _fundService.Get10(request);
 
-				FundCategoryFilterRequest.LastDate = null;
 
 				_logger.LogInformation(
 					"Wynik pobierania kolejnych funduszy: StatusCode={StatusCode}",
@@ -705,8 +723,9 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
 				FiltersVisible = false;
 
-				var response = await _fundService.Get10(FundCategoryFilterRequest, useDatesFromToo: UseDateFilter);
-				FundCategoryFilterRequest.Reset();
+				var request = FundCategoryFilterRequest.Clone();
+
+				var response = await _fundService.Get10(request, useDatesFromToo: UseDateFilter);
 				if (!response.IsSuccessStatusCode)
 				{
 					var content = await response.Content.ReadAsStringAsync();

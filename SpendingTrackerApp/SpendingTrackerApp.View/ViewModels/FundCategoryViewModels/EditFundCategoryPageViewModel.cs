@@ -3,13 +3,7 @@ using Microsoft.Extensions.Logging;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
@@ -37,10 +31,11 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 			get => _fundCategory;
 			set
 			{
-				_fundCategory = value;
-				OnPropertyChanged(nameof(FundCategory));
-				OnPropertyChanged(nameof(FundCategory.ShouldBe));
-				OnPropertyChanged(nameof(FundCategory.Name));
+				if (_fundCategory != value)
+				{
+					_fundCategory = value;
+					OnPropertyChanged(nameof(FundCategory));
+				}
 			}
 		}
 
@@ -49,7 +44,7 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 			get => _fundCategoryRequest;
 			set
 			{
-				if (_fundCategoryRequest != null)
+				if (_fundCategoryRequest != value)
 				{
 					_fundCategoryRequest = value;
 					OnPropertyChanged(nameof(FundCategoryRequest));

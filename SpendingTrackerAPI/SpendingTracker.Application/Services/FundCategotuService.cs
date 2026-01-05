@@ -142,7 +142,8 @@ namespace SpendingTracker.Application.Services
 
 			if (request.LastDate != null)
 			{
-				query = query.Where(f => f.CreationDate < request.LastDate);
+				var lastDate = request.LastDate.Value.DateTime;
+				query = query.Where(f => f.CreationDate < lastDate);
 			}
 
 			return query;

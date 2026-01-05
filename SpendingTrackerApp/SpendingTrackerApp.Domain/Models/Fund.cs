@@ -4,9 +4,10 @@ namespace SpendingTrackerApp.Domain.Models
 {
 	public class Fund : INotifyPropertyChanged
 	{
-	    public Guid Id {  get; set; }
-		public decimal _amount { get; set; }
-		public DateTime _creationDate { get; set; }
+		public Guid Id { get; set; }
+		private FundCategory? _fundCategory;
+		private decimal _amount;
+		private DateTime _creationDate;
 
 
 		public decimal Amount
@@ -37,7 +38,21 @@ namespace SpendingTrackerApp.Domain.Models
 			}
 		}
 
+		public FundCategory? FundCategory
+		{
+			get => _fundCategory;
+			set
+			{
+				if (_fundCategory != value)
+				{
+					_fundCategory = value;
+					OnPropertyChanged(nameof(FundCategory));
+				}
+			}
+		}
+
 		public event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string prop) =>
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-	} }
+	}
+}

@@ -98,6 +98,19 @@ namespace SpendingTrackerApp.Contracts.Dtos.Requests
 			DateTo = DateTime.Now;
 		}
 
+		public FundCategoryFilterRequest Clone()
+		{
+			return new FundCategoryFilterRequest
+			{
+				Name = this.Name,
+				DateFrom = this.DateFrom,
+				DateTo = this.DateTo,
+				ShouldBeFrom = this.ShouldBeFrom,
+				ShouldBeTo = this.ShouldBeTo,
+				LastDate = this.LastDate
+			};
+		}
+
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string propertyName)
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

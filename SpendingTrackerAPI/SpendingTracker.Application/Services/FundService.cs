@@ -40,6 +40,7 @@ namespace SpendingTracker.Application.Services
 
 
 			var result = await query
+				.Include(f => f.FundCategory)
 				.OrderByDescending(f => f.CreationDate)
 				.Take(10)
 				.Select(f => new FundResponse()
@@ -47,6 +48,7 @@ namespace SpendingTracker.Application.Services
 					Id = f.Id,
 					Amount = f.Amount,
 					CreationDate = f.CreationDate,
+					FundCategory = f.FundCategory
 				})
 				.AsNoTracking()
 				.ToListAsync();
@@ -63,7 +65,7 @@ namespace SpendingTracker.Application.Services
 				var error = result.Errors.FirstOrDefault();
 				throw new BadRequestException(error?.ErrorMessage ?? "Dodanie funduszu nie powiodło się.");
 			}
-			
+
 			Fund newFund = _mapper.Map<Fund>(request);
 
 			newFund.UserId = Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42");
@@ -104,9 +106,9 @@ namespace SpendingTracker.Application.Services
 				throw new BadRequestException("Edycja funduszu nie powiodło się. Podany fundusz nie istnieje.");
 			}
 
+
 			fundToEdit.Amount = fundRequest.Amount;
-
-
+			fundToEdit.FundCategoryId = fundRequest.FundCategoryId;
 
 			await _context.SaveChangesAsync();
 		}
@@ -135,7 +137,8 @@ namespace SpendingTracker.Application.Services
 
 			if (request.LastDate != null)
 			{
-				query = query.Where(f => f.CreationDate < request.LastDate);
+				var lastDate = request.LastDate.Value.DateTime;
+				query = query.Where(f => f.CreationDate < lastDate);
 			}
 
 			return query;

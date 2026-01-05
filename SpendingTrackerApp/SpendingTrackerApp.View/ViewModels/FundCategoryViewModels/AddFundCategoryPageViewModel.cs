@@ -26,7 +26,7 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 			get => _fundCategoryRequest;
 			set
 			{
-				if (_fundCategoryRequest != null)
+				if (_fundCategoryRequest != value)
 				{
 					_fundCategoryRequest = value;
 					OnPropertyChanged(nameof(FundCategoryRequest));
