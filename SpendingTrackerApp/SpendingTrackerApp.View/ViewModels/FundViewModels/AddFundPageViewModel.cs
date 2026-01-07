@@ -2,12 +2,9 @@
 using Microsoft.Extensions.Logging;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Contracts.Dtos.Responses;
-using SpendingTrackerApp.Domain.HelpModels;
 using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
-using SpendingTrackerApp.Infrastructure.Services;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
@@ -24,7 +21,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		private FundCategoryFilterRequest _fundCategoryFilterRequest = new FundCategoryFilterRequest();
 		private JsonService _jsonService;
 		private IFundService _fundService;
-		private IFundCategotuService _fundCategotuService;
+		private IFundCategoryService _fundCategotuService;
 		private IMapper _mapper;
 		private ILogger<AddFundPageViewModel> _logger;
 
@@ -313,7 +310,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		User user,
 		JsonService jsonService,
 		IFundService fundService,
-		IFundCategotuService fundCategotuService,
+		IFundCategoryService fundCategotuService,
 		IMapper mapper,
 		ILogger<AddFundPageViewModel> logger)
 		{

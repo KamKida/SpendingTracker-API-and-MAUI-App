@@ -19,7 +19,7 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 		private FundCategoryFilterRequest _filterRequest = new FundCategoryFilterRequest();
 		private ObservableCollection<FundCategory> _fundCategories;
 		private JsonService _jsonService;
-		private IFundCategotuService _fundService;
+		private IFundCategoryService _fundService;
 		private IMapper _mapper;
 		private ILogger<FundCategoryListViewModel> _logger;
 
@@ -257,7 +257,7 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 
 		public FundCategoryListViewModel(
 		JsonService jsonService,
-		IFundCategotuService fundService,
+		IFundCategoryService fundService,
 		IMapper mapper,
 		ILogger<FundCategoryListViewModel> logger)
 		{

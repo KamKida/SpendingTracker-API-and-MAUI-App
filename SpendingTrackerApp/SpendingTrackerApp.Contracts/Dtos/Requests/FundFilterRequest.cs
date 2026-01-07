@@ -9,6 +9,7 @@ namespace SpendingTrackerApp.Contracts.Dtos.Requests
 		private DateTime? _dateFrom = DateTime.Now;
 		private DateTime? _dateTo = DateTime.Now;
 		private DateTime? _lastDate;
+		private Guid? _fundCategoryId;
 
 		public decimal? AmountFrom
 		{
@@ -71,6 +72,19 @@ namespace SpendingTrackerApp.Contracts.Dtos.Requests
 				{
 					_lastDate = value;
 					OnPropertyChanged(nameof(LastDate));
+				}
+			}
+		}
+
+		public Guid? FundCategoryId
+		{
+			get => _fundCategoryId;
+			set
+			{
+				if (_fundCategoryId != value)
+				{
+					_fundCategoryId = value;
+					OnPropertyChanged(nameof(FundCategoryId));
 				}
 			}
 		}

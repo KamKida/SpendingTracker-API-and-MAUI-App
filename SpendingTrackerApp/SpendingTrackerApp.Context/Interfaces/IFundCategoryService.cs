@@ -2,7 +2,7 @@
 
 namespace SpendingTrackerApp.Infrastructure.Interfaces
 {
-	public interface IFundCategotuService
+	public interface IFundCategoryService
 	{
 		Task<HttpResponseMessage> Get10(FundCategoryFilterRequest request, bool useDatesFromToo = false);
 		Task<HttpResponseMessage> AddFundCategory(FundCategoryRequest request);

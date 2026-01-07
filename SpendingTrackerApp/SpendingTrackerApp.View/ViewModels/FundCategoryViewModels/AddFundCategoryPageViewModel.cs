@@ -9,7 +9,7 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 	public class AddFundCategoryPageViewModel : INotifyPropertyChanged
 	{
 		private FundCategoryRequest _fundCategoryRequest;
-		private IFundCategotuService _fundCategoryService;
+		private IFundCategoryService _fundCategoryService;
 		private ILogger<AddFundCategoryPageViewModel> _logger;
 
 		private string _message = "";
@@ -126,7 +126,7 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 		}
 
 		public AddFundCategoryPageViewModel(
-		IFundCategotuService fundCategoryService,
+		IFundCategoryService fundCategoryService,
 		ILogger<AddFundCategoryPageViewModel> logger)
 		{
 			_fundCategoryService = fundCategoryService;

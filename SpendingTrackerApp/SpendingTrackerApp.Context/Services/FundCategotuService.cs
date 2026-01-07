@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SpendingTrackerApp.Infrastructure.Services
 {
-	public class FundCategotuService : IFundCategotuService
+	public class FundCategotuService : IFundCategoryService
 	{
 		private readonly BaseHttpService _httpService;
 		private readonly ILogger<FundService> _logger;
