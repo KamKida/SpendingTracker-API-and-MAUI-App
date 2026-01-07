@@ -38,7 +38,7 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
 			//Services
 			services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFundService, FundService>();
-            services.AddScoped<IFundCategotuService, FundCategotuService>();
+            services.AddScoped<IFundCategoryService, FundCategotuService>();
 
             //Auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -17,22 +17,43 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 	public class FundsHistoryPageViewModel : INotifyPropertyChanged
 	{
 		private FundFilterRequest _filterRequest = new FundFilterRequest();
+
 		private User _user;
-		private FundsList _fundsList;
-		public ObservableCollection<Fund> Funds { get; set; }
+
+		public ObservableCollection<Fund> _funds = new ObservableCollection<Fund>();
+
 		private JsonService _jsonService;
 		private IFundService _fundService;
 		private IMapper _mapper;
 		private ILogger<FundsHistoryPageViewModel> _logger;
 
 		private bool _filtersVisible = false;
+
+
 		private bool _showErrorMessage = false;
+
 		private bool _enableFilters = true;
+
 		private bool _enableShowMore = true;
 
 		private bool _useDateFilter = false;
+
 		private bool _showFilterErrorMessage = false;
+
 		private string _filterErrorText;
+		public string FilterErrorText
+		{
+			get => _filterErrorText;
+			set
+			{
+				if (_filterErrorText != value)
+				{
+					_filterErrorText = value;
+					OnPropertyChanged(nameof(FilterErrorText));
+				}
+			}
+		}
+
 
 		private Color _filterEntryColorFrom = Colors.White;
 		private Color _filterEntryColorTo = Colors.White;
@@ -44,6 +65,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 
 		public Color _dateColor = Colors.White;
 
+
 		public FundFilterRequest FundFilterRequest
 		{
 			get => _filterRequest;
@@ -53,6 +75,19 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 				{
 					_filterRequest = value;
 					OnPropertyChanged(nameof(FundFilterRequest));
+				}
+			}
+		}
+
+		public ObservableCollection<Fund> Funds
+		{
+			get => _funds;
+			set
+			{
+				if (_funds != value)
+				{
+					_funds = value;
+					OnPropertyChanged(nameof(Funds));
 				}
 			}
 		}
@@ -174,18 +209,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			}
 		}
 
-		public string FilterErrorText
-		{
-			get => _filterErrorText;
-			set
-			{
-				if (_filterErrorText != value)
-				{
-					_filterErrorText = value;
-					OnPropertyChanged(nameof(FilterErrorText));
-				}
-			}
-		}
 
 		public Color DateColor
 		{
@@ -228,7 +251,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 
 		public FundsHistoryPageViewModel(
 		User user,
-		FundsList fundsList,
 		JsonService jsonService,
 		IFundService fundService,
 		IMapper mapper,
@@ -236,8 +258,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		{
 
 			_user = user;
-			_fundsList = fundsList;
-			Funds = fundsList.Funds;
 			_jsonService = jsonService;
 			_fundService = fundService;
 			_mapper = mapper;
@@ -246,7 +266,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			ShowHideFiltersCommand = new Command(async () => await ShowHideFilters());
 			ResetFilterCommand = new Command(async () => await ResetFilter());
 			FilterCommand = new Command(async () => await Filter());
-			OpenDateCommand = new Command<DatePicker>(async (picker) => await OpenDate(picker));
 			DeleteFundCommand = new Command<Fund>(async (fund) => await DeleteFund(fund));
 			ShowMoreCommand = new Command(async () => await ShowMore());
 			GoToAddFundPageCommand = new Command(async () => await GoToAddFundPage());
@@ -256,7 +275,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		public ICommand ShowHideFiltersCommand { get; }
 		public ICommand ResetFilterCommand { get; }
 		public ICommand FilterCommand { get; }
-		public ICommand OpenDateCommand { get; }
 		public ICommand DeleteFundCommand { get; }
 		public ICommand ShowMoreCommand { get; }
 		public ICommand GoToAddFundPageCommand { get; }
@@ -429,6 +447,27 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			}
 		}
 
+		
+
+		private async Task GoToAddFundPage()
+		{
+			_logger.LogInformation("Rozpoczynam nawigację do strony dodawania funduszu.");
+
+			try
+			{
+				await Shell.Current.GoToAsync(nameof(AddFundPage));
+
+				_logger.LogInformation("Nawigacja do strony dodawania funduszu zakończona sukcesem.");
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas nawigacji do strony dodawania funduszu."
+				);
+				throw;
+			}
+		}
 		private async Task ShowMore()
 		{
 			_logger.LogInformation("Rozpoczynam ładowanie kolejnych funduszy.");
@@ -509,26 +548,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			}
 		}
 
-		private async Task GoToAddFundPage()
-		{
-			_logger.LogInformation("Rozpoczynam nawigację do strony dodawania funduszu.");
-
-			try
-			{
-				await Shell.Current.GoToAsync(nameof(AddFundPage));
-
-				_logger.LogInformation("Nawigacja do strony dodawania funduszu zakończona sukcesem.");
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(
-					ex,
-					"Nieoczekiwany błąd podczas nawigacji do strony dodawania funduszu."
-				);
-				throw;
-			}
-		}
-
 		private async Task GoToEditFundPage(Fund fund)
 		{
 			_logger.LogInformation(
@@ -602,16 +621,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			}
 		}
 
-		private async Task OpenDate(DatePicker picker)
-		{
-			if (picker == null)
-				return;
-
-			await MainThread.InvokeOnMainThreadAsync(() =>
-			{
-				picker.Focus();
-			});
-		}
 
 		private async Task Filter()
 		{

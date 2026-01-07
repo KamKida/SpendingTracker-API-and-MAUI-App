@@ -53,6 +53,9 @@ namespace SpendingTrackerApp.Infrastructure.Services
 				if (request.LastDate.HasValue)
 					query.Add($"lastDate={Uri.EscapeDataString(request.LastDate.Value.ToString("yyyy-MM-ddTHH:mm:ss.fff"))}");
 
+				if (request.FundCategoryId.HasValue)
+					query.Add($"fundCategoryId={request.FundCategoryId}");
+
 				var url = "fund/get10";
 
 				if (query.Any())

@@ -127,18 +127,25 @@ namespace SpendingTracker.Application.Services
 
 			if (request.DateFrom != null)
 			{
-				query = query.Where(f => f.CreationDate.Date >= request.DateFrom);
+				var dateFrom = request.DateFrom.Value.DateTime;
+				query = query.Where(f => f.CreationDate.Date >= dateFrom);
 			}
 
 			if (request.DateTo != null)
 			{
-				query = query.Where(f => f.CreationDate.Date <= request.DateTo);
+				var dateTo = request.DateTo.Value.DateTime;
+				query = query.Where(f => f.CreationDate.Date <= dateTo);
 			}
 
 			if (request.LastDate != null)
 			{
 				var lastDate = request.LastDate.Value.DateTime;
 				query = query.Where(f => f.CreationDate < lastDate);
+			}
+
+			if (request.FundCategoryId != null)
+			{
+				query = query.Where(f => f.FundCategoryId == request.FundCategoryId);
 			}
 
 			return query;

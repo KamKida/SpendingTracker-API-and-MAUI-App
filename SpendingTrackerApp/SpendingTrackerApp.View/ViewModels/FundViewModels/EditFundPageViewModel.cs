@@ -23,7 +23,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		private FundCategoryFilterRequest _fundCategoryFilterRequest = new FundCategoryFilterRequest();
 		private JsonService _jsonService;
 		private IFundService _fundService;
-		private IFundCategotuService _fundCategotuService;
+		private IFundCategoryService _fundCategotuService;
 		private IMapper _mapper;
 		private ILogger<AddFundPageViewModel> _logger;
 
@@ -354,7 +354,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		User user,
 		JsonService jsonService,
 		IFundService fundService,
-		IFundCategotuService fundCategotuService,
+		IFundCategoryService fundCategotuService,
 		IMapper mapper,
 		ILogger<AddFundPageViewModel> logger)
 		{
@@ -396,6 +396,10 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			if (Fund.FundCategory != null) 
 			{
 				FundCategoryRequest = _mapper.Map<FundCategoryRequest>(Fund.FundCategory);
+			}
+			else
+			{
+				FundCategoryRequest = new FundCategoryRequest();
 			}
 
 			FundDifrence = (decimal)(FundCategoryRequest.ShouldBe == null ? FundRequest.Amount : FundRequest.Amount - FundCategoryRequest.ShouldBe);
