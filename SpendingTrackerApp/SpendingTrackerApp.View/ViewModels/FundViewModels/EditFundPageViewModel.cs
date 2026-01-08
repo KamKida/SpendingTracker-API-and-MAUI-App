@@ -52,6 +52,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		private bool _showFilterErrorMessage = false;
 		private string _filterErrorText;
 
+
 		private Fund _fund;
 
 		public Fund Fund
@@ -74,7 +75,22 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 				{
 					_fundRequest = value;
 					OnPropertyChanged(nameof(FundRequest));
+
 				}
+			}
+		}
+
+		public string Description
+		{
+			get => FundRequest.Description;
+			set
+			{
+				if (FundRequest.Description == value)
+					return;
+
+				FundRequest.Description = value;
+				OnPropertyChanged(nameof(Description));
+				OnPropertyChanged(nameof(DescriptionCount));
 			}
 		}
 
@@ -87,8 +103,8 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 				{
 					_fundCategoryRequest = value;
 					OnPropertyChanged(nameof(FundCategoryRequest));
-					OnPropertyChanged(nameof(FundCategoryRequest.Name));
-					OnPropertyChanged(nameof(FundCategoryRequest.ShouldBe));
+					OnPropertyChanged(nameof(Description));
+					OnPropertyChanged(nameof(DescriptionCount));
 				}
 			}
 		}
@@ -350,6 +366,11 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			}
 		}
 
+		public int DescriptionCount
+		{
+			get => FundRequest.Description?.Length ?? 0;
+		}
+
 		public EditFundPageViewModel(
 		User user,
 		JsonService jsonService,
@@ -393,7 +414,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 
 			FundRequest = _mapper.Map<FundRequest>(Fund);
 
-			if (Fund.FundCategory != null) 
+			if (Fund.FundCategory != null)
 			{
 				FundCategoryRequest = _mapper.Map<FundCategoryRequest>(Fund.FundCategory);
 			}
@@ -933,6 +954,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		{
 			ShowCategories = false;
 		}
+
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string name)

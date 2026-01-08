@@ -125,6 +125,25 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 			}
 		}
 
+		public string Description
+		{
+			get => FundCategoryRequest.Description;
+			set
+			{
+				if (FundCategoryRequest.Description == value)
+					return;
+
+				FundCategoryRequest.Description = value;
+				OnPropertyChanged(nameof(Description));
+				OnPropertyChanged(nameof(DescriptionCount));
+			}
+		}
+
+		public int DescriptionCount
+		{
+			get => FundCategoryRequest.Description?.Length ?? 0;
+		}
+
 		public AddFundCategoryPageViewModel(
 		IFundCategoryService fundCategoryService,
 		ILogger<AddFundCategoryPageViewModel> logger)

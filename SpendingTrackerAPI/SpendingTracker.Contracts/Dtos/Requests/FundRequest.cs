@@ -6,6 +6,7 @@ namespace SpendingTracker.Contracts.Dtos.Requests
 	{
 		public Guid Id { get; set; }
 		public Guid? FundCategoryId { get; set; }
+		public string? Description { get; set; }
 		public decimal Amount { get; set; }
 	}
 }

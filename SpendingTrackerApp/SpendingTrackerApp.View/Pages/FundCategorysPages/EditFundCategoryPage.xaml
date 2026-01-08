@@ -4,7 +4,7 @@
 								 xmlns:local="clr-namespace:SpendingTrackerApp.Pages.FundCategorysPages"
                                  x:Class="SpendingTrackerApp.Pages.FundCategorysPages.EditFundCategoryPage"
 			                     xmlns:converters="clr-namespace:SpendingTrackerApp.Converters"
-                                 Title="EditFundCategoryPage">
+                                 Title="Edytuj fundusz">
 	<ContentPage.Resources>
 		<ResourceDictionary>
 			<converters:DecimalNullableConverter x:Key="DecimalNullableConverter"/>
@@ -15,7 +15,7 @@
 		<Grid
                     InputTransparent="{Binding BlockInteraction}">
 			<Grid
-                            RowDefinitions="Auto ,Auto, Auto, Auto, Auto"
+                            RowDefinitions="Auto ,Auto, Auto, Auto, Auto ,Auto"
                             ColumnDefinitions="*, *"
                             Padding="20"
                             RowSpacing="20">
@@ -23,7 +23,7 @@
                                 Grid.Row="0"
                                 Grid.ColumnSpan="2">
 					<Grid 
-                                    RowDefinitions="Auto ,Auto, Auto,Auto, Auto, Auto"
+                                    RowDefinitions="Auto ,Auto, Auto,Auto, Auto, Auto, Auto"
                                     ColumnDefinitions="*,*"
                                     ColumnSpacing="20"
                                     RowSpacing="20">
@@ -99,6 +99,39 @@
                                                 BackgroundColor="Transparent"/>
 
 						</ScrollView>
+
+						<Border
+Grid.Row="6"
+Grid.ColumnSpan="3"
+Background="White">
+
+							<Grid
+				RowDefinitions="Auto, Auto"
+				ColumnDefinitions="*, Auto, Auto">
+
+								<Editor
+        Grid.ColumnSpan="3"
+        AutoSize="Disabled"
+        HeightRequest="240"
+        FontSize="20"
+        VerticalOptions="Start"
+        MaxLength="150"
+        Text="{Binding Description}"
+    />
+
+								<Label
+				            Grid.Row="1"
+				            Grid.Column="1"
+				            Text="{Binding DescriptionCount}"
+				            TextColor="{StaticResource Primary}"/>
+
+								<Label
+					            Grid.Row="1"
+					            Grid.Column="2"
+					            Text="/150"
+					            TextColor="{StaticResource Primary}"/>
+							</Grid>
+						</Border>
 
 
 					</Grid>

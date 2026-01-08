@@ -1,3 +1,4 @@
+using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.ViewModels.FundViewModels;
 
 namespace SpendingTrackerApp.Pages.LoginPages;
@@ -19,4 +20,5 @@ public partial class EditFundPage : ContentPage
 			await vm.Reset();
 		}
 	}
+
 }

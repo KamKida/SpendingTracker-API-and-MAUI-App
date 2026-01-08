@@ -8,6 +8,20 @@ namespace SpendingTrackerApp.Domain.Models
 		private string _name { get; set; }
 		private decimal? _shouldBe { get; set; }
 		public DateTime CreationDate { get; set; }
+		private string? _description;
+
+		public string? Description
+		{
+			get => _description;
+			set
+			{
+				if (_description != value)
+				{
+					_description = value;
+					OnPropertyChanged(nameof(Description));
+				}
+			}
+		}
 
 		public string Name
 		{

@@ -52,6 +52,7 @@ namespace SpendingTracker.Application.Services
 					Name = f.Name,
 					ShouldBe = f.ShouldBe,
 					CreationDate = f.CreationDate,
+					Description = f.Description
 				})
 				.AsNoTracking()
 				.ToListAsync();
@@ -97,18 +98,19 @@ namespace SpendingTracker.Application.Services
 
 		public async Task EditFundCategory(FundCategoryRequest fundCategoryRequest)
 		{//_userContextService.GetUserId()
-			FundCategory fundToEdit = await _context.FundCategories
+			FundCategory fundCategoryToEdit = await _context.FundCategories
 			.Where(f => f.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42")
 				&& f.Id == fundCategoryRequest.Id)
 				.FirstOrDefaultAsync();
 
-			if (fundToEdit == null)
+			if (fundCategoryToEdit == null)
 			{
 				throw new BadRequestException("Edycja kategori funduszu nie powiodło się. Podany fundusz nie istnieje.");
 			}
 
-			fundToEdit.Name = fundCategoryRequest.Name;
-			fundToEdit.ShouldBe = fundCategoryRequest.ShouldBe;
+			fundCategoryToEdit.Name = fundCategoryRequest.Name;
+			fundCategoryToEdit.ShouldBe = fundCategoryRequest.ShouldBe;
+			fundCategoryToEdit.Description = fundCategoryRequest.Description;
 
 			await _context.SaveChangesAsync();
 		}

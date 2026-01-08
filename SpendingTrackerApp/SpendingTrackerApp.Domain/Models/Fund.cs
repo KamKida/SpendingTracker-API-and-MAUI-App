@@ -8,7 +8,7 @@ namespace SpendingTrackerApp.Domain.Models
 		private FundCategory? _fundCategory;
 		private decimal _amount;
 		private DateTime _creationDate;
-
+		private string? _description;
 
 		public decimal Amount
 		{
@@ -47,6 +47,19 @@ namespace SpendingTrackerApp.Domain.Models
 				{
 					_fundCategory = value;
 					OnPropertyChanged(nameof(FundCategory));
+				}
+			}
+		}
+
+		public string? Description
+		{
+			get => _description;
+			set
+			{
+				if (_description != value)
+				{
+					_description = value;
+					OnPropertyChanged(nameof(Description));
 				}
 			}
 		}

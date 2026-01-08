@@ -23,7 +23,7 @@
 					Grid.Row="0"
 					Grid.ColumnSpan="2">
 					<Grid 
-							RowDefinitions="Auto ,Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto,Auto"
+							RowDefinitions="Auto ,Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto"
 							ColumnDefinitions="Auto, *"
 							ColumnSpacing="20"
 							RowSpacing="20">
@@ -153,6 +153,47 @@
 							Text="Usuń"
 							BackgroundColor="{StaticResource Negative}"
 							Command="{Binding DeleteCategoryComand}"/>
+
+						<Label
+							Grid.Row="12"
+							Grid.ColumnSpan="2"
+							Text="Opis:"
+							FontSize="35"/>
+
+						<Border
+							Grid.Row="13"
+							Grid.ColumnSpan="13"
+							Background="White">
+
+							<Grid
+								RowDefinitions="Auto, Auto"
+								ColumnDefinitions="*, Auto, Auto">
+
+								<Editor
+			Grid.ColumnSpan="3"
+			AutoSize="Disabled"
+			HeightRequest="240"
+			FontSize="20"
+			VerticalOptions="Start"
+			MaxLength="150"
+			Text="{Binding Description}"
+			/>
+
+								<Label
+								Grid.Row="1"
+								Grid.Column="1"
+								Text="{Binding DescriptionCount}"
+								TextColor="{StaticResource Primary}"/>
+
+								<Label
+									Grid.Row="1"
+									Grid.Column="2"
+									Text="/150"
+									TextColor="{StaticResource Primary}"/>
+							</Grid>
+						</Border>
+
+
 
 					</Grid>
 				</Border>

@@ -11,6 +11,7 @@ namespace SpendingTrackerApp.Contracts.Dtos.Requests
 		private DateTime? _lastDate;
 		private Guid? _fundCategoryId;
 
+
 		public decimal? AmountFrom
 		{
 			get => _amountFrom;

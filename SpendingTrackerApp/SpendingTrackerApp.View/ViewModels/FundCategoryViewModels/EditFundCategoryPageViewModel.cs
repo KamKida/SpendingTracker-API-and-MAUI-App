@@ -222,10 +222,31 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 				{
 					_fundCategoryRequest = value;
 					OnPropertyChanged(nameof(FundCategoryRequest));
+					OnPropertyChanged(nameof(Description));
+					OnPropertyChanged(nameof(DescriptionCount));
 				}
 			}
 		}
 
+
+		public string Description
+		{
+			get => FundCategoryRequest.Description;
+			set
+			{
+				if (FundCategoryRequest.Description == value)
+					return;
+
+				FundCategoryRequest.Description = value;
+				OnPropertyChanged(nameof(Description));
+				OnPropertyChanged(nameof(DescriptionCount));
+			}
+		}
+
+		public int DescriptionCount
+		{
+			get => FundCategoryRequest.Description?.Length ?? 0;
+		}
 		public string Message
 		{
 			get => _message;
@@ -341,7 +362,7 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 		{
 			_logger.LogInformation("Rozpoczynam resetowanie formularza kategorii funduszu oraz stanu błędów UI.");
 
-			FundCategoryRequest = new FundCategoryRequest() { Name = FundCategory.Name };
+			FundCategoryRequest = new FundCategoryRequest() { Name = FundCategory.Name, Description = FundCategory.Description };
 			Message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby dodatnie. Nazwa wymagana.";
 			MessageColor = ShouldBeEntryColor = (Color)Application.Current.Resources["Positive"];
 			FundFilterRequest.FundCategoryId = FundCategory.Id;

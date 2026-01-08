@@ -15,7 +15,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 	public class AddFundPageViewModel : INotifyPropertyChanged
 	{
 		private User _user;
-		private FundRequest _fundRequest;
+		private FundRequest _fundRequest = new FundRequest();
 		private ObservableCollection<FundCategory> _fundCategorie = new ObservableCollection<FundCategory>();
 		private FundCategoryRequest _fundCategoryRequest = new FundCategoryRequest();
 		private FundCategoryFilterRequest _fundCategoryFilterRequest = new FundCategoryFilterRequest();
@@ -146,8 +146,28 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 				{
 					_fundRequest = value;
 					OnPropertyChanged(nameof(FundRequest));
+
 				}
 			}
+		}
+
+		public string Description
+		{
+			get => FundRequest.Description;
+			set
+			{
+				if (FundRequest.Description == value)
+					return;
+
+				FundRequest.Description = value;
+				OnPropertyChanged(nameof(Description));
+				OnPropertyChanged(nameof(DescriptionCount));
+			}
+		}
+
+		public int DescriptionCount
+		{
+			get => FundRequest.Description?.Length ?? 0;
 		}
 
 		public FundCategoryRequest FundCategoryRequest
@@ -347,6 +367,7 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 			_logger.LogInformation("Rozpoczynam resetowanie stanu funduszu i błędów UI.");
 
 			FundRequest = new FundRequest();
+			Description = String.Empty;
 			FundCategoryRequest = new FundCategoryRequest();
 			Message = "Format: 00.00. Do 15 przed piecinkiem, 2 po przecinku. Jedynie liczby pozytywne.";
 			MessageColor = AmountEntryColor = (Color)Application.Current.Resources["Positive"];

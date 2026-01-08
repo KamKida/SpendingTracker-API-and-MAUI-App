@@ -48,7 +48,9 @@ namespace SpendingTracker.Application.Services
 					Id = f.Id,
 					Amount = f.Amount,
 					CreationDate = f.CreationDate,
-					FundCategory = f.FundCategory
+					FundCategory = f.FundCategory,
+					Description = f.Description
+					
 				})
 				.AsNoTracking()
 				.ToListAsync();
@@ -109,6 +111,7 @@ namespace SpendingTracker.Application.Services
 
 			fundToEdit.Amount = fundRequest.Amount;
 			fundToEdit.FundCategoryId = fundRequest.FundCategoryId;
+			fundToEdit.Description = fundRequest.Description;
 
 			await _context.SaveChangesAsync();
 		}
