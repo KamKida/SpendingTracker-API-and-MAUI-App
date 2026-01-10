@@ -2,14 +2,13 @@
 
 namespace SpendingTrackerApp.Contracts.Dtos.Requests
 {
-	public class FundFilterRequest : INotifyPropertyChanged
+	public class SpendingFilterRequest : INotifyPropertyChanged
 	{
 		private decimal? _amountFrom;
 		private decimal? _amountTo;
 		private DateTime? _dateFrom = DateTime.Now;
 		private DateTime? _dateTo = DateTime.Now;
 		private DateTime? _lastDate;
-		private Guid? _fundCategoryId;
 
 
 		public decimal? AmountFrom
@@ -77,18 +76,7 @@ namespace SpendingTrackerApp.Contracts.Dtos.Requests
 			}
 		}
 
-		public Guid? FundCategoryId
-		{
-			get => _fundCategoryId;
-			set
-			{
-				if (_fundCategoryId != value)
-				{
-					_fundCategoryId = value;
-					OnPropertyChanged(nameof(FundCategoryId));
-				}
-			}
-		}
+
 		public void Reset()
 		{
 			AmountFrom = null;
@@ -97,9 +85,9 @@ namespace SpendingTrackerApp.Contracts.Dtos.Requests
 			DateTo = DateTime.Now;
 		}
 
-		public FundFilterRequest Clone()
+		public SpendingFilterRequest Clone()
 		{
-			return new FundFilterRequest
+			return new SpendingFilterRequest
 			{
 				DateFrom = this.DateFrom,
 				DateTo = this.DateTo,

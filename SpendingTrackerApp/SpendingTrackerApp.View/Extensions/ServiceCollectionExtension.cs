@@ -7,6 +7,7 @@ using SpendingTrackerApp.ViewModels;
 using SpendingTrackerApp.ViewModels.FundCategoryViewModels;
 using SpendingTrackerApp.ViewModels.FundViewModels;
 using SpendingTrackerApp.ViewModels.LoginViewModels;
+using SpendingTrackerApp.ViewModels.SpendingViewModels;
 
 namespace SpendingTrackerApp.Infrastructure.Extensions
 {
@@ -34,14 +35,20 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddScoped<AddFundCategoryPageViewModel>();
             services.AddScoped<EditFundCategoryPageViewModel>();
 
+            services.AddScoped<SpendingHistoryPageViewModel>();
+            services.AddScoped<AddSpendingPageViewModel>();
+            services.AddScoped<EditSpendingPageViewModel>();
+
 
 			//Services
 			services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFundService, FundService>();
             services.AddScoped<IFundCategoryService, FundCategotuService>();
+            services.AddScoped<ISpendingService, SpendingService>();
 
             //Auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
             return services;
         }

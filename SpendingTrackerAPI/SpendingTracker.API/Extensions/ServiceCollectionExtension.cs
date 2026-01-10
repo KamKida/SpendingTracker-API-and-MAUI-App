@@ -28,6 +28,7 @@ namespace SpendingTracker.Infrastructure.Extensions
             services.AddScoped<UserEditRequestValidator>();
             services.AddScoped<FundRequestValidator>();
             services.AddScoped<FundCategoryRequestValidator>();
+            services.AddScoped<SpendingRequestValidator>();
            
             //Auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -36,6 +37,7 @@ namespace SpendingTracker.Infrastructure.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFundService, FundService>();
             services.AddScoped<IFundCategotuService, FundCategotuService>();
+            services.AddScoped<ISpendingService, SpendingService>();
 
             //Context services
             services.AddScoped<IUserContextService,UserContextService>();

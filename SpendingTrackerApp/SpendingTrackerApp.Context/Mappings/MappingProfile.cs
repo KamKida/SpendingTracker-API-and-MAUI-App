@@ -17,9 +17,13 @@ namespace SpendingTrackerApp.Infrastructure.Mappings
             CreateMap<Fund, FundRequest>();
             CreateMap<FundResponse, Fund>();
 
-            //Fund cattegory
+            //Fund cattegory mapping
             CreateMap<FundCategory, FundCategoryRequest>();
             CreateMap<FundCategoryResponse, FundCategory>();
-        }
+
+			//Spending mapping
+			CreateMap<Spending, SpendingRequest>();
+			CreateMap<SpendingReponse, Spending>();
+		}
     }
 }

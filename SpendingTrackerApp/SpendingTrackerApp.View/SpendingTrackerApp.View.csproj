@@ -61,8 +61,10 @@
 	  <None Remove="Resources\Images\ButtonIcons\add.png" />
 	  <None Remove="Resources\Images\ButtonIcons\calendar.png" />
 	  <None Remove="Resources\Images\ButtonIcons\delete.png" />
+	  <None Remove="Resources\Images\MenuIcons\budget.png" />
 	  <None Remove="Resources\Images\MenuIcons\funds.png" />
 	  <None Remove="Resources\Images\MenuIcons\home.png" />
+	  <None Remove="Resources\Images\MenuIcons\spending.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -102,6 +104,15 @@
 	  <MauiXaml Update="Pages\MainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\SpendingPages\AddSpendingPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\SpendingPages\EditSpendingPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\SpendingPages\SpendingHistoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -123,6 +134,9 @@
 	  <Compile Update="Pages\MainPage.xaml.cs">
 	    <DependentUpon>MainPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Pages\SpendingPages\SpendingHistoryPage.xaml.cs">
+	    <DependentUpon>SpendingHistoryPage.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -136,13 +150,15 @@
 	  <MauiImage Include="Resources\Images\ButtonIcons\calendar.png" />
 	  <MauiImage Include="Resources\Images\ButtonIcons\delete.png" />
 	  <MauiImage Include="Resources\Images\ButtonIcons\hide_password.png" />
-	  <MauiImage Include="Resources\Images\ButtonIcons\funds_category.png" />
+	  <MauiImage Include="Resources\Images\MenuIcons\budget.png" />
+	  <MauiImage Include="Resources\Images\MenuIcons\funds_category.png" />
 	  <MauiImage Include="Resources\Images\ButtonIcons\show_password.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiImage Include="Resources\Images\MenuIcons\funds.png" />
 	  <MauiImage Include="Resources\Images\MenuIcons\home.png" />
+	  <MauiImage Include="Resources\Images\MenuIcons\spending.png" />
 	</ItemGroup>
 
 </Project>

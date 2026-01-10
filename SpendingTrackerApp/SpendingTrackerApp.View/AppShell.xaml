@@ -6,15 +6,11 @@
     xmlns:local="clr-namespace:SpendingTrackerApp.Pages"
     xmlns:funds="clr-namespace:SpendingTrackerApp.Pages.LoginPages"
     xmlns:fundCat="clr-namespace:SpendingTrackerApp.Pages.FundCategorysPages"
+    xmlns:spendings="clr-namespace:SpendingTrackerApp.Pages.SpendingPages"
     xmlns:start="clr-namespace:SpendingTrackerApp"
 
     Title="SpendingTrackerApp"
     FlyoutBehavior="Flyout">
-
-	<ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate funds:FundsHistoryPage}"
-        Route="LoginPage" />
 
 	<FlyoutItem
         Icon="home.png"
@@ -38,6 +34,14 @@
 		<ShellContent
         ContentTemplate="{DataTemplate fundCat:FundCategoryList}"
         Route="FundCategoryList"/>
+	</FlyoutItem>
+
+	<FlyoutItem
+    Icon="spending.png"
+    Title="Historia wydatków">
+		<ShellContent
+        ContentTemplate="{DataTemplate spendings:SpendingHistoryPage}"
+        Route="SpendingHistoryPage"/>
 	</FlyoutItem>
 
 </Shell>

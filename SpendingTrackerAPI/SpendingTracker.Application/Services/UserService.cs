@@ -177,8 +177,12 @@ namespace SpendingTracker.Application.Services
                                     ThisMonthFund = u.Funds
                                     .Where(f => f.CreationDate.Month == today.Month
                                             && f.CreationDate.Year == today.Year)
-                                    .Sum(f => f.Amount)
-                                }).FirstOrDefaultAsync();
+                                    .Sum(f => f.Amount),
+                                    ThisMonthSpendings = u.Spendings
+									.Where(s => s.CreationDate.Month == today.Month
+											&& s.CreationDate.Year == today.Year)
+									.Sum(s => s.Amount)
+								}).FirstOrDefaultAsync();
 
             if(response == null)
             {
