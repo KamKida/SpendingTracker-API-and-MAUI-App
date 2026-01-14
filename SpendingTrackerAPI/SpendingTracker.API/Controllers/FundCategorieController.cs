@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Application.Interfaces.Services;
 using SpendingTracker.Application.Services;
 using SpendingTracker.Contracts.Dtos.Requests;
+using SpendingTracker.Contracts.Dtos.Requests.FiltersRequests;
 
 namespace SpendingTracker.API.Controllers
 {
@@ -16,7 +18,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpGet("get10")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> Get10([FromQuery] FundCategoryFilterRequest request)
 		{
 			var response = await _fundCategotuService.GetByFilter(request);
@@ -25,7 +27,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpPost("add")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> AddFundCategory([FromBody] FundCategoryRequest request)
 		{
 			await _fundCategotuService.AddFundCategory(request);
@@ -35,7 +37,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpDelete("delete/{fundId}")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> DeleteFundCategory([FromRoute] Guid fundId)
 		{
 			await _fundCategotuService.DeleteFundCategory(fundId);
@@ -44,7 +46,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpPut("edit")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> EditFundCategory([FromBody] FundCategoryRequest request)
 		{
 			await _fundCategotuService.EditFundCategory(request);

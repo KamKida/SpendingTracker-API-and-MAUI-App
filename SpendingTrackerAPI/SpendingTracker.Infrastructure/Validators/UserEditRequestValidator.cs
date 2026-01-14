@@ -5,7 +5,7 @@ namespace SpendingTracker.Infrastructure.Validators
 {
     public class UserEditRequestValidator : AbstractValidator<UserRequest>
     {
-        public UserEditRequestValidator()
+        public UserEditRequestValidator(bool checkPassword = true)
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
@@ -13,11 +13,15 @@ namespace SpendingTracker.Infrastructure.Validators
                 .EmailAddress()
                 .WithMessage("Należy podać adres e-mail.");
 
-
-            RuleFor(x => x.Password)
-                .MinimumLength(6)
-                .WithMessage("Hasło musi mieć co najmniej sześć znaków.");
-        }
+			When(_ => checkPassword, () =>
+			{
+				RuleFor(x => x.Password)
+					.NotEmpty()
+					.WithMessage("Hasło jest wymagane.")
+					.MinimumLength(6)
+					.WithMessage("Hasło musi mieć co najmniej 6 znaków.");
+			});
+		}
 
     }
 }

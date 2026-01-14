@@ -11,5 +11,7 @@ namespace SpendingTrackerApp.Infrastructure.Interfaces
         Task<HttpResponseMessage> ResetPassword(UserRequest request);
 
         Task<HttpResponseMessage> GetBaseInfo();
+        Task<HttpResponseMessage> EditUser(UserRequest request);
+        Task<HttpResponseMessage> DeleteUser();
     }
 }

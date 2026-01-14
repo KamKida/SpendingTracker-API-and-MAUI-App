@@ -61,10 +61,11 @@
 	  <None Remove="Resources\Images\ButtonIcons\add.png" />
 	  <None Remove="Resources\Images\ButtonIcons\calendar.png" />
 	  <None Remove="Resources\Images\ButtonIcons\delete.png" />
-	  <None Remove="Resources\Images\MenuIcons\budget.png" />
+	  <None Remove="Resources\Images\ButtonIcons\log_off.png" />
 	  <None Remove="Resources\Images\MenuIcons\funds.png" />
 	  <None Remove="Resources\Images\MenuIcons\home.png" />
 	  <None Remove="Resources\Images\MenuIcons\spending.png" />
+	  <None Remove="Resources\Images\MenuIcons\user.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -74,13 +75,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="AddShells\AppShellMain.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\FundCategorysPages\AddFundCategoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\FundCategorysPages\EditFundCategoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\FundCategorysPages\FundCategoryList.xaml">
+	  <MauiXaml Update="Pages\FundCategorysPages\FundCategoryListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\FundsPages\EditFundPage.xaml">
@@ -98,10 +102,16 @@
 	  <MauiXaml Update="Pages\LoginPages\ResetAccountPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\LoadingDataPage.xaml">
+	  <MauiXaml Update="Pages\MainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\MainPage.xaml">
+	  <MauiXaml Update="Pages\SpendingCategoryPages\AddSpendingCategoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\SpendingCategoryPages\EditSpendingCategoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\SpendingCategoryPages\SpendingCategoryListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\SpendingPages\AddSpendingPage.xaml">
@@ -113,6 +123,9 @@
 	  <MauiXaml Update="Pages\SpendingPages\SpendingHistoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\UserPages\EditUserPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -122,20 +135,29 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="AddShells\AppShellLogin.xaml.cs">
+	    <DependentUpon>AppShellLogin.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="AddShells\AppShellMain.xaml.cs">
+	    <DependentUpon>AppShellMain.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\FundCategorysPages\FundCategoryListPage.xaml.cs">
+	    <DependentUpon>FundCategoryListPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\LoginPages\CreateAcountPage.xaml.cs">
 	    <DependentUpon>CreateAcountPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Pages\LoginPages\ResetAccountPage.xaml.cs">
 	    <DependentUpon>ResetAccountPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\LoadingDataPage.xaml.cs">
-	    <DependentUpon>LoadingDataPage.xaml</DependentUpon>
-	  </Compile>
 	  <Compile Update="Pages\MainPage.xaml.cs">
 	    <DependentUpon>MainPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Pages\SpendingPages\SpendingHistoryPage.xaml.cs">
 	    <DependentUpon>SpendingHistoryPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\UserPages\EditUserPage.xaml.cs">
+	    <DependentUpon>EditUserPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -150,7 +172,8 @@
 	  <MauiImage Include="Resources\Images\ButtonIcons\calendar.png" />
 	  <MauiImage Include="Resources\Images\ButtonIcons\delete.png" />
 	  <MauiImage Include="Resources\Images\ButtonIcons\hide_password.png" />
-	  <MauiImage Include="Resources\Images\MenuIcons\budget.png" />
+	  <MauiImage Include="Resources\Images\ButtonIcons\log_off.png" />
+	  <MauiImage Include="Resources\Images\MenuIcons\spending_category.png" />
 	  <MauiImage Include="Resources\Images\MenuIcons\funds_category.png" />
 	  <MauiImage Include="Resources\Images\ButtonIcons\show_password.png" />
 	</ItemGroup>
@@ -159,6 +182,7 @@
 	  <MauiImage Include="Resources\Images\MenuIcons\funds.png" />
 	  <MauiImage Include="Resources\Images\MenuIcons\home.png" />
 	  <MauiImage Include="Resources\Images\MenuIcons\spending.png" />
+	  <MauiImage Include="Resources\Images\MenuIcons\user.png" />
 	</ItemGroup>
 
 </Project>

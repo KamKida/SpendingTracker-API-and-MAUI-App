@@ -12,9 +12,22 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
     {
         private readonly IUserService _service;
         private readonly ILogger<ResetAccountPageViewModel> _logger;
-        public UserRequest _userRequest { get; set; }
+		private UserRequest _userRequest;
 
-        private bool _hidePassword = true;
+		public UserRequest UserRequest
+		{
+			get => _userRequest;
+			set
+			{
+				if (_userRequest != value)
+				{
+					_userRequest = value;
+					OnPropertyChanged(nameof(UserRequest));
+				}
+			}
+		}
+
+		private bool _hidePassword = true;
         private string _passwordIcon = "hide_password.png";
 
         private string _message = "Wprować swój e-mail i nowe hasło.";
@@ -130,6 +143,17 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
             ResetAccountCommand = new Command(async () => await ResetAccount());
 
         }
+
+		public async Task Reset()
+		{
+			UserRequest = new UserRequest();
+			ShowLoadingIcon = false;
+			RunLoadingIcon = false;
+			Message = "Wprować swój e-mail i nowe hasło.";
+			MessageColor = Colors.Green;
+            BlockInteraction = false;
+
+		}
 
 		private async Task ResetAccount()
 		{

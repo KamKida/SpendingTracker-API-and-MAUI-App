@@ -1,6 +1,6 @@
 using SpendingTrackerApp.ViewModels.LoginViewModels;
 
-namespace SpendingTrackerApp.Pages;
+namespace SpendingTrackerApp.Pages.LoginPages;
 
 public partial class ResetPasswordPage : ContentPage
 {
@@ -9,4 +9,15 @@ public partial class ResetPasswordPage : ContentPage
 		InitializeComponent();
         BindingContext = vm;
     }
+
+	protected async override void OnAppearing()
+	{
+		base.OnAppearing();
+
+		var vm = BindingContext as ResetAccountPageViewModel;
+		if (vm != null)
+		{
+			await vm.Reset();
+		}
+	}
 }

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SpendingTrackerApp.Pages.UserPages.EditUserPage"
+             Title="Konto">
+
+
+	<Grid 
+                RowDefinitions="*,Auto"
+                InputTransparent="{Binding BlockInteraction}">
+		<Grid
+	        Grid.Row="0"
+            RowDefinitions="Auto,Auto,Auto,Auto,Auto, Auto"
+            RowSpacing="30"
+            Padding="30">
+
+			<Border
+                    Grid.Row="0">
+				<Entry
+                        Placeholder="Imię"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        Text ="{Binding UserRequest.FirstName}"
+                        FontSize="20"
+                        HorizontalTextAlignment="End"/>
+
+
+			</Border>
+
+			<Border
+            Grid.Row="1">
+				<Entry
+                Placeholder="Nazwisko"
+                TextColor="White"
+                BackgroundColor="Transparent"
+                Text ="{Binding UserRequest.LastName}"
+                FontSize="20"
+                HorizontalTextAlignment="End"/>
+
+
+			</Border>
+
+			<Border
+            Grid.Row="2">
+				<Entry
+                Placeholder="email@email.com"
+                TextColor="White"
+                BackgroundColor="Transparent"
+                Text ="{Binding UserRequest.Email}"
+                FontSize="20"
+                HorizontalTextAlignment="End"/>
+
+
+			</Border>
+
+			<Border
+        
+            Grid.Row="3">
+				<Entry 
+                Placeholder="hasło"
+                IsPassword="{Binding HidePassword}" 
+                Text="{Binding UserRequest.Password}"
+                BackgroundColor="Transparent"
+                TextColor="White"
+                HorizontalTextAlignment="End"
+                FontSize="25"/>
+
+			</Border>
+
+			<Grid
+        Grid.Row="4"
+        RowDefinitions="Auto, Auto, *"
+        ColumnDefinitions="*, *"
+        ColumnSpacing="30"
+        RowSpacing="30">
+
+				<Button
+        
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalOptions="Center"
+                HorizontalOptions="Start"
+                Text="Zapisz"
+                FontSize="20"
+                WidthRequest="200"
+                Command ="{Binding EditAccountCommand }"/>
+
+				<Border
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HeightRequest="75"
+                    WidthRequest="75"
+                    Padding="0"
+                    StrokeShape="RoundRectangle 50,50,50,50" >
+
+					<ImageButton
+                    HeightRequest="50"
+                    WidthRequest="50"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Source="{Binding PasswordIcon}"
+                    Command="{Binding TogglePasswordCommand}"/>
+				</Border>
+
+
+				<Border 
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Background="White"
+                    IsVisible="{Binding ShowMessage}"
+                    Padding="10">
+
+					<Label 
+                    Text="{Binding Message}"
+                    TextColor="{Binding MessageColor}"
+                    FontSize="30"
+                    LineBreakMode="WordWrap" />
+				</Border>
+			</Grid>
+
+			<Button
+        
+    Grid.Row="5"
+    Grid.Column="0"
+    VerticalOptions="Center"
+    HorizontalOptions="Center"
+    BackgroundColor="{StaticResource Negative}"
+    Text="Usuń konto"
+    FontSize="20"
+    WidthRequest="200"
+    Command ="{Binding DeleteAccountCommand}"/>
+		</Grid>
+
+		<Grid
+        IsVisible="{Binding ShowLoadingIcon}"
+        BackgroundColor="#80000000"
+        ZIndex="999">
+
+			<ActivityIndicator
+                IsRunning="{Binding RunLoadingIcon}"
+                Color="White"
+                WidthRequest="80"
+                HeightRequest="80"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"/>
+
+		</Grid>
+	</Grid>
+
+</ContentPage>

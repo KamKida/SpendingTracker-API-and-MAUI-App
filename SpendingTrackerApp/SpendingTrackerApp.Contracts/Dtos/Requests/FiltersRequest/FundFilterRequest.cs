@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace SpendingTrackerApp.Contracts.Dtos.Requests
+namespace SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest
 {
 	public class FundFilterRequest : INotifyPropertyChanged
 	{
@@ -101,11 +101,11 @@ namespace SpendingTrackerApp.Contracts.Dtos.Requests
 		{
 			return new FundFilterRequest
 			{
-				DateFrom = this.DateFrom,
-				DateTo = this.DateTo,
-				AmountFrom = this.AmountFrom,
-				AmountTo = this.AmountTo,
-				LastDate = this.LastDate
+				DateFrom = DateFrom,
+				DateTo = DateTo,
+				AmountFrom = AmountFrom,
+				AmountTo = AmountTo,
+				LastDate = LastDate
 			};
 		}
 

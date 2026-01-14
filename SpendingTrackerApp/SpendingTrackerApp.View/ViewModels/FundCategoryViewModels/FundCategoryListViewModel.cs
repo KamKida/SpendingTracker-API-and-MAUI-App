@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using SpendingTrackerApp.Contracts.Dtos.Requests;
+using SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest;
 using SpendingTrackerApp.Contracts.Dtos.Responses;
 using SpendingTrackerApp.Domain.HelpModels;
 using SpendingTrackerApp.Domain.Models;

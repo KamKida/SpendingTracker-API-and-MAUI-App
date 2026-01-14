@@ -1,4 +1,5 @@
 ﻿using SpendingTracker.Contracts.Dtos.Requests;
+using SpendingTracker.Contracts.Dtos.Requests.FiltersRequests;
 using SpendingTracker.Contracts.Dtos.Responses;
 using System;
 using System.Collections.Generic;

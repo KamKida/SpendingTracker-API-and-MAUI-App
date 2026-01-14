@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Application.Interfaces.Services;
 using SpendingTracker.Contracts.Dtos.Requests;
+using SpendingTracker.Contracts.Dtos.Requests.FiltersRequests;
 
 namespace SpendingTracker.API.Controllers
 {
@@ -17,8 +18,8 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpGet("get10")]
-		//[Authorize]
-		public async Task<IActionResult> Get10([FromQuery]FundFilterRequest request)
+		[Authorize]
+		public async Task<IActionResult> Get10([FromQuery] FundFilterRequest request)
 		{
 			var response = await _fundService.GetByFilter(request);
 
@@ -26,7 +27,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpPost("add")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> AddFund([FromBody] FundRequest request)
 		{
 			await _fundService.AddFund(request);
@@ -36,7 +37,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpDelete("delete/{fundId}")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> DeleteFund([FromRoute] Guid fundId)
 		{
 			await _fundService.DeleteFund(fundId);
@@ -45,7 +46,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpPut("edit")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> EditFund([FromBody] FundRequest request)
 		{
 			await _fundService.EditFund(request);

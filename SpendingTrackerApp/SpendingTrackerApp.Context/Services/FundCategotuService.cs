@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
+using SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using System.Net.Http.Json;

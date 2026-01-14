@@ -24,6 +24,10 @@ namespace SpendingTracker.Infrastructure.Mappings
             //Spending mapping
             CreateMap<Spending, SpendingReponse>();
             CreateMap<SpendingRequest, Spending>();
-        }
+
+			//Spending category mapping
+			CreateMap<SpendingCategory, SpendingCategoryResponse>();
+			CreateMap<SpendingCategoryRequest, SpendingCategory>();
+		}
     }
 }

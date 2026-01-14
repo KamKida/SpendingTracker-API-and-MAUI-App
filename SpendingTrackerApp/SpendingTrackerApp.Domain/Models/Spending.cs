@@ -5,7 +5,7 @@ namespace SpendingTrackerApp.Domain.Models
 	public class Spending : INotifyPropertyChanged
 	{
 		public Guid Id { get; set; }
-		//public SpendingCategory? SpendingCategory { get; set; }
+		public SpendingCategory? SpendingCategory { get; set; }
 		private decimal _amount;
 		private DateTime _creationDate;
 		private string? _description;

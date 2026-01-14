@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
+using SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest;
 using SpendingTrackerApp.Contracts.Dtos.Responses;
 using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
-using SpendingTrackerApp.Pages.LoginPages;
+using SpendingTrackerApp.Pages.FundsPages;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
@@ -432,12 +433,6 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 						content
 					);
 
-					FundCategory.Name = FundCategoryRequest.Name;
-					if (FundCategory.ShouldBe != FundCategoryRequest.ShouldBe)
-					{
-						FundCategory.ShouldBe = FundCategoryRequest.ShouldBe;
-					}
-
 					MessageColor = (Color)Application.Current.Resources["Negative"];
 					Message = "Coś poszło nie tak. Spróbuj ponownie.";
 					return;
@@ -665,25 +660,6 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 			else FiltersVisible = false;
 
 			_logger.LogInformation("Filtry są widoczne. {FiltersVisible}", FiltersVisible);
-		}
-		private async Task GoToAddFundPage()
-		{
-			_logger.LogInformation("Rozpoczynam nawigację do strony dodawania funduszu.");
-
-			try
-			{
-				await Shell.Current.GoToAsync(nameof(AddFundPage));
-
-				_logger.LogInformation("Nawigacja do strony dodawania funduszu zakończona sukcesem.");
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(
-					ex,
-					"Nieoczekiwany błąd podczas nawigacji do strony dodawania funduszu."
-				);
-				throw;
-			}
 		}
 		private async Task ResetFilter()
 		{

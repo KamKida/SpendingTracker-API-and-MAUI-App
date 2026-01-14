@@ -13,8 +13,8 @@ namespace SpendingTrackerApp.Domain.Models
 		private decimal _thisMonthFund;
 		private decimal _thisMonthSpendings;
 
-
-		private ObservableCollection<Fund> _funds = new();
+		private ObservableCollection<Spending> _spendings = new ObservableCollection<Spending>();
+		private ObservableCollection<SpendingCategory> _spendingCategorys = new ObservableCollection<SpendingCategory>();
 
 
 		public string Email
@@ -100,6 +100,32 @@ namespace SpendingTrackerApp.Domain.Models
 				{
 					_thisMonthSpendings = value;
 					OnPropertyChanged(nameof(ThisMonthSpendings));
+				}
+			}
+		}
+
+		public ObservableCollection<Spending> Spendings
+		{
+			get => _spendings;
+			set
+			{
+				if (_spendings != value)
+				{
+					_spendings = value;
+					OnPropertyChanged(nameof(Spendings));
+				}
+			}
+		}
+
+		public ObservableCollection<SpendingCategory> SpendingCategorys
+		{
+			get => _spendingCategorys;
+			set
+			{
+				if (_spendingCategorys != value)
+				{
+					_spendingCategorys = value;
+					OnPropertyChanged(nameof(SpendingCategorys));
 				}
 			}
 		}

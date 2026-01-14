@@ -1,23 +1,24 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Shell
-    x:Class="SpendingTrackerApp.AppShell"
+    x:Class="SpendingTrackerApp.AddShells.AppShellMain"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SpendingTrackerApp.Pages"
-    xmlns:funds="clr-namespace:SpendingTrackerApp.Pages.LoginPages"
+    xmlns:funds="clr-namespace:SpendingTrackerApp.Pages.FundsPages"
     xmlns:fundCat="clr-namespace:SpendingTrackerApp.Pages.FundCategorysPages"
     xmlns:spendings="clr-namespace:SpendingTrackerApp.Pages.SpendingPages"
-    xmlns:start="clr-namespace:SpendingTrackerApp"
-
-    Title="SpendingTrackerApp"
+    xmlns:spendingCat="clr-namespace:SpendingTrackerApp.Pages.SpendingCategoryPages"
+    xmlns:user="clr-namespace:SpendingTrackerApp.Pages.UserPages"
+	Title="SpendingTrackerApp"
     FlyoutBehavior="Flyout">
 
 	<FlyoutItem
         Icon="home.png"
         Title="Meny główne">
-		<ShellContent
+	<ShellContent
             ContentTemplate="{DataTemplate local:MainPage}"
-            Route="MainPage"/>
+            Route="MainPage"
+            IsVisible="True" />
 	</FlyoutItem>
 
 	<FlyoutItem
@@ -32,8 +33,8 @@
     Icon="funds_category.png"
     Title="Lista kategori funduszy">
 		<ShellContent
-        ContentTemplate="{DataTemplate fundCat:FundCategoryList}"
-        Route="FundCategoryList"/>
+        ContentTemplate="{DataTemplate fundCat:FundCategoryListPage}"
+        Route="FundCategoryListPage"/>
 	</FlyoutItem>
 
 	<FlyoutItem
@@ -42,6 +43,22 @@
 		<ShellContent
         ContentTemplate="{DataTemplate spendings:SpendingHistoryPage}"
         Route="SpendingHistoryPage"/>
+	</FlyoutItem>
+
+	<FlyoutItem
+    Icon="spending_category.png"
+    Title="Lista kategori wydatków">
+		<ShellContent
+        ContentTemplate="{DataTemplate spendingCat:SpendingCategoryListPage}"
+        Route="SpendingCategoryListPage"/>
+	</FlyoutItem>
+
+	<FlyoutItem
+    Icon="user.png"
+    Title="Konto uzytkownika">
+		<ShellContent
+        ContentTemplate="{DataTemplate user:EditUserPage}"
+        Route="EditUserPage"/>
 	</FlyoutItem>
 
 </Shell>

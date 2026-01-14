@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SpendingTrackerApp.Pages.CreateAcountPage"
+             x:Class="SpendingTrackerApp.Pages.LoginPages.CreateAcountPage"
              Title="Utwórz konto">
 
 
@@ -19,7 +19,9 @@
 				<Entry
                         Placeholder="Imię"
                         BackgroundColor="Transparent"
-                        Text ="{Binding Request.FirstName}"
+                        
+                        TextColor="White"
+                        Text ="{Binding UserRequest.FirstName}"
                         FontSize="20"
                         HorizontalTextAlignment="End"/>
 
@@ -31,7 +33,9 @@
 				<Entry
                 Placeholder="Nazwisko"
                 BackgroundColor="Transparent"
-                Text ="{Binding Request.LastName}"
+                
+                TextColor="White"
+                Text ="{Binding UserRequest.LastName}"
                 FontSize="20"
                 HorizontalTextAlignment="End"/>
 
@@ -43,7 +47,8 @@
 				<Entry
                 Placeholder="email@email.com"
                 BackgroundColor="Transparent"
-                Text ="{Binding Request.Email}"
+                Text ="{Binding UserRequest.Email}"
+                TextColor="White"
                 FontSize="20"
                 HorizontalTextAlignment="End"/>
 
@@ -56,7 +61,7 @@
 				<Entry 
                 Placeholder="hasło"
                 IsPassword="{Binding HidePassword}" 
-                Text="{Binding Request.Password}"
+                Text="{Binding UserRequest.Password}"
                 BackgroundColor="Transparent"
                 TextColor="White"
                 HorizontalTextAlignment="End"

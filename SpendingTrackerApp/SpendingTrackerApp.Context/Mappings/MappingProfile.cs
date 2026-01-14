@@ -11,7 +11,11 @@ namespace SpendingTrackerApp.Infrastructure.Mappings
         {
             //User mapping
             CreateMap<User, UserRequest>();
-            CreateMap<UserResponse, User>();
+            CreateMap<UserResponse, User>()
+                .ForMember(dest => dest.Spendings, opt => opt.MapFrom(src => src.SpendingReponses))
+				.ForMember(dest => dest.SpendingCategorys, opt => opt.MapFrom(src => src.SpendingCategoryResponses));
+
+            CreateMap<UserRequest, User>();
 
             //Fund mapping
             CreateMap<Fund, FundRequest>();
@@ -23,7 +27,11 @@ namespace SpendingTrackerApp.Infrastructure.Mappings
 
 			//Spending mapping
 			CreateMap<Spending, SpendingRequest>();
-			CreateMap<SpendingReponse, Spending>();
+			CreateMap<SpendingResponse, Spending>();
+
+			//Spending cattegory mapping
+			CreateMap<SpendingCategory, SpendingCategoryRequest>();
+			CreateMap<SpendingCategoryResponse, SpendingCategory>();
 		}
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SpendingTracker.Application.Interfaces.ContextServices;
 using SpendingTracker.Application.Interfaces.Services;
 using SpendingTracker.Contracts.Dtos.Requests;
+using SpendingTracker.Contracts.Dtos.Requests.FiltersRequests;
 using SpendingTracker.Contracts.Dtos.Responses;
 using SpendingTracker.Domain.Exeptions;
 using SpendingTracker.Domain.Models;
@@ -37,8 +38,7 @@ namespace SpendingTracker.Application.Services
 
 		public async Task<List<FundCategoryResponse>> GetByFilter(FundCategoryFilterRequest request)
 		{
-			//_userContextService.GetUserId()
-			var query = _context.FundCategories.Where(f => f.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42"));
+			var query = _context.FundCategories.Where(f => f.UserId == _userContextService.GetUserId());
 
 			query = AddFilter(query, request);
 
@@ -72,9 +72,7 @@ namespace SpendingTracker.Application.Services
 
 			FundCategory newFundCategory = _mapper.Map<FundCategory>(request);
 
-			newFundCategory.UserId = Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42");
-
-			//newFundcategory.UserId = (Guid)_userContextService.GetUserId();
+			newFundCategory.UserId = (Guid)_userContextService.GetUserId();
 			await _context.FundCategories.AddAsync(newFundCategory);
 			await _context.SaveChangesAsync();
 
@@ -97,9 +95,9 @@ namespace SpendingTracker.Application.Services
 		}
 
 		public async Task EditFundCategory(FundCategoryRequest fundCategoryRequest)
-		{//_userContextService.GetUserId()
+		{
 			FundCategory fundCategoryToEdit = await _context.FundCategories
-			.Where(f => f.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42")
+			.Where(f => f.UserId ==  _userContextService.GetUserId()
 				&& f.Id == fundCategoryRequest.Id)
 				.FirstOrDefaultAsync();
 
@@ -109,7 +107,10 @@ namespace SpendingTracker.Application.Services
 			}
 
 			fundCategoryToEdit.Name = fundCategoryRequest.Name;
-			fundCategoryToEdit.ShouldBe = fundCategoryRequest.ShouldBe;
+			if(fundCategoryRequest.ShouldBe.HasValue)
+			{
+				fundCategoryToEdit.ShouldBe = fundCategoryRequest.ShouldBe;
+			}
 			fundCategoryToEdit.Description = fundCategoryRequest.Description;
 
 			await _context.SaveChangesAsync();

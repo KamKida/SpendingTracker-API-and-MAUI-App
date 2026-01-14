@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SpendingTrackerApp.Pages.ResetPasswordPage"
+             x:Class="SpendingTrackerApp.Pages.LoginPages.ResetPasswordPage"
              Title="Resetuj hasło">
 
 	<Grid
@@ -17,8 +17,9 @@
 			<Border
                 Grid.Row="0">
 				<Entry 
+                Background="Transparent"
                 Placeholder="email@email.com"
-                Text ="{Binding Request.Email}"
+                Text ="{Binding UserRequest.Email}"
                 TextColor="White"
                 HorizontalTextAlignment="End"
                 FontSize="25"/>
@@ -29,7 +30,7 @@
                 Grid.Row="1">
 				<Entry 
                     Placeholder="hasło"
-                    Text="{Binding Request.Password}"
+                    Text="{Binding UserRequest.Password}"
                     BackgroundColor="Transparent"
                     TextColor="White"
                     HorizontalTextAlignment="End"

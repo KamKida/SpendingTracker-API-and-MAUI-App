@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using SpendingTrackerApp.AddShells;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Extensions;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Pages;
+using SpendingTrackerApp.Pages.LoginPages;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -13,9 +15,22 @@ public class LoginViewModel : INotifyPropertyChanged
     private readonly ILogger<LoginViewModel> _logger;
     BaseHttpService _htttp {  get; set; }
 
-    public UserRequest _userRequest {  get; set; }
+	private UserRequest _userRequest;
 
-    private bool _hidePassword = true;
+	public UserRequest UserRequest
+	{
+		get => _userRequest;
+		set
+		{
+			if (_userRequest != value)
+			{
+				_userRequest = value;
+				OnPropertyChanged(nameof(UserRequest));
+			}
+		}
+	}
+
+	private bool _hidePassword = true;
     private string _passwordIcon = "hide_password.png";
 
     private bool _showErrorMessage = false;
@@ -127,7 +142,6 @@ public class LoginViewModel : INotifyPropertyChanged
         IUserService userService,
 		ILogger<LoginViewModel> logger)
     {
-        _userRequest = new UserRequest() { Email ="test@test.pl", Password="testte"};
         _htttp = http;
         _userService = userService;
         _logger = logger;
@@ -138,6 +152,16 @@ public class LoginViewModel : INotifyPropertyChanged
         GoToResetPasswordPageCommand = new Command(async () => await GoToResetPasswordPage());
     }
 
+	public async Task Reset()
+	{
+	
+		UserRequest = new UserRequest() { Email = "test1@test.pl", Password = "inne22" };
+		ShowLoadingIcon = false;
+		RunLoadingIcon = false;
+		ShowErrorMessage = false;
+		BlockInteraction = false;
+
+	}
 	private async Task TogglePassword()
 	{
 		_logger.LogInformation(
@@ -160,7 +184,7 @@ public class LoginViewModel : INotifyPropertyChanged
 	{
 		_logger.LogInformation(
 			"Rozpoczynam logowanie użytkownika (UI). Email: {Email}",
-			_userRequest.Email
+			UserRequest.Email
 		);
 
 		KeyboardHelper.HideKeyboard();
@@ -171,11 +195,11 @@ public class LoginViewModel : INotifyPropertyChanged
 
 		try
 		{
-			var response = await _userService.LoginUser(_userRequest);
+			var response = await _userService.LoginUser(UserRequest);
 
 			_logger.LogInformation(
 				"Wynik logowania użytkownika (UI) {Email}: {StatusCode}",
-				_userRequest.Email,
+				UserRequest.Email,
 				response.StatusCode
 			);
 
@@ -183,7 +207,7 @@ public class LoginViewModel : INotifyPropertyChanged
 			{
 				_logger.LogWarning(
 					"Logowanie użytkownika (UI) nie powiodło się. Email: {Email}, StatusCode: {StatusCode}",
-					_userRequest.Email,
+					UserRequest.Email,
 					response.StatusCode
 				);
 
@@ -194,19 +218,19 @@ public class LoginViewModel : INotifyPropertyChanged
 
 			_logger.LogInformation(
 				"Logowanie użytkownika (UI) zakończone sukcesem. Ustawiam token. Email: {Email}",
-				_userRequest.Email
+				UserRequest.Email
 			);
 
 			_htttp.SetToken(await response.Content.ReadAsStringAsync());
 
-			await Shell.Current.GoToAsync(nameof(LoadingDataPage));
+			Application.Current.MainPage = new AppShellMain();
 		}
 		catch (HttpRequestException httpEx)
 		{
 			_logger.LogError(
 				httpEx,
 				"Błąd HTTP podczas logowania użytkownika (UI). Email: {Email}",
-				_userRequest.Email
+				UserRequest.Email
 			);
 			throw;
 		}
@@ -215,7 +239,7 @@ public class LoginViewModel : INotifyPropertyChanged
 			_logger.LogError(
 				ex,
 				"Nieoczekiwany błąd podczas logowania użytkownika (UI). Email: {Email}",
-				_userRequest.Email
+				UserRequest.Email
 			);
 			throw;
 		}
@@ -227,7 +251,7 @@ public class LoginViewModel : INotifyPropertyChanged
 
 			_logger.LogInformation(
 				"Zakończono proces logowania użytkownika (UI). Email: {Email}",
-				_userRequest.Email
+				UserRequest.Email
 			);
 		}
 	}

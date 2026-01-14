@@ -1,4 +1,4 @@
-﻿namespace SpendingTracker.Contracts.Dtos.Requests
+﻿namespace SpendingTracker.Contracts.Dtos.Requests.FiltersRequests
 {
 	public class FundCategoryFilterRequest
 	{

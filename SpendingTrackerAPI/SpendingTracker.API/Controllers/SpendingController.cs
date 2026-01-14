@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Application.Interfaces.Services;
 using SpendingTracker.Contracts.Dtos.Requests;
+using SpendingTracker.Contracts.Dtos.Requests.FiltersRequests;
 
 namespace SpendingTracker.API.Controllers
 {
@@ -16,7 +18,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpGet("get10")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> Get10([FromQuery] SpendingFilterRequest request)
 		{
 			var response = await _spendingService.GetByFilter(request);
@@ -25,7 +27,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpPost("add")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> AddSpending([FromBody] SpendingRequest request)
 		{
 			await _spendingService.AddSpending(request);
@@ -35,7 +37,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpDelete("delete/{spendingId}")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> DeleteSpending([FromRoute] Guid spendingId)
 		{
 			await _spendingService.DeleteSpending(spendingId);
@@ -44,7 +46,7 @@ namespace SpendingTracker.API.Controllers
 		}
 
 		[HttpPut("edit")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> EditSpending([FromBody] SpendingRequest request)
 		{
 			await _spendingService.EditSpending(request);

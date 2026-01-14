@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
+using SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest;
 using SpendingTrackerApp.Contracts.Dtos.Responses;
 using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
@@ -18,14 +19,14 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 	{
 		private User _user;
 		private SpendingRequest _spendingRequest = new SpendingRequest();
-		//private SpendingCategoryRequest _spendingCategoryRequest = new SpendingCategoryRequest();
-		//private ObservableCollection<SpendingCategory> _spendingCategories = new ObservableCollection<SpendingCategory>();
-		//private SpendingCategoryFilterRequest _spendingCategoryFilterRequest = new SpendingCategoryFilterRequest();
+		private SpendingCategoryRequest _spendingCategoryRequest = new SpendingCategoryRequest();
+		private ObservableCollection<SpendingCategory> _spendingCategories = new ObservableCollection<SpendingCategory>();
+		private SpendingCategoryFilterRequest _spendingCategoryFilterRequest = new SpendingCategoryFilterRequest();
 		private JsonService _jsonService;
 		private ISpendingService _spendingService;
-		//private ISpendingCategoryService _spendingCategoryService;
+		private ISpendingCategoryService _spendingCategoryService;
 		private IMapper _mapper;
-		private ILogger<AddSpendingPageViewModel> _logger;
+		private ILogger<EditSpendingPageViewModel> _logger;
 
 		private string _message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby pozytywne.";
 		private Color _messageColor = (Color)Application.Current.Resources["Positive"];
@@ -85,46 +86,46 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 			}
 		}
 
-		//public SpendingCategoryRequest SpendingCategoryRequest
-		//{
-		//	get => _spendingCategoryRequest;
-		//	set
-		//	{
-		//		if (_spendingCategoryRequest != value)
-		//		{
-		//			_spendingCategoryRequest = value;
-		//			OnPropertyChanged(nameof(SpendingCategoryRequest));
-		//			OnPropertyChanged(nameof(Description));
-		//			OnPropertyChanged(nameof(DescriptionCount));
-		//		}
-		//	}
-		//}
+		public SpendingCategoryRequest SpendingCategoryRequest
+		{
+			get => _spendingCategoryRequest;
+			set
+			{
+				if (_spendingCategoryRequest != value)
+				{
+					_spendingCategoryRequest = value;
+					OnPropertyChanged(nameof(SpendingCategoryRequest));
+					OnPropertyChanged(nameof(Description));
+					OnPropertyChanged(nameof(DescriptionCount));
+				}
+			}
+		}
 
-		//public SpendingCategoryFilterRequest SpendingCategoryFilterRequest
-		//{
-		//	get => _spendingCategoryFilterRequest;
-		//	set
-		//	{
-		//		if (_spendingCategoryFilterRequest != value)
-		//		{
-		//			_spendingCategoryFilterRequest = value;
-		//			OnPropertyChanged(nameof(SpendingCategoryFilterRequest));
-		//		}
-		//	}
-		//}
+		public SpendingCategoryFilterRequest SpendingCategoryFilterRequest
+		{
+			get => _spendingCategoryFilterRequest;
+			set
+			{
+				if (_spendingCategoryFilterRequest != value)
+				{
+					_spendingCategoryFilterRequest = value;
+					OnPropertyChanged(nameof(SpendingCategoryFilterRequest));
+				}
+			}
+		}
 
-		//public ObservableCollection<SpendingCategory> SpendingCategories
-		//{
-		//	get => _spendingCategories;
-		//	set
-		//	{
-		//		if (_spendingCategories != value)
-		//		{
-		//			_spendingCategories = value;
-		//			OnPropertyChanged(nameof(SpendingCategories));
-		//		}
-		//	}
-		//}
+		public ObservableCollection<SpendingCategory> SpendingCategories
+		{
+			get => _spendingCategories;
+			set
+			{
+				if (_spendingCategories != value)
+				{
+					_spendingCategories = value;
+					OnPropertyChanged(nameof(SpendingCategories));
+				}
+			}
+		}
 
 		public string Message
 		{
@@ -366,14 +367,14 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 			User user,
 			JsonService jsonService,
 			ISpendingService spendingService,
-			//ISpendingCategoryService spendingCategoryService,
+			ISpendingCategoryService spendingCategoryService,
 			IMapper mapper,
-			ILogger<AddSpendingPageViewModel> logger)
+			ILogger<EditSpendingPageViewModel> logger)
 		{
 			_user = user;
 			_jsonService = jsonService;
 			_spendingService = spendingService;
-			//_spendingCategoryService = spendingCategoryService;
+			_spendingCategoryService = spendingCategoryService;
 			_mapper = mapper;
 			_logger = logger;
 
@@ -385,8 +386,8 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 			ResetFilterCommand = new Command(async () => await ResetFilter());
 			FilterCommand = new Command(async () => await Filter());
 			CancelChoiceCategoryCommand = new Command(async () => await CancelChoiceCategory());
-			//SelectCategoryCommand = new Command<SpendingCategory>(async (category) => await SelectCategory(category));
-			//DeleteCategoryCommand = new Command(async () => await DeleteCategory());
+			SelectCategoryCommand = new Command<SpendingCategory>(async (category) => await SelectCategory(category));
+			DeleteCategoryCommand = new Command(async () => await DeleteCategory());
 		}
 
 		public ICommand EditSpendingCommand { get; }
@@ -409,16 +410,16 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 			OnPropertyChanged(nameof(Description));
 			OnPropertyChanged(nameof(DescriptionCount));
 
-			//if (Spending.SpendingCategory != null)
-			//{
-			//	SpendingCategoryRequest = _mapper.Map<SpendingCategoryRequest>(Spending.SpendingCategory);
-			//}
-			//else
-			//{
-			//	SpendingCategoryRequest = new SpendingCategoryRequest();
-			//}
+			if (Spending.SpendingCategory != null)
+			{
+				SpendingCategoryRequest = _mapper.Map<SpendingCategoryRequest>(Spending.SpendingCategory);
+			}
+			else
+			{
+				SpendingCategoryRequest = new SpendingCategoryRequest();
+			}
 
-			//SpendingDifference = (decimal)(SpendingCategoryRequest.ShouldBe == null ? SpendingRequest.Amount : SpendingRequest.Amount - SpendingCategoryRequest.ShouldBe);
+			SpendingDifference= (decimal)(SpendingCategoryRequest.WeeklyLimit == null ? SpendingRequest.Amount : SpendingCategoryRequest.WeeklyLimit - SpendingRequest.Amount);
 			DifferenceColor = SpendingDifference > 0 ? (Color)Application.Current.Resources["Positive"] : (Color)Application.Current.Resources["Negative"];
 			ShowCategories = false;
 			Message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby pozytywne.";
@@ -458,14 +459,14 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 
 				SpendingRequest.Id = Spending.Id;
 
-				//if (!String.IsNullOrEmpty(SpendingCategoryRequest.Name))
-				//{
-				//	SpendingRequest.SpendingCategoryId = SpendingCategoryRequest.Id;
-				//}
-				//else
-				//{
-				//	SpendingRequest.SpendingCategoryId = null;
-				//}
+				if (!String.IsNullOrEmpty(SpendingCategoryRequest.Name))
+				{
+					SpendingRequest.SpendingCategoryId = SpendingCategoryRequest.Id;
+				}
+				else
+				{
+					SpendingRequest.SpendingCategoryId = null;
+				}
 
 				var response = await _spendingService.EditSpending(SpendingRequest);
 
@@ -487,6 +488,8 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 
 				Spending.Amount = SpendingRequest.Amount;
 				_user.ThisMonthSpendings = _user.ThisMonthSpendings - Spending.Amount + SpendingRequest.Amount;
+				SpendingDifference = (decimal)(SpendingCategoryRequest.WeeklyLimit == null ? SpendingRequest.Amount : SpendingCategoryRequest.WeeklyLimit - SpendingRequest.Amount);
+				DifferenceColor = SpendingDifference > 0 ? (Color)Application.Current.Resources["Positive"] : (Color)Application.Current.Resources["Negative"];
 
 				MessageColor = (Color)Application.Current.Resources["Positive"];
 				Message = "Wydatek zaktualizowany pomyślnie.";
@@ -536,98 +539,98 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 
 		public async Task ShowCategoryList()
 		{
-			//var request = SpendingCategoryFilterRequest.Clone();
-			//var result = await _spendingCategoryService.Get10(request);
+			var request = SpendingCategoryFilterRequest.Clone();
+			var result = await _spendingCategoryService.Get10(request);
 
-			//var categoryResult = _jsonService.Deserialize<ObservableCollection<SpendingCategoryResponse>>(await result.Content.ReadAsStringAsync());
+			var categoryResult = _jsonService.Deserialize<ObservableCollection<SpendingCategoryResponse>>(await result.Content.ReadAsStringAsync());
 
-			//SpendingCategoryFilterRequest = new SpendingCategoryFilterRequest();
+			SpendingCategoryFilterRequest = new SpendingCategoryFilterRequest();
 
-			//SpendingCategories = _mapper.Map<ObservableCollection<SpendingCategory>>(categoryResult);
+			SpendingCategories = _mapper.Map<ObservableCollection<SpendingCategory>>(categoryResult);
 
-			//EnableShowMore = SpendingCategories.Count % 10 == 0;
+			EnableShowMore = SpendingCategories.Count % 10 == 0;
 
-			//ShowCategories = true;
+			ShowCategories = true;
 		}
 
 		public async Task ShowMoreCategories()
 		{
-			//_logger.LogInformation("Rozpoczynam ładowanie kolejnych kategorii wydatków.");
+			_logger.LogInformation("Rozpoczynam ładowanie kolejnych kategorii wydatków.");
 
-			//ShowLoadingIcon = true;
-			//RunLoadingIcon = true;
-			//BlockInteraction = true;
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
 
-			//try
-			//{
-			//	if (!SpendingCategories.Any())
-			//	{
-			//		_logger.LogWarning("Brak kategorii do załadowania kolejnych.");
-			//		return;
-			//	}
+			try
+			{
+				if (!SpendingCategories.Any())
+				{
+					_logger.LogWarning("Brak kategorii do załadowania kolejnych.");
+					return;
+				}
 
-			//	var request = SpendingCategoryFilterRequest.Clone();
-			//	request.LastDate = SpendingCategories.Last().CreationDate;
+				var request = SpendingCategoryFilterRequest.Clone();
+				request.LastDate = SpendingCategories.Last().CreationDate;
 
-			//	var response = await _spendingCategoryService.Get10(request);
+				var response = await _spendingCategoryService.Get10(request);
 
-			//	_logger.LogInformation(
-			//		"Wynik pobierania kolejnych kategorii: StatusCode={StatusCode}",
-			//		response.StatusCode
-			//	);
+				_logger.LogInformation(
+					"Wynik pobierania kolejnych kategorii: StatusCode={StatusCode}",
+					response.StatusCode
+				);
 
-			//	if (!response.IsSuccessStatusCode)
-			//	{
-			//		var content = await response.Content.ReadAsStringAsync();
-			//		_logger.LogWarning(
-			//			"Pobieranie kolejnych kategorii nie powiodło się. StatusCode={StatusCode}, Content={Content}",
-			//			response.StatusCode,
-			//			content
-			//		);
+				if (!response.IsSuccessStatusCode)
+				{
+					var content = await response.Content.ReadAsStringAsync();
+					_logger.LogWarning(
+						"Pobieranie kolejnych kategorii nie powiodło się. StatusCode={StatusCode}, Content={Content}",
+						response.StatusCode,
+						content
+					);
 
-			//		ShowErrorMessage = true;
-			//		return;
-			//	}
+					ShowErrorMessage = true;
+					return;
+				}
 
-			//	int oldCount = SpendingCategories.Count;
+				int oldCount = SpendingCategories.Count;
 
-			//	var categoryResponse = _jsonService.Deserialize<ObservableCollection<SpendingCategoryResponse>>(await response.Content.ReadAsStringAsync());
-			//	var next10Categories = _mapper.Map<ObservableCollection<SpendingCategory>>(categoryResponse);
+				var categoryResponse = _jsonService.Deserialize<ObservableCollection<SpendingCategoryResponse>>(await response.Content.ReadAsStringAsync());
+				var next10Categories = _mapper.Map<ObservableCollection<SpendingCategory>>(categoryResponse);
 
-			//	foreach (var category in next10Categories.OrderByDescending(c => c.CreationDate))
-			//	{
-			//		SpendingCategories.Add(category);
-			//	}
+				foreach (var category in next10Categories.OrderByDescending(c => c.CreationDate))
+				{
+					SpendingCategories.Add(category);
+				}
 
-			//	EnableShowMore = !(SpendingCategories.Count % 10 != 0 || oldCount == SpendingCategories.Count);
+				EnableShowMore = !(SpendingCategories.Count % 10 != 0 || oldCount == SpendingCategories.Count);
 
-			//	_logger.LogInformation(
-			//		"Pobrano {NewCategories} kolejnych kategorii. Łączna liczba kategorii: {TotalCategories}. EnableShowMore={EnableShowMore}",
-			//		next10Categories.Count,
-			//		SpendingCategories.Count,
-			//		EnableShowMore
-			//	);
-			//}
-			//catch (HttpRequestException httpEx)
-			//{
-			//	_logger.LogError(httpEx, "Błąd HTTP podczas pobierania kolejnych kategorii.");
-			//	ShowErrorMessage = true;
-			//	throw;
-			//}
-			//catch (Exception ex)
-			//{
-			//	_logger.LogError(ex, "Nieoczekiwany błąd podczas pobierania kolejnych kategorii.");
-			//	ShowErrorMessage = true;
-			//	throw;
-			//}
-			//finally
-			//{
-			//	ShowLoadingIcon = false;
-			//	RunLoadingIcon = false;
-			//	BlockInteraction = false;
+				_logger.LogInformation(
+					"Pobrano {NewCategories} kolejnych kategorii. Łączna liczba kategorii: {TotalCategories}. EnableShowMore={EnableShowMore}",
+					next10Categories.Count,
+					SpendingCategories.Count,
+					EnableShowMore
+				);
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(httpEx, "Błąd HTTP podczas pobierania kolejnych kategorii.");
+				ShowErrorMessage = true;
+				throw;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Nieoczekiwany błąd podczas pobierania kolejnych kategorii.");
+				ShowErrorMessage = true;
+				throw;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
 
-			//	_logger.LogInformation("Zakończono proces ładowania kolejnych kategorii wydatków.");
-			//}
+				_logger.LogInformation("Zakończono proces ładowania kolejnych kategorii wydatków.");
+			}
 		}
 
 		private bool CheckAmount()
@@ -691,7 +694,7 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 			BlockInteraction = true;
 			try
 			{
-				//SpendingCategoryFilterRequest.Reset();
+				SpendingCategoryFilterRequest.Reset();
 				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
 				UseDateFilter = false;
 				await ShowCategoryList();
@@ -712,129 +715,208 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 
 		private async Task Filter()
 		{
-			//ShowLoadingIcon = true;
-			//RunLoadingIcon = true;
-			//BlockInteraction = true;
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
 
-			//try
-			//{
-			//	ShowFilterErrorMessage = false;
-			//	string errorMessage = null;
+			try
+			{
+				ShowFilterErrorMessage = false;
+				string errorMessage = null;
 
-			//	if (UseDateFilter && !CheckDateFilter())
-			//	{
-			//		DateColor = (Color)Application.Current.Resources["Negative"];
-			//		errorMessage = "Data 'Od' nie może być większa niż data 'Do'.";
-			//		_logger.LogWarning(errorMessage + " DateFrom={DateFrom}, DateTo={DateTo}", SpendingCategoryFilterRequest.DateFrom, SpendingCategoryFilterRequest.DateTo);
-			//	}
-			//	else
-			//	{
-			//		DateColor = Colors.White;
-			//	}
+				if (UseDateFilter)
+				{
+					if (!CheckDateFilter())
+					{
+						DateColor = (Color)Application.Current.Resources["Negative"];
+						errorMessage = "Data 'Od' nie może być większa niż data 'Do'.";
+						_logger.LogWarning(errorMessage + " DateFrom={DateFrom}, DateTo={DateTo}",
+							SpendingCategoryFilterRequest.DateFrom, SpendingCategoryFilterRequest.DateTo);
+					}
+					else
+					{
+						DateColor = Colors.White;
+					}
+				}
 
-			//	if (SpendingCategoryFilterRequest.ShouldBeFrom != null && SpendingCategoryFilterRequest.ShouldBeTo != null)
-			//	{
-			//		if (SpendingCategoryFilterRequest.ShouldBeFrom > SpendingCategoryFilterRequest.ShouldBeTo)
-			//		{
-			//			FilterEntryColorFrom = FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
-			//			errorMessage = "Kwota 'Od' nie może być większa od kwoty 'Do'.";
-			//			_logger.LogWarning(errorMessage + " AmountFrom={AmountFrom}, AmountTo={AmountTo}", SpendingCategoryFilterRequest.ShouldBeFrom, SpendingCategoryFilterRequest.ShouldBeTo);
-			//		}
-			//		else
-			//		{
-			//			FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
-			//		}
-			//	}
+				if (SpendingCategoryFilterRequest.WeeklyLimitFrom != null && !CheckAmountFilter((decimal)SpendingCategoryFilterRequest.WeeklyLimitFrom))
+				{
+					FilterEntryColorFrom = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Kwota 'Od' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					_logger.LogWarning(errorMessage + " WeeklyLimitFrom={WeeklyLimitFrom}", SpendingCategoryFilterRequest.WeeklyLimitFrom);
+				}
+				else
+				{
+					FilterEntryColorFrom = Colors.White;
+				}
 
-			//	if (SpendingCategoryFilterRequest.ShouldBeFrom != null && !CheckAmountFilter((decimal)SpendingCategoryFilterRequest.ShouldBeFrom))
-			//	{
-			//		FilterEntryColorFrom = (Color)Application.Current.Resources["Negative"];
-			//		errorMessage = "Kwota 'Od' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
-			//		_logger.LogWarning(errorMessage + " AmountFrom={AmountFrom}", SpendingCategoryFilterRequest.ShouldBeFrom);
-			//	}
+				if (SpendingCategoryFilterRequest.WeeklyLimitTo != null && !CheckAmountFilter((decimal)SpendingCategoryFilterRequest.WeeklyLimitTo))
+				{
+					FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Kwota 'Do' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					_logger.LogWarning(errorMessage + " WeeklyLimitTo)={WeeklyLimitTo)}", SpendingCategoryFilterRequest.WeeklyLimitTo);
+				}
+				else
+				{
+					FilterEntryColorTo = Colors.White;
+				}
 
-			//	if (SpendingCategoryFilterRequest.ShouldBeTo != null && !CheckAmountFilter((decimal)SpendingCategoryFilterRequest.ShouldBeTo))
-			//	{
-			//		FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
-			//		errorMessage = "Kwota 'Do' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
-			//		_logger.LogWarning(errorMessage + " AmountTo={AmountTo}", SpendingCategoryFilterRequest.ShouldBeTo);
-			//	}
 
-			//	if (!string.IsNullOrEmpty(errorMessage))
-			//	{
-			//		FilterErrorText = errorMessage;
-			//		ShowFilterErrorMessage = true;
-			//		return;
-			//	}
+				if (SpendingCategoryFilterRequest.MonthlyLimitFrom != null && !CheckAmountFilter((decimal)SpendingCategoryFilterRequest.MonthlyLimitFrom))
+				{
+					FilterEntryColorFrom = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Kwota 'Od'  limitu miesięcznego jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					_logger.LogWarning(errorMessage + " MonthlyLimitFrom={MonthlyLimitFrom}", SpendingCategoryFilterRequest.MonthlyLimitFrom);
+				}
+				else
+				{
+					FilterEntryColorFrom = Colors.White;
+				}
 
-			//	DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
-			//	FiltersVisible = false;
+				if (SpendingCategoryFilterRequest.MonthlyLimitTo != null && !CheckAmountFilter((decimal)SpendingCategoryFilterRequest.MonthlyLimitTo))
+				{
+					FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Kwota 'Do' limitu miesięcznego jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					_logger.LogWarning(errorMessage + " MonthlyLimitTo={MonthlyLimitTo}", SpendingCategoryFilterRequest.MonthlyLimitTo);
+				}
+				else
+				{
+					FilterEntryColorTo = Colors.White;
+				}
 
-			//	var request = SpendingCategoryFilterRequest.Clone();
+				if (!string.IsNullOrEmpty(errorMessage))
+				{
+					FilterErrorText = errorMessage;
+					ShowFilterErrorMessage = true;
+					return;
+				}
 
-			//	var response = await _spendingCategoryService.Get10(request, useDatesFromToo: UseDateFilter);
-			//	if (!response.IsSuccessStatusCode)
-			//	{
-			//		var content = await response.Content.ReadAsStringAsync();
-			//		_logger.LogWarning("Pobieranie kategorii po filtrze nie powiodło się. StatusCode={StatusCode}, Content={Content}", response.StatusCode, content);
-			//		ShowErrorMessage = true;
-			//		return;
-			//	}
+				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
+				FiltersVisible = false;
 
-			//	var categoryResponse = _jsonService.Deserialize<ObservableCollection<SpendingCategoryResponse>>(await response.Content.ReadAsStringAsync());
-			//	_mapper.Map(categoryResponse, SpendingCategories);
-			//}
-			//catch (Exception ex)
-			//{
-			//	_logger.LogError(ex, "Nieoczekiwany błąd podczas filtrowania kategorii wydatków.");
-			//	ShowErrorMessage = true;
-			//}
-			//finally
-			//{
-			//	ShowLoadingIcon = false;
-			//	RunLoadingIcon = false;
-			//	BlockInteraction = false;
-			//}
-		}
+				var request = SpendingCategoryFilterRequest.Clone();
 
-		private bool CheckAmountFilter(decimal amount)
-		{
-			if (amount <= 0) return false;
+				var response = await _spendingCategoryService.Get10(request, useDatesFromToo: UseDateFilter);
+				if (!response.IsSuccessStatusCode)
+				{
+					var content = await response.Content.ReadAsStringAsync();
+					_logger.LogWarning(
+						"Pobieranie kategorii wydatków po filtrze nie powiodło się. StatusCode={StatusCode}, Content={Content}",
+						response.StatusCode,
+						content
+					);
+					ShowErrorMessage = true;
+					return;
+				}
 
-			string amountStr = amount.ToString(CultureInfo.InvariantCulture);
-			var parts = amountStr.Split('.');
-
-			if (parts[0].Length > 15) return false;
-			if (parts.Length == 2 && parts[1].Length > 2) return false;
-
-			return true;
+				var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingCategoryResponse>>(await response.Content.ReadAsStringAsync());
+				_mapper.Map(spendingResponse, SpendingCategories);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Nieoczekiwany błąd podczas filtrowania kategorii wydatków.");
+				ShowErrorMessage = true;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+			}
 		}
 
 		private bool CheckDateFilter()
 		{
-			//if (SpendingCategoryFilterRequest.DateFrom > SpendingCategoryFilterRequest.DateTo) return false;
+			_logger.LogInformation(
+				"Rozpoczynam sprawdzanie filtra dat. DateFrom={DateFrom}, DateTo={DateTo}",
+				SpendingCategoryFilterRequest.DateFrom,
+				SpendingCategoryFilterRequest.DateTo
+			);
+
+			if (SpendingCategoryFilterRequest.DateFrom > SpendingCategoryFilterRequest.DateTo)
+			{
+				_logger.LogWarning(
+					"Niepoprawny zakres dat. DateFrom ({DateFrom}) jest późniejsza niż DateTo ({DateTo})",
+					SpendingCategoryFilterRequest.DateFrom,
+					SpendingCategoryFilterRequest.DateTo
+				);
+				return false;
+			}
+
+			_logger.LogInformation(
+				"Filtr dat jest poprawny. DateFrom={DateFrom}, DateTo={DateTo}",
+				SpendingCategoryFilterRequest.DateFrom,
+				SpendingCategoryFilterRequest.DateTo
+			);
+
 			return true;
 		}
 
-		//private async Task SelectCategory(SpendingCategory category)
-		//{
-		//	SpendingCategoryRequest = _mapper.Map<SpendingCategoryRequest>(category);
-		//	SpendingDifference = (decimal)(SpendingCategoryRequest.ShouldBe == null ? SpendingRequest.Amount : SpendingRequest.Amount - SpendingCategoryRequest.ShouldBe);
-		//	DifferenceColor = SpendingDifference > 0 ? (Color)Application.Current.Resources["Positive"] : (Color)Application.Current.Resources["Negative"];
-		//	ShowCategories = false;
-		//}
+		private bool CheckAmountFilter(decimal amount)
+		{
+			_logger.LogInformation(
+					"Rozpoczynam sprawdzanie kwoty wydatku. Amount={Amount}",
+					amount
+				);
 
-		//private async Task DeleteCategory()
-		//{
-		//	SpendingCategoryRequest = new SpendingCategoryRequest();
-		//	DifferenceColor = (Color)Application.Current.Resources["Positive"];
-		//	SpendingDifference = SpendingRequest.Amount;
-		//}
+			if (amount <= 0)
+			{
+				_logger.LogWarning(
+					"Kwota wydatku jest mniejsza lub równa zero. Amount={Amount}",
+					amount
+				);
+				return false;
+			}
+
+			string amountStr = amount.ToString(CultureInfo.InvariantCulture);
+			var amountParts = amountStr.Split('.');
+
+			if (amountParts[0].Length > 15)
+			{
+				_logger.LogWarning(
+					"Kwota wydatku przekracza 15 cyfr przed przecinkiem. Amount={Amount}",
+					amount
+				);
+				return false;
+			}
+
+			if (amountParts.Length == 2 && amountParts[1].Length > 2)
+			{
+				_logger.LogWarning(
+					"Kwota wydatku przekracza 2 miejsca po przecinku. Amount={Amount}",
+					amount
+				);
+				return false;
+			}
+
+			_logger.LogInformation(
+				"Kwota wydatku jest poprawna. Amount={Amount}",
+				amount
+			);
+
+			return true;
+		}
+
+		private async Task SelectCategory(SpendingCategory fundCategory)
+		{
+			SpendingCategoryRequest = _mapper.Map<SpendingCategoryRequest>(fundCategory);
+			SpendingDifference = (decimal)(SpendingCategoryRequest.WeeklyLimit == null ? Spending.Amount : SpendingCategoryRequest.WeeklyLimit - SpendingRequest.Amount);
+			DifferenceColor = SpendingDifference > 0 ? (Color)Application.Current.Resources["Positive"] : (Color)Application.Current.Resources["Negative"];
+			ShowCategories = false;
+		}
+
+		private async Task DeleteCategory()
+		{
+			SpendingCategoryRequest = new SpendingCategoryRequest();
+			DifferenceColor = (Color)Application.Current.Resources["Positive"];
+			SpendingDifference = Spending.Amount;
+		}
 
 		private async Task CancelChoiceCategory()
 		{
 			ShowCategories = false;
 		}
+
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string name)

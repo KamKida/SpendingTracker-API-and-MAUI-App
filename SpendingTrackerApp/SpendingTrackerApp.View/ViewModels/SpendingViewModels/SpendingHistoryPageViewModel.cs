@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using SpendingTrackerApp.Contracts.Dtos.Requests;
+using SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest;
 using SpendingTrackerApp.Contracts.Dtos.Responses;
 using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
@@ -8,6 +8,7 @@ using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Pages.SpendingPages;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Input;
 
 namespace SpendingTrackerApp.ViewModels.SpendingViewModels
@@ -15,9 +16,10 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 	public class SpendingHistoryPageViewModel : INotifyPropertyChanged
 	{
 		private SpendingFilterRequest _filterRequest = new SpendingFilterRequest();
+
 		private User _user;
 
-		private ObservableCollection<Spending> _spendings = new ObservableCollection<Spending>();
+		public ObservableCollection<Spending> _spendings = new ObservableCollection<Spending>();
 
 		private JsonService _jsonService;
 		private ISpendingService _spendingService;
@@ -30,30 +32,15 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 		private bool _enableShowMore = true;
 		private bool _useDateFilter = false;
 		private bool _showFilterErrorMessage = false;
-
 		private string _filterErrorText;
-		public string FilterErrorText
-		{
-			get => _filterErrorText;
-			set
-			{
-				if (_filterErrorText != value)
-				{
-					_filterErrorText = value;
-					OnPropertyChanged(nameof(FilterErrorText));
-				}
-			}
-		}
 
 		private Color _filterEntryColorFrom = Colors.White;
 		private Color _filterEntryColorTo = Colors.White;
 
-		private bool _showLoadingIcon = false;
-		private bool _runLoadingIcon = false;
-		private bool _blockInteraction = false;
-
-		private Color _dateColor = Colors.White;
-
+		public bool _showLoadingIcon = false;
+		public bool _runLoadingIcon = false;
+		public bool _blockInteraction = false;
+		public Color _dateColor = Colors.White;
 		public SpendingFilterRequest SpendingFilterRequest
 		{
 			get => _filterRequest;
@@ -184,6 +171,19 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 			}
 		}
 
+		public string FilterErrorText
+		{
+			get => _filterErrorText;
+			set
+			{
+				if (_filterErrorText != value)
+				{
+					_filterErrorText = value;
+					OnPropertyChanged(nameof(FilterErrorText));
+				}
+			}
+		}
+
 		public bool ShowFilterErrorMessage
 		{
 			get => _showFilterErrorMessage;
@@ -256,7 +256,6 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 			ShowMoreCommand = new Command(async () => await ShowMore());
 			GoToAddSpendingPageCommand = new Command(async () => await GoToAddSpendingPage());
 			GoToEditSpendingPageCommand = new Command<Spending>(async (spending) => await GoToEditSpendingPage(spending));
-
 		}
 
 		public ICommand ShowHideFiltersCommand { get; }
@@ -266,23 +265,102 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 		public ICommand ShowMoreCommand { get; }
 		public ICommand GoToAddSpendingPageCommand { get; }
 		public ICommand GoToEditSpendingPageCommand { get; }
+		public async Task SetBaseInfo()
+		{
+			_logger.LogInformation("Rozpoczynam pobieranie podstawowych informacji o wydatkach.");
+
+			SpendingFilterRequest.Reset();
+			DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
+			UseDateFilter = false;
+
+			try
+			{
+				var response = await _spendingService.Get10(SpendingFilterRequest);
+
+				_logger.LogInformation(
+					"Wynik pobierania podstawowych informacji o wydatkach: StatusCode={StatusCode}",
+					response.StatusCode
+				);
+
+				if (!response.IsSuccessStatusCode)
+				{
+					var content = await response.Content.ReadAsStringAsync();
+
+					_logger.LogWarning(
+						"Pobieranie wydatków nie powiodło się. StatusCode={StatusCode}, Content={Content}",
+						response.StatusCode,
+						content
+					);
+
+					ShowErrorMessage = true;
+					EnableFilters = false;
+					EnableShowMore = false;
+					return;
+				}
+
+				ShowErrorMessage = false;
+
+				var contentString = await response.Content.ReadAsStringAsync();
+				var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingResponse>>(contentString);
+
+				_mapper.Map(spendingResponse, Spendings);
+
+				if (Spendings.Count % 10 != 0)
+					EnableShowMore = false;
+				else
+					EnableShowMore = true;
+
+				_logger.LogInformation(
+					"Pobrano i zmapowano {Count} wydatków do kolekcji Spendings.",
+					spendingResponse.Count
+				);
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas pobierania podstawowych informacji o wydatkach."
+				);
+				throw;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas pobierania podstawowych informacji o wydatkach."
+				);
+				throw;
+			}
+			finally
+			{
+				_logger.LogInformation("Zakończono proces pobierania podstawowych informacji o wydatkach.");
+			}
+		}
 
 		private async Task DeleteSpending(Spending spending)
 		{
 			_logger.LogInformation(
-				"Rozpoczynam usuwanie wydatku. SpendingId={SpendingId}, Amount={Amount}",
+				"Rozpoczynam proces usuwania wydatku. SpendingId={SpendingId}, Amount={Amount}, CreationDate={CreationDate}",
 				spending.Id,
-				spending.Amount
+				spending.Amount,
+				spending.CreationDate
 			);
 
 			bool answer = await Application.Current.MainPage.DisplayAlert(
 				"",
-				$"Czy na pewno usunąć wydatek o kwocie {spending.Amount} zł z dnia {spending.CreationDate}?",
+				$"Czy na pewno usunąć wydatek z kwotą: {spending.Amount} zł. \n Dodanego: {spending.CreationDate} ?",
 				"Tak",
 				"Nie"
 			);
 
-			if (!answer) return;
+			if (!answer)
+			{
+				_logger.LogInformation(
+					"Usuwanie wydatku anulowane przez użytkownika. SpendingId={SpendingId}",
+					spending.Id
+				);
+				return;
+			}
 
 			ShowLoadingIcon = true;
 			RunLoadingIcon = true;
@@ -294,22 +372,58 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 
 				if (!response.IsSuccessStatusCode)
 				{
+					var content = await response.Content.ReadAsStringAsync();
+
+					_logger.LogWarning(
+						"Usuwanie wydatku nie powiodło się. SpendingId={SpendingId}, StatusCode={StatusCode}, Content={Content}",
+						spending.Id,
+						response.StatusCode,
+						content
+					);
+
 					ShowErrorMessage = true;
 					return;
 				}
-				else
-				{
-					ShowErrorMessage = false;
-				}
+
+				_logger.LogInformation(
+					"Wydatki usunięte pomyślnie. SpendingId={SpendingId}, Amount={Amount}",
+					spending.Id,
+					spending.Amount
+				);
 
 				_user.ThisMonthSpendings -= spending.Amount;
 				Spendings.Remove(spending);
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas usuwania wydatku. SpendingId={SpendingId}",
+					spending.Id
+				);
+				ShowErrorMessage = true;
+				throw;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas usuwania wydatku. SpendingId={SpendingId}",
+					spending.Id
+				);
+				ShowErrorMessage = true;
+				throw;
 			}
 			finally
 			{
 				ShowLoadingIcon = false;
 				RunLoadingIcon = false;
 				BlockInteraction = false;
+
+				_logger.LogInformation(
+					"Zakończono proces usuwania wydatku. SpendingId={SpendingId}",
+					spending.Id
+				);
 			}
 		}
 		private async Task GoToAddSpendingPage()
@@ -319,12 +433,96 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 			try
 			{
 				await Shell.Current.GoToAsync(nameof(AddSpendingPage));
+
 				_logger.LogInformation("Nawigacja do strony dodawania wydatku zakończona sukcesem.");
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Nieoczekiwany błąd podczas nawigacji do strony dodawania wydatku.");
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas nawigacji do strony dodawania wydatku."
+				);
 				throw;
+			}
+		}
+
+		private async Task ShowMore()
+		{
+			_logger.LogInformation("Rozpoczynam ładowanie kolejnych wydatków.");
+
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
+
+			try
+			{
+				if (!Spendings.Any())
+				{
+					_logger.LogWarning("Brak wydatków do załadowania kolejnych.");
+					return;
+				}
+
+				var request = SpendingFilterRequest.Clone();
+				request.LastDate = Spendings.Last().CreationDate;
+
+				var response = await _spendingService.Get10(request);
+
+				_logger.LogInformation(
+					"Wynik pobierania kolejnych wydatków: StatusCode={StatusCode}",
+					response.StatusCode
+				);
+
+				if (!response.IsSuccessStatusCode)
+				{
+					var content = await response.Content.ReadAsStringAsync();
+					_logger.LogWarning(
+						"Pobieranie kolejnych wydatków nie powiodło się. StatusCode={StatusCode}, Content={Content}",
+						response.StatusCode,
+						content
+					);
+
+					ShowErrorMessage = true;
+					return;
+				}
+
+				int oldSpendingCount = Spendings.Count;
+
+				var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingResponse>>(await response.Content.ReadAsStringAsync());
+				var next10Spendings = _mapper.Map<ObservableCollection<Spending>>(spendingResponse);
+
+				foreach (var spending in next10Spendings.OrderByDescending(f => f.CreationDate))
+				{
+					Spendings.Add(spending);
+				}
+
+				EnableShowMore = !(Spendings.Count % 10 != 0 || oldSpendingCount == Spendings.Count);
+
+				_logger.LogInformation(
+					"Pobrano {NewSpendings} kolejnych wydatków. Łączna liczba wydatków: {TotalSpendings}. EnableShowMore={EnableShowMore}",
+					next10Spendings.Count,
+					Spendings.Count,
+					EnableShowMore
+				);
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(httpEx, "Błąd HTTP podczas pobierania kolejnych wydatków.");
+				ShowErrorMessage = true;
+				throw;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Nieoczekiwany błąd podczas pobierania kolejnych wydatków.");
+				ShowErrorMessage = true;
+				throw;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+
+				_logger.LogInformation("Zakończono proces ładowania kolejnych wydatków.");
 			}
 		}
 
@@ -359,56 +557,217 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 				throw;
 			}
 		}
-
-
-		private async Task ShowMore()
-		{
-			if (!Spendings.Any()) return;
-
-			var request = SpendingFilterRequest.Clone();
-			request.LastDate = Spendings.Last().CreationDate;
-
-			var response = await _spendingService.Get10(request);
-			var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingReponse>>(
-				await response.Content.ReadAsStringAsync());
-
-			var nextSpendings = _mapper.Map<ObservableCollection<Spending>>(spendingResponse);
-
-			foreach (var spending in nextSpendings.OrderByDescending(e => e.CreationDate))
-			{
-				Spendings.Add(spending);
-			}
-		}
-
 		private async Task ShowHideFilters()
 		{
+			_logger.LogInformation("Rozpoczynam pokazywanie filtrów.");
+
 			FiltersVisible = !FiltersVisible;
+
+			_logger.LogInformation("Filtry są widoczne. {FiltersVisible}", FiltersVisible);
 		}
 
 		private async Task ResetFilter()
 		{
-			SpendingFilterRequest.Reset();
-			await SetBaseInfo();
-		}
+			_logger.LogInformation("Rozpoczynam czyszczenie filtrów wydatków.");
 
-		public async Task SetBaseInfo()
-		{
-			SpendingFilterRequest.Reset();
-			var response = await _spendingService.Get10(SpendingFilterRequest);
-			var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingReponse>>(
-				await response.Content.ReadAsStringAsync());
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
+			try
+			{
+				SpendingFilterRequest.Reset();
+				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
+				UseDateFilter = false;
+				await SetBaseInfo();
 
-			_mapper.Map(spendingResponse, Spendings);
+				_logger.LogInformation("Filtry wydatków zostały wyczyszczone.");
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Błąd podczas czyszczenia filtrów wydatków.");
+				throw;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+			}
 		}
 
 		private async Task Filter()
 		{
-			var request = SpendingFilterRequest.Clone();
-			var response = await _spendingService.Get10(request, UseDateFilter);
-			var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingReponse>>(
-				await response.Content.ReadAsStringAsync());
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
 
-			_mapper.Map(spendingResponse, Spendings);
+			try
+			{
+				ShowFilterErrorMessage = false;
+				string errorMessage = null;
+
+				if (UseDateFilter)
+				{
+					if (!CheckDateFilter())
+					{
+						DateColor = (Color)Application.Current.Resources["Negative"];
+						errorMessage = "Data 'Od' nie może być większa niż data 'Do'.";
+						_logger.LogWarning(errorMessage + " DateFrom={DateFrom}, DateTo={DateTo}",
+							SpendingFilterRequest.DateFrom, SpendingFilterRequest.DateTo);
+					}
+					else
+					{
+						DateColor = Colors.White;
+					}
+				}
+
+				if (SpendingFilterRequest.AmountFrom != null && SpendingFilterRequest.AmountTo != null)
+				{
+					if (SpendingFilterRequest.AmountFrom > SpendingFilterRequest.AmountTo)
+					{
+						FilterEntryColorFrom = FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
+						errorMessage = "Kwota 'Od' nie może być większa od kwoty 'Do'.";
+						_logger.LogWarning(errorMessage + " AmountFrom={AmountFrom}, AmountTo={AmountTo}",
+							SpendingFilterRequest.AmountFrom, SpendingFilterRequest.AmountTo);
+					}
+					else
+					{
+						FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
+					}
+				}
+
+				if (SpendingFilterRequest.AmountFrom != null && !CheckAmountFilter((decimal)SpendingFilterRequest.AmountFrom))
+				{
+					FilterEntryColorFrom = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Kwota 'Od' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					_logger.LogWarning(errorMessage + " AmountFrom={AmountFrom}", SpendingFilterRequest.AmountFrom);
+				}
+				else
+				{
+					FilterEntryColorFrom = Colors.White;
+				}
+
+				if (SpendingFilterRequest.AmountTo != null && !CheckAmountFilter((decimal)SpendingFilterRequest.AmountTo))
+				{
+					FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Kwota 'Do' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					_logger.LogWarning(errorMessage + " AmountTo={AmountTo}", SpendingFilterRequest.AmountTo);
+				}
+				else
+				{
+					FilterEntryColorTo = Colors.White;
+				}
+
+				if (!string.IsNullOrEmpty(errorMessage))
+				{
+					FilterErrorText = errorMessage;
+					ShowFilterErrorMessage = true;
+					return;
+				}
+
+				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
+				FiltersVisible = false;
+
+				var request = SpendingFilterRequest.Clone();
+
+				var response = await _spendingService.Get10(request, useDatesFromToo: UseDateFilter);
+				if (!response.IsSuccessStatusCode)
+				{
+					var content = await response.Content.ReadAsStringAsync();
+					_logger.LogWarning(
+						"Pobieranie wydatków po filtrze nie powiodło się. StatusCode={StatusCode}, Content={Content}",
+						response.StatusCode,
+						content
+					);
+					ShowErrorMessage = true;
+					return;
+				}
+
+				var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingResponse>>(await response.Content.ReadAsStringAsync());
+				_mapper.Map(spendingResponse, Spendings);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Nieoczekiwany błąd podczas filtrowania wydatków.");
+				ShowErrorMessage = true;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+			}
+		}
+		private bool CheckDateFilter()
+		{
+			_logger.LogInformation(
+				"Rozpoczynam sprawdzanie filtra dat. DateFrom={DateFrom}, DateTo={DateTo}",
+				SpendingFilterRequest.DateFrom,
+				SpendingFilterRequest.DateTo
+			);
+
+			if (SpendingFilterRequest.DateFrom > SpendingFilterRequest.DateTo)
+			{
+				_logger.LogWarning(
+					"Niepoprawny zakres dat. DateFrom ({DateFrom}) jest późniejsza niż DateTo ({DateTo})",
+					SpendingFilterRequest.DateFrom,
+					SpendingFilterRequest.DateTo
+				);
+				return false;
+			}
+
+			_logger.LogInformation(
+				"Filtr dat jest poprawny. DateFrom={DateFrom}, DateTo={DateTo}",
+				SpendingFilterRequest.DateFrom,
+				SpendingFilterRequest.DateTo
+			);
+
+			return true;
+		}
+
+		private bool CheckAmountFilter(decimal amount)
+		{
+			_logger.LogInformation(
+					"Rozpoczynam sprawdzanie kwoty wydatku. Amount={Amount}",
+					amount
+				);
+
+			if (amount <= 0)
+			{
+				_logger.LogWarning(
+					"Kwota wydatku jest mniejsza lub równa zero. Amount={Amount}",
+					amount
+				);
+				return false;
+			}
+
+			string amountStr = amount.ToString(CultureInfo.InvariantCulture);
+			var amountParts = amountStr.Split('.');
+
+			if (amountParts[0].Length > 15)
+			{
+				_logger.LogWarning(
+					"Kwota wydatku przekracza 15 cyfr przed przecinkiem. Amount={Amount}",
+					amount
+				);
+				return false;
+			}
+
+			if (amountParts.Length == 2 && amountParts[1].Length > 2)
+			{
+				_logger.LogWarning(
+					"Kwota wydatku przekracza 2 miejsca po przecinku. Amount={Amount}",
+					amount
+				);
+				return false;
+			}
+
+			_logger.LogInformation(
+				"Kwota wydatku jest poprawna. Amount={Amount}",
+				amount
+			);
+
+			return true;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

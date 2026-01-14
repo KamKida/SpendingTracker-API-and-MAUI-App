@@ -5,8 +5,8 @@ namespace SpendingTrackerApp.Domain.Models
 	public class FundCategory : INotifyPropertyChanged
 	{
 		public Guid Id { get; set; }
-		private string _name { get; set; }
-		private decimal? _shouldBe { get; set; }
+		private string _name;
+		private decimal? _shouldBe;
 		public DateTime CreationDate { get; set; }
 		private string? _description;
 

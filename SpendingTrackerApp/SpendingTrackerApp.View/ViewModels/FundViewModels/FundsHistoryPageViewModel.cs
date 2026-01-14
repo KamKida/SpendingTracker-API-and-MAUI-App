@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using SpendingTrackerApp.Contracts.Dtos.Requests;
+using SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest;
 using SpendingTrackerApp.Contracts.Dtos.Responses;
-using SpendingTrackerApp.Domain.HelpModels;
 using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
-using SpendingTrackerApp.Pages.LoginPages;
+using SpendingTrackerApp.Pages.FundsPages;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;

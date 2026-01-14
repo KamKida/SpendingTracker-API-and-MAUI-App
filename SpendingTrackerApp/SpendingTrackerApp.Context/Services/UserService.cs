@@ -15,7 +15,7 @@ namespace SpendingTrackerApp.Infrastructure.Services
 
 
 		public UserService(
-		User user, 
+		User user,
 		BaseHttpService http,
 		ILogger<UserService> logger)
 		{
@@ -172,5 +172,80 @@ namespace SpendingTrackerApp.Infrastructure.Services
 			}
 		}
 
+		public async Task<HttpResponseMessage> EditUser(UserRequest request)
+		{
+			_logger.LogInformation(
+					"Rozpoczynam edycji użytkownika. Email: {Email}",
+					request.Email
+				);
+
+			try
+			{
+				var response = await _http._httpClient.PutAsJsonAsync(
+					"account/edit",
+					request
+				);
+
+				_logger.LogInformation(
+							"Wynik edycji użytkownika {Email}: {StatusCode}",
+							request.Email,
+							response.StatusCode
+						);
+
+				return response;
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas edycji użytkownika {Email}",
+					request.Email
+				);
+				throw;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas edycji użytkownika {Email}",
+					request.Email
+				);
+				throw;
+			}
+		}
+
+		public async Task<HttpResponseMessage> DeleteUser()
+		{
+
+			try
+			{
+				var response = await _http._httpClient.DeleteAsync(
+					"account/delete"
+				);
+
+				_logger.LogInformation(
+							"Wynik edycji użytkownika: {StatusCode}",
+							response.StatusCode
+						);
+
+				return response;
+			}
+			catch (HttpRequestException httpEx)
+			{
+				_logger.LogError(
+					httpEx,
+					"Błąd HTTP podczas edycji użytkownika"
+				);
+				throw;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Nieoczekiwany błąd podczas edycji użytkownika"
+				);
+				throw;
+			}
+		}
 	}
 }

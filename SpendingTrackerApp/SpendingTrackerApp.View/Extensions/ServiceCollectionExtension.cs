@@ -3,11 +3,19 @@ using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Infrastructure.Services;
+using SpendingTrackerApp.Pages;
+using SpendingTrackerApp.Pages.FundCategorysPages;
+using SpendingTrackerApp.Pages.FundsPages;
+using SpendingTrackerApp.Pages.LoginPages;
+using SpendingTrackerApp.Pages.SpendingPages;
+using SpendingTrackerApp.Pages.UserPages;
 using SpendingTrackerApp.ViewModels;
 using SpendingTrackerApp.ViewModels.FundCategoryViewModels;
 using SpendingTrackerApp.ViewModels.FundViewModels;
 using SpendingTrackerApp.ViewModels.LoginViewModels;
+using SpendingTrackerApp.ViewModels.SpendingCategoryViewModels;
 using SpendingTrackerApp.ViewModels.SpendingViewModels;
+using SpendingTrackerApp.ViewModels.UserPagesViewModels;
 
 namespace SpendingTrackerApp.Infrastructure.Extensions
 {
@@ -24,7 +32,6 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddScoped<LoginViewModel>();
             services.AddScoped<CreateAccountViewModel>();
             services.AddScoped<ResetAccountPageViewModel>();
-            services.AddScoped<LoadingDataPageViewModel>();
 
 			services.AddScoped<MainPageViewModel>();
             services.AddScoped<FundsHistoryPageViewModel>();
@@ -39,12 +46,18 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddScoped<AddSpendingPageViewModel>();
             services.AddScoped<EditSpendingPageViewModel>();
 
+            services.AddScoped<SpendingCategoryListPageViewModel>();
+            services.AddScoped<AddSpendingCategoryPageViewModel>();
+            services.AddScoped<EditSpendingCategoryPageViewModel>();
+
+            services.AddScoped<EditUserPageViewModel>();
 
 			//Services
 			services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFundService, FundService>();
             services.AddScoped<IFundCategoryService, FundCategotuService>();
             services.AddScoped<ISpendingService, SpendingService>();
+            services.AddScoped<ISpendingCategoryService, SpendingCategoryService>();
 
             //Auto mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

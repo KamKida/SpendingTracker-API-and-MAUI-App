@@ -58,13 +58,13 @@
 						</ScrollView>
 
 						<Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                               Text="Powinno być:"
+                               Text="Limit &#10;tygodniowy:"
                                FontSize="35"/>
 						<ScrollView Orientation="Horizontal"
                                     Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
                                     HorizontalOptions="End">
 							<Label FontSize="35"
-                                   Text="{Binding SpendingCategoryRequest.ShouldBe, TargetNullValue='Brak'}"/>
+                                   Text="{Binding SpendingCategoryRequest.WeeklyLimit, TargetNullValue='Brak'}"/>
 						</ScrollView>
 
 						<Button Grid.Row="5" Grid.ColumnSpan="2"
@@ -239,7 +239,9 @@
 										<Label Grid.Row="0" Grid.Column="0" Text="{Binding CreationDate, StringFormat='{0:dd.MM.yyyy HH:mm}'}"/>
 										<Label Grid.Row="1" Grid.Column="0" Text="{Binding Name}"/>
 										<Label Grid.Row="2" Grid.Column="0" Text="Powinno być:"/>
-										<Label Grid.Row="3" Grid.Column="0" Text="{Binding ShouldBe}" TextColor="{StaticResource Positive}"/>
+										<ScrollView Orientation="Horizontal" Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="End">
+											<Label Grid.Row="3" Grid.Column="0" Text="{Binding ShouldBe}" TextColor="{StaticResource Positive}"/>
+										</ScrollView>
 									</Grid>
 								</Border>
 							</DataTemplate>

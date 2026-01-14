@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 				 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-				 xmlns:local="clr-namespace:SpendingTrackerApp.Pages.LoginPages"
+				 xmlns:local="clr-namespace:SpendingTrackerApp.Pages.FundsPages"
 				 xmlns:converters="clr-namespace:SpendingTrackerApp.Converters"
-				 x:Class="SpendingTrackerApp.Pages.LoginPages.FundsHistoryPage"
+				 x:Class="SpendingTrackerApp.Pages.FundsPages.FundsHistoryPage"
 				 Title="Historia funduszy">
 
 	<ContentPage.Resources>
@@ -138,18 +138,19 @@
 								</Border.GestureRecognizers>
 								<Grid
 									RowDefinitions="Auto, Auto"
-									ColumnDefinitions="Auto, *"
+									ColumnDefinitions="*, Auto"
 									ColumnSpacing="30">
 									<Label
 										Grid.Row="0"
 										Grid.Column="0"
 										Text="{Binding CreationDate,  StringFormat='{0:dd.MM.yyyy HH:mm}'}"/>
-
-									<Label
+									<ScrollView Orientation="Horizontal"
 										Grid.Row="1"
-										Grid.Column="0"
+										Grid.Column="0">
+									<Label
 										Text="{Binding Amount, StringFormat='{}+ {0} zł'}"
 										TextColor="{StaticResource Positive}"/>
+									</ScrollView>
 
 									<ImageButton
 										Grid.Row="0"

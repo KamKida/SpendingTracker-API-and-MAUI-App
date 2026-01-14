@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
+using SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using System.Net.Http.Json;
@@ -51,6 +52,9 @@ namespace SpendingTrackerApp.Infrastructure.Services
 
 				if (request.LastDate.HasValue)
 					query.Add($"lastDate={Uri.EscapeDataString(request.LastDate.Value.ToString("yyyy-MM-ddTHH:mm:ss.fff"))}");
+
+				if (request.SpendingCategoryId.HasValue)
+					query.Add($"spendingCategoryId={request.SpendingCategoryId}");
 
 				var url = "spending/get10";
 

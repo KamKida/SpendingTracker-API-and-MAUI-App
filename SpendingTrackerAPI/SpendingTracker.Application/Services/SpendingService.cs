@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SpendingTracker.Application.Interfaces.ContextServices;
 using SpendingTracker.Application.Interfaces.Services;
 using SpendingTracker.Contracts.Dtos.Requests;
+using SpendingTracker.Contracts.Dtos.Requests.FiltersRequests;
 using SpendingTracker.Contracts.Dtos.Responses;
 using SpendingTracker.Domain.Exeptions;
 using SpendingTracker.Domain.Models;
@@ -33,18 +34,19 @@ namespace SpendingTracker.Application.Services
 
 		public async Task<List<SpendingReponse>> GetByFilter(SpendingFilterRequest request)
 		{
-			//_userContextService.GetUserId()
-			var query = _context.Spendings.Where(f => f.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42"));
+			var query = _context.Spendings.Where(f => f.UserId == _userContextService.GetUserId());
 
 			query = AddFilter(query, request);
 
 
 			var result = await query
 				.OrderByDescending(f => f.CreationDate)
+				.Include(s => s.SpendingCategory)
 				.Take(10)
 				.Select(f => new SpendingReponse()
 				{
 					Id = f.Id,
+					SpendingCategory = f.SpendingCategory,
 					Amount = f.Amount,
 					CreationDate = f.CreationDate,
 					Description = f.Description
@@ -67,9 +69,7 @@ namespace SpendingTracker.Application.Services
 
 			Spending newSpending = _mapper.Map<Spending>(request);
 
-			newSpending.UserId = Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42");
-
-			//newFund.UserId = (Guid)_userContextService.GetUserId();
+			newSpending.UserId = (Guid)_userContextService.GetUserId();
 			await _context.Spendings.AddAsync(newSpending);
 			await _context.SaveChangesAsync();
 
@@ -94,9 +94,9 @@ namespace SpendingTracker.Application.Services
 		}
 
 		public async Task EditSpending(SpendingRequest request)
-		{//_userContextService.GetUserId()
+		{
 			Spending spendingToEdit = await _context.Spendings
-			.Where(s => s.UserId == Guid.Parse("92AE20E5-BAE7-4EB5-42FB-08DE3EFD3C42")
+			.Where(s => s.UserId == _userContextService.GetUserId()
 				&& s.Id == request.Id)
 				.FirstOrDefaultAsync();
 
@@ -105,9 +105,13 @@ namespace SpendingTracker.Application.Services
 				throw new BadRequestException("Edycja wydatku nie powiodło się. Podany fundusz nie istnieje.");
 			}
 
+			if (request.Amount.HasValue)
+			{
+				spendingToEdit.Amount = (decimal)request.Amount;
+			}
 
-			spendingToEdit.Amount = request.Amount;
 			spendingToEdit.Description = request.Description;
+			spendingToEdit.SpendingCategoryId = request.SpendingCategoryId;
 
 			await _context.SaveChangesAsync();
 		}

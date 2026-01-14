@@ -1,4 +1,5 @@
 ﻿using SpendingTrackerApp.Contracts.Dtos.Requests;
+using SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest;
 
 namespace SpendingTrackerApp.Infrastructure.Interfaces
 {

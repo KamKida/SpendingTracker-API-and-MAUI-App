@@ -13,7 +13,8 @@ namespace SpendingTracker.Application.Interfaces.Services
 
         Task<UserResponse> GetUserBaseData();
 
-        //Task EditUser(UserEditRequest request);
+        Task EditUser(UserRequest request);
+        Task DeleteUser();
 
     }
 }
