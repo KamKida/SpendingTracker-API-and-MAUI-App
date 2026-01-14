@@ -1,6 +1,6 @@
 using SpendingTrackerApp.ViewModels.LoginViewModels;
 
-namespace SpendingTrackerApp.Pages;
+namespace SpendingTrackerApp.Pages.LoginPages;
 
 public partial class ResetPasswordPage : ContentPage
 {

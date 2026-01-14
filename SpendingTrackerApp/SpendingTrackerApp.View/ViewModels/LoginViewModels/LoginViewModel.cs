@@ -4,6 +4,7 @@ using SpendingTrackerApp.Extensions;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Pages;
+using SpendingTrackerApp.Pages.LoginPages;
 using System.ComponentModel;
 using System.Windows.Input;
 

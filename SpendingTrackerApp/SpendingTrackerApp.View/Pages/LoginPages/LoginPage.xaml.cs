@@ -1,4 +1,4 @@
-namespace SpendingTrackerApp;
+namespace SpendingTrackerApp.Pages.LoginPages;
 
 public partial class LoginPage : ContentPage
 {

@@ -8,6 +8,7 @@ using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Pages.SpendingPages;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Input;
 
 namespace SpendingTrackerApp.ViewModels.SpendingViewModels
@@ -19,7 +20,7 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 
 		private ObservableCollection<Spending> _spendings = new ObservableCollection<Spending>();
 
-		private JsonService _jsonService;
+		private readonly JsonService _jsonService;
 		private ISpendingService _spendingService;
 		private IMapper _mapper;
 		private ILogger<SpendingHistoryPageViewModel> _logger;
@@ -387,8 +388,31 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 
 		private async Task ResetFilter()
 		{
-			SpendingFilterRequest.Reset();
-			await SetBaseInfo();
+			_logger.LogInformation("Rozpoczynam czyszczenie filtrów wydatków.");
+
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
+			try
+			{
+				SpendingFilterRequest.Reset();
+				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
+				UseDateFilter = false;
+				await SetBaseInfo();
+
+				_logger.LogInformation("Filtry wydatków zostały wyczyszczone.");
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Błąd podczas czyszczenia filtrów wydatków.");
+				throw;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+			}
 		}
 
 		public async Task SetBaseInfo()
@@ -403,12 +427,183 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 
 		private async Task Filter()
 		{
-			var request = SpendingFilterRequest.Clone();
-			var response = await _spendingService.Get10(request, UseDateFilter);
-			var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingReponse>>(
-				await response.Content.ReadAsStringAsync());
 
-			_mapper.Map(spendingResponse, Spendings);
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
+
+			try
+			{
+				ShowFilterErrorMessage = false;
+				string errorMessage = null;
+
+				if (UseDateFilter)
+				{
+					if (!CheckDateFilter())
+					{
+						DateColor = (Color)Application.Current.Resources["Negative"];
+						errorMessage = "Data 'Od' nie może być większa niż data 'Do'.";
+						_logger.LogWarning(errorMessage + " DateFrom={DateFrom}, DateTo={DateTo}",
+							SpendingFilterRequest.DateFrom, SpendingFilterRequest.DateTo);
+					}
+					else
+					{
+						DateColor = Colors.White;
+					}
+				}
+
+
+				if (SpendingFilterRequest.AmountFrom != null && SpendingFilterRequest.AmountTo != null)
+				{
+					if (SpendingFilterRequest.AmountFrom > SpendingFilterRequest.AmountTo)
+					{
+						FilterEntryColorFrom = FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
+						errorMessage = "Kwota 'Od' nie może być większa od kwoty 'Do'.";
+						_logger.LogWarning(errorMessage + " AmountFrom={AmountFrom}, AmountTo={AmountTo}",
+							SpendingFilterRequest.AmountFrom, SpendingFilterRequest.AmountTo);
+					}
+					else
+					{
+						FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
+					}
+				}
+
+				if (SpendingFilterRequest.AmountFrom != null && !CheckAmountFilter((decimal)SpendingFilterRequest.AmountFrom))
+				{
+					FilterEntryColorFrom = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Kwota 'Od' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					_logger.LogWarning(errorMessage + " AmountFrom={AmountFrom}", SpendingFilterRequest.AmountFrom);
+				}
+				else
+				{
+					FilterEntryColorFrom = Colors.White;
+				}
+
+				if (SpendingFilterRequest.AmountTo != null && !CheckAmountFilter((decimal)SpendingFilterRequest.AmountTo))
+				{
+					FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Kwota 'Do' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					_logger.LogWarning(errorMessage + " AmountTo={AmountTo}", SpendingFilterRequest.AmountTo);
+				}
+				else
+				{
+					FilterEntryColorTo = Colors.White;
+				}
+
+				if (!string.IsNullOrEmpty(errorMessage))
+				{
+					FilterErrorText = errorMessage;
+					ShowFilterErrorMessage = true;
+					return;
+				}
+
+
+				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
+				FiltersVisible = false;
+
+				var request = SpendingFilterRequest.Clone();
+
+				var response = await _spendingService.Get10(request, useDatesFromToo: UseDateFilter);
+				if (!response.IsSuccessStatusCode)
+				{
+					var content = await response.Content.ReadAsStringAsync();
+					_logger.LogWarning(
+						"Pobieranie funduszy po filtrze nie powiodło się. StatusCode={StatusCode}, Content={Content}",
+						response.StatusCode,
+						content
+					);
+					ShowErrorMessage = true;
+					return;
+				}
+
+				var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingReponse>>(await response.Content.ReadAsStringAsync());
+				_mapper.Map(spendingResponse, Spendings);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Nieoczekiwany błąd podczas filtrowania funduszy.");
+				ShowErrorMessage = true;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+			}
+		}
+
+		private bool CheckDateFilter()
+		{
+			_logger.LogInformation(
+				"Rozpoczynam sprawdzanie filtra dat. DateFrom={DateFrom}, DateTo={DateTo}",
+				SpendingFilterRequest.DateFrom,
+				SpendingFilterRequest.DateTo
+			);
+
+
+			if (SpendingFilterRequest.DateFrom > SpendingFilterRequest.DateTo)
+			{
+				_logger.LogWarning(
+					"Niepoprawny zakres dat. DateFrom ({DateFrom}) jest późniejsza niż DateTo ({DateTo})",
+					SpendingFilterRequest.DateFrom,
+					SpendingFilterRequest.DateTo
+				);
+				return false;
+			}
+
+			_logger.LogInformation(
+				"Filtr dat jest poprawny. DateFrom={DateFrom}, DateTo={DateTo}",
+				SpendingFilterRequest.DateFrom,
+				SpendingFilterRequest.DateTo
+			);
+
+			return true;
+		}
+
+
+		private bool CheckAmountFilter(decimal amount)
+		{
+			_logger.LogInformation(
+					"Rozpoczynam sprawdzanie kwoty funduszu. Amount={Amount}",
+					amount
+				);
+
+			if (amount <= 0)
+			{
+				_logger.LogWarning(
+					"Kwota funduszu jest mniejsza lub równa zero. Amount={Amount}",
+					amount
+				);
+				return false;
+			}
+
+			string amountStr = amount.ToString(CultureInfo.InvariantCulture);
+			var amountParts = amountStr.Split('.');
+
+			if (amountParts[0].Length > 15)
+			{
+				_logger.LogWarning(
+					"Kwota funduszu przekracza 15 cyfr przed przecinkiem. Amount={Amount}",
+					amount
+				);
+				return false;
+			}
+
+			if (amountParts.Length == 2 && amountParts[1].Length > 2)
+			{
+				_logger.LogWarning(
+					"Kwota funduszu przekracza 2 miejsca po przecinku. Amount={Amount}",
+					amount
+				);
+				return false;
+			}
+
+			_logger.LogInformation(
+				"Kwota funduszu jest poprawna. Amount={Amount}",
+				amount
+			);
+
+			return true;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

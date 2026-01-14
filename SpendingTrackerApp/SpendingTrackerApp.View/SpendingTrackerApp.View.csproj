@@ -74,13 +74,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="AddShells\AppShellMain.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\FundCategorysPages\AddFundCategoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\FundCategorysPages\EditFundCategoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\FundCategorysPages\FundCategoryList.xaml">
+	  <MauiXaml Update="Pages\FundCategorysPages\FundCategoryListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\FundsPages\EditFundPage.xaml">
@@ -122,6 +125,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="AddShells\AppShellLogin.xaml.cs">
+	    <DependentUpon>AppShellLogin.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="AddShells\AppShellMain.xaml.cs">
+	    <DependentUpon>AppShellMain.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\FundCategorysPages\FundCategoryListPage.xaml.cs">
+	    <DependentUpon>FundCategoryListPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\LoginPages\CreateAcountPage.xaml.cs">
 	    <DependentUpon>CreateAcountPage.xaml</DependentUpon>
 	  </Compile>

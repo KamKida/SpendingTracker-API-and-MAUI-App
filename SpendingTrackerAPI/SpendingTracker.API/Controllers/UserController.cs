@@ -42,7 +42,7 @@ namespace SpendingTracker.API.Controllers
         }
 
         [HttpGet("getBaseInfo")]
-        [Authorize]
+       //[Authorize]
         public async Task<IActionResult> GetUserBaseData()
         {
             UserResponse response = await _userService.GetUserBaseData();

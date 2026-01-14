@@ -5,7 +5,7 @@ using SpendingTrackerApp.Contracts.Dtos.Responses;
 using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
-using SpendingTrackerApp.Pages.LoginPages;
+using SpendingTrackerApp.Pages.FundsPages;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;

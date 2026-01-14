@@ -1,15 +1,20 @@
-﻿namespace SpendingTrackerApp
+﻿using SpendingTrackerApp.AddShells;
+using SpendingTrackerApp.Pages;
+
+namespace SpendingTrackerApp
 {
     public partial class App : Application
     {
-        public App()
+        public App(IServiceProvider serviceProvider)
         {
             InitializeComponent();
-        }
 
-        protected override Window CreateWindow(IActivationState? activationState)
+		}
+
+
+		protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            return new Window(new AppShellLogin());
         }
     }
 }

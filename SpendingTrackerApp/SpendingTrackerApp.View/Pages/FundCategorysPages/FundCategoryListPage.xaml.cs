@@ -2,9 +2,9 @@ using SpendingTrackerApp.ViewModels.FundCategoryViewModels;
 
 namespace SpendingTrackerApp.Pages.FundCategorysPages;
 
-public partial class FundCategoryList : ContentPage
+public partial class FundCategoryListPage : ContentPage
 {
-	public FundCategoryList(FundCategoryListViewModel vm )
+	public FundCategoryListPage(FundCategoryListViewModel vm )
 	{
 		InitializeComponent();
 		BindingContext = vm;

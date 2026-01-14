@@ -3,6 +3,11 @@ using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Infrastructure.Services;
+using SpendingTrackerApp.Pages;
+using SpendingTrackerApp.Pages.FundCategorysPages;
+using SpendingTrackerApp.Pages.FundsPages;
+using SpendingTrackerApp.Pages.LoginPages;
+using SpendingTrackerApp.Pages.SpendingPages;
 using SpendingTrackerApp.ViewModels;
 using SpendingTrackerApp.ViewModels.FundCategoryViewModels;
 using SpendingTrackerApp.ViewModels.FundViewModels;
@@ -38,7 +43,6 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddScoped<SpendingHistoryPageViewModel>();
             services.AddScoped<AddSpendingPageViewModel>();
             services.AddScoped<EditSpendingPageViewModel>();
-
 
 			//Services
 			services.AddScoped<IUserService, UserService>();

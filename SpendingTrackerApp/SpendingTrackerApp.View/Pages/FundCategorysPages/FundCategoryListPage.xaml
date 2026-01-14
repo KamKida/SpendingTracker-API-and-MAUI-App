@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:local="clr-namespace:SpendingTrackerApp.Pages.FundCategorysPages"
 			 xmlns:converters="clr-namespace:SpendingTrackerApp.Converters"
-             x:Class="SpendingTrackerApp.Pages.FundCategorysPages.FundCategoryList"
+             x:Class="SpendingTrackerApp.Pages.FundCategorysPages.FundCategoryListPage"
              Title="Kategorie funduszy">
 
 	<ContentPage.Resources>
@@ -141,13 +141,13 @@
 					Margin="0,10,0,0">
 									<Border.GestureRecognizers>
 										<TapGestureRecognizer 
-						Command="{Binding Source={RelativeSource AncestorType={x:Type local:FundCategoryList}}, Path=BindingContext.GoToEditFundCategoryPageCommand}"
+						Command="{Binding Source={RelativeSource AncestorType={x:Type local:FundCategoryListPage}}, Path=BindingContext.GoToEditFundCategoryPageCommand}"
 						CommandParameter="{Binding .}" />
 
 									</Border.GestureRecognizers>
 									<Grid
 							RowDefinitions="Auto, Auto, Auto, *"
-							ColumnDefinitions="Auto, *"
+							ColumnDefinitions="*, Auto"
 							ColumnSpacing="30">
 									<Label
 										Grid.Row="0"
@@ -163,12 +163,14 @@
 										Grid.Row="2"
 										Grid.Column="0"
 										Text="Powinno być: "/>
-
-									<Label
+										<ScrollView Orientation="Horizontal" 
 										Grid.Row="3"
-										Grid.Column="0"
-										Text="{Binding ShouldBe}"
-										TextColor="{StaticResource Positive}"/>
+										Grid.Column="0" HorizontalOptions="End">
+
+											<Label
+											Text="{Binding ShouldBe}"
+											TextColor="{StaticResource Positive}"/>
+										</ScrollView>
 
 									<ImageButton
 										Grid.Row="1"
@@ -177,7 +179,7 @@
 										HeightRequest="70"
 										WidthRequest="70"
 										Source="delete.png"
-										Command="{Binding Source={RelativeSource AncestorType={x:Type local:FundCategoryList}}, Path=BindingContext.DeleteFundCategoryCommand}"
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:FundCategoryListPage}}, Path=BindingContext.DeleteFundCategoryCommand}"
 										CommandParameter="{Binding .}"
 										InputTransparent="False"/>
 

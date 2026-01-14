@@ -25,7 +25,7 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 		private ISpendingService _spendingService;
 		//private ISpendingCategoryService _spendingCategoryService;
 		private IMapper _mapper;
-		private ILogger<AddSpendingPageViewModel> _logger;
+		private ILogger<EditSpendingPageViewModel> _logger;
 
 		private string _message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby pozytywne.";
 		private Color _messageColor = (Color)Application.Current.Resources["Positive"];
@@ -368,7 +368,7 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 			ISpendingService spendingService,
 			//ISpendingCategoryService spendingCategoryService,
 			IMapper mapper,
-			ILogger<AddSpendingPageViewModel> logger)
+			ILogger<EditSpendingPageViewModel> logger)
 		{
 			_user = user;
 			_jsonService = jsonService;

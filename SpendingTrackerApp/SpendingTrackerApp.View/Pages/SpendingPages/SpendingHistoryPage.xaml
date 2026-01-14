@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:SpendingTrackerApp.Pages.SpendingPages"
-             xmlns:converters="clr-namespace:SpendingTrackerApp.Converters"
-             x:Class="SpendingTrackerApp.Pages.SpendingPages.SpendingHistoryPage"
-             Title="Historia wydatków">
+				 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+				 xmlns:local="clr-namespace:SpendingTrackerApp.Pages.SpendingPages"
+				 xmlns:converters="clr-namespace:SpendingTrackerApp.Converters"
+				 x:Class="SpendingTrackerApp.Pages.SpendingPages.SpendingHistoryPage"
+				 Title="Historia wydatków">
 
 	<ContentPage.Resources>
 		<ResourceDictionary>
@@ -12,161 +12,200 @@
 		</ResourceDictionary>
 	</ContentPage.Resources>
 
-	<Grid InputTransparent="{Binding BlockInteraction}">
-		<Grid RowDefinitions="Auto, Auto, *, Auto, Auto"
-              ColumnDefinitions="Auto, *"
-              RowSpacing="10"
-              Padding="20">
+	<Grid 
+		InputTransparent="{Binding BlockInteraction}">
+		<Grid 
+			RowDefinitions="Auto, Auto, * , Auto , Auto"
+			ColumnDefinitions="Auto, *"
+			RowSpacing="10"
+			Padding="20">
 
-			<!-- Dodaj wydatek -->
-			<ImageButton Grid.Row="0"
-                         Grid.Column="0"
-                         Source="add.png"
-                         WidthRequest="75"
-                         HeightRequest="75"
-                         Command="{Binding GoToAddSpendingPageCommand}" />
+			<ImageButton
+				Grid.Row="0"
+				Grid.Column="0"
+				Source="add.png"
+				WidthRequest="75"
+				HeightRequest="75"
+				Command="{Binding GoToAddSpendingPageCommand}"/>
 
-			<!-- Filtry -->
-			<Button Grid.Row="0"
-                    Grid.Column="1"
-                    HorizontalOptions="End"
-                    Text="Filtry"
-                    WidthRequest="200"
-                    HeightRequest="75"
-                    IsEnabled="{Binding EnableFilters}"
-                    Command="{Binding ShowHideFiltersCommand}" />
+			<Button
+				Grid.Row="0"
+				Grid.Column="1"
+				HorizontalOptions="End"
+				Text="Filtry"
+				IsEnabled="{Binding EnableFilters}"
+				Command="{Binding ShowHideFiltersCommand}"/>
 
-			<!-- Panel filtrów -->
-			<Border Grid.Row="1"
-                    Grid.ColumnSpan="2"
-                    IsVisible="{Binding FiltersVisible}">
-				<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*"
-                      ColumnDefinitions="Auto,*,Auto"
-                      ColumnSpacing="10">
+			<Border Grid.Row="1" Grid.ColumnSpan="2" IsVisible="{Binding FiltersVisible}">
+				<Grid
+            RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, *"
+            ColumnDefinitions="Auto, *, Auto"
+            ColumnSpacing="10"
+            ZIndex="10">
 
-					<Label Grid.Row="0" Text="Data:" FontSize="33"/>
-					<Label Grid.Row="1" Text="Uwzględnić" FontSize="33"/>
-					<Switch Grid.Row="1"
-                            Grid.Column="1"
-                            Scale="2"
-                            IsToggled="{Binding UseDateFilter}"
-                            OnColor="{StaticResource Positive}" />
+					<Label Grid.Row="0" Grid.Column="0" Text="Data:" FontSize="33"/>
+					<Label Grid.Row="1" Grid.Column="0" Text="Uwzględnić" FontSize="33"/>
+					<Switch 
+						Grid.Row="1"
+						Grid.Column="1"
+						Scale="2"
+						IsToggled="{Binding UseDateFilter}"
+						OnColor="{StaticResource Positive}"/>
 
-					<Label Grid.Row="2" Text="Od:" FontSize="25"/>
-					<DatePicker Grid.Row="2"
-                                Grid.ColumnSpan="2"
-                                Date="{Binding SpendingFilterRequest.DateFrom, Mode=TwoWay}"
-                                IsEnabled="{Binding UseDateFilter}"
-                                Format="dd.MM.yyyy"
-                                TextColor="{Binding DateColor}"
-                                HorizontalOptions="End"/>
+					<Label Grid.Row="2" Grid.Column="0" Text="Do:" FontSize="25" VerticalOptions="Center"/>
+					<DatePicker Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" FontSize="25"
+						Date="{Binding SpendingFilterRequest.DateFrom, Mode=TwoWay}" 
+						Format="dd.MM.yyyy"
+						HorizontalOptions="End"
+						IsEnabled="{Binding UseDateFilter}"
+						TextColor="{Binding DateColor}"/>
 
-					<Label Grid.Row="3" Text="Do:" FontSize="25"/>
-					<DatePicker Grid.Row="3"
-                                Grid.ColumnSpan="2"
-                                Date="{Binding SpendingFilterRequest.DateTo, Mode=TwoWay}"
-                                IsEnabled="{Binding UseDateFilter}"
-                                Format="dd.MM.yyyy"
-                                TextColor="{Binding DateColor}"
-                                HorizontalOptions="End"/>
+					<Label Grid.Row="3" Grid.Column="0" Text="Do:" FontSize="25" VerticalOptions="Center"/>
+					<DatePicker Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" FontSize="25"
+                        Date="{Binding SpendingFilterRequest.DateTo, Mode=TwoWay}" 
+                        Format="dd.MM.yyyy"
+                        HorizontalOptions="End"
+						IsEnabled="{Binding UseDateFilter}"
+						TextColor="{Binding DateColor}"/>
 
-					<Label Grid.Row="4" Text="Kwota:" FontSize="33"/>
+					<Label Grid.Row="4" Grid.Column="0" Text="Kwota:" FontSize="33"/>
+					<Label Grid.Row="5" Grid.Column="0" Text="Od:" FontSize="25" VerticalOptions="Center"/>
+					<Entry Grid.Row="5" Grid.Column="1"
+					   FontSize="25"
+					   Keyboard="Numeric"
+					   HorizontalTextAlignment="End"
+					   Placeholder="00.00"
+					   Text="{Binding SpendingFilterRequest.AmountFrom, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
+					   TextColor="{Binding FilterEntryColorFrom}"
+					   BackgroundColor="Transparent"/>
+					<Label Grid.Row="5" Grid.Column="2" Text="zł." FontSize="25" VerticalOptions="Center"/>
 
-					<Label Grid.Row="5" Text="Od:" FontSize="25"/>
-					<Entry Grid.Row="5"
-                           Grid.Column="1"
-                           Keyboard="Numeric"
-                           HorizontalTextAlignment="End"
-                           Placeholder="00.00"
-                           Text="{Binding SpendingFilterRequest.AmountFrom, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
-                           TextColor="{Binding FilterEntryColorFrom}" />
-					<Label Grid.Row="5" Grid.Column="2" Text="zł"/>
+					<Label Grid.Row="6" Grid.Column="0" Text="Do:" FontSize="25" VerticalOptions="Center"/>
+					<Entry Grid.Row="6" Grid.Column="1"
+                       FontSize="25"
+                       Keyboard="Numeric"
+                       HorizontalTextAlignment="End"
+                       Placeholder="00.00"
+                       Text="{Binding SpendingFilterRequest.AmountTo, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
+                       TextColor="{Binding FilterEntryColorTo}"
+                       BackgroundColor="Transparent"/>
+					<Label Grid.Row="6" Grid.Column="2" Text="zł." FontSize="25" VerticalOptions="Center"/>
 
-					<Label Grid.Row="6" Text="Do:" FontSize="25"/>
-					<Entry Grid.Row="6"
-                           Grid.Column="1"
-                           Keyboard="Numeric"
-                           HorizontalTextAlignment="End"
-                           Placeholder="00.00"
-                           Text="{Binding SpendingFilterRequest.AmountTo, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
-                           TextColor="{Binding FilterEntryColorTo}" />
-					<Label Grid.Row="6" Grid.Column="2" Text="zł"/>
-
-					<Border Grid.Row="7"
-                            Grid.ColumnSpan="3"
-                            IsVisible="{Binding ShowFilterErrorMessage}">
-						<Label Text="{Binding FilterErrorText}"
-                               FontSize="20"
-                               TextColor="{StaticResource Negative}" />
-					</Border>
-
-					<Grid Grid.Row="8" ColumnDefinitions="*,*">
-						<Button Text="Resetuj"
-                                Command="{Binding ResetFilterCommand}"/>
-						<Button Grid.Column="1"
-                                Text="Filtruj"
-                                Command="{Binding FilterCommand}"/>
+					<Grid Grid.Row="8" Grid.ColumnSpan="3" 
+						ColumnDefinitions="*,*" Margin="0,30,0,0">
+						<Button Grid.Column="0" Text="Resetuj" WidthRequest="100" FontSize="20"
+							Command="{Binding ResetFilterCommand}"/>
+						<Button Grid.Column="1" Text="Filtruj" WidthRequest="100" FontSize="20"
+							Command="{Binding FilterCommand}"/>
 					</Grid>
 
+					<Border
+						Grid.Row="7"
+						Grid.ColumnSpan="3"
+						Margin="0,10,0,0"
+						IsVisible="{Binding ShowFilterErrorMessage}"
+						Background="White">
+						<Label
+							Text="{Binding FilterErrorText}"
+							FontSize="20"
+							TextColor="{StaticResource Negative}"/>
+					</Border>
 				</Grid>
 			</Border>
 
-			<!-- Lista wydatków -->
-			<ScrollView Grid.Row="2"
-                        Grid.ColumnSpan="2">
-				<CollectionView ItemsSource="{Binding Spendings}">
+			<ScrollView
+				Grid.Row="2"
+				Grid.ColumnSpan="2">
+
+				<CollectionView
+					ItemsSource="{Binding Spendings}">
+
 					<CollectionView.ItemTemplate>
 						<DataTemplate>
-							<Border Margin="0,10,0,0">
+							<Border
+								Margin="0,10,0,0">
 								<Border.GestureRecognizers>
 									<TapGestureRecognizer 
-								Command="{Binding Source={RelativeSource AncestorType={x:Type local:SpendingHistoryPage}}, Path=BindingContext.GoToEditSpendingPageCommand}"
-								CommandParameter="{Binding .}" />
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:SpendingHistoryPage}}, Path=BindingContext.GoToEditSpendingPageCommand}"
+										CommandParameter="{Binding .}" />
 								</Border.GestureRecognizers>
-								<Grid ColumnDefinitions="*,Auto">
-									<StackLayout>
-										<Label Text="{Binding CreationDate, StringFormat='{0:dd.MM.yyyy HH:mm}'}"/>
-										<Label Text="{Binding Amount, StringFormat='{}- {0} zł'}"
-                                               TextColor="{StaticResource Negative}"/>
-									</StackLayout>
+								<Grid
+									RowDefinitions="Auto, Auto"
+									ColumnDefinitions="*, *"
+									ColumnSpacing="30">
+									<Label
+										Grid.Row="0"
+										Grid.Column="0"
+										Text="{Binding CreationDate,  StringFormat='{0:dd.MM.yyyy HH:mm}'}"/>
 
-									<ImageButton Grid.Column="1"
-                                                 HeightRequest="70"
-                                                 WidthRequest="70"
-                                                 Source="delete.png"
-                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type local:SpendingHistoryPage}}, Path=BindingContext.DeleteSpendingCommand}"
-                                                 CommandParameter="{Binding .}"/>
+									<ScrollView Orientation="Horizontal"
+            
+										Grid.Row="1"
+										Grid.Column="0">
+									<Label
+										Text="{Binding Amount, StringFormat='{}- {0} zł'}"
+										TextColor="{StaticResource Negative}"/>
+									</ScrollView>
+
+									<ImageButton
+										Grid.Row="0"
+										Grid.RowSpan="2"
+										Grid.Column="1"
+										HeightRequest="70"
+										WidthRequest="70"
+										Source="delete.png"
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:SpendingHistoryPage}}, Path=BindingContext.DeleteSpendingCommand}"
+										CommandParameter="{Binding .}"
+										InputTransparent="False"/>
+
 								</Grid>
 							</Border>
 						</DataTemplate>
 					</CollectionView.ItemTemplate>
+
 				</CollectionView>
+
 			</ScrollView>
 
-			<!-- Komunikat o błędzie -->
-			<Border Grid.Row="3"
-                    Grid.ColumnSpan="2"
-                    IsVisible="{Binding ShowErrorMessage}">
-				<Label Text="Coś poszło nie tak. Spróbuj ponownie."
-                       TextColor="Red"/>
+			<Border 
+				Grid.Row="3"
+				Grid.ColumnSpan="2"
+				IsVisible="{Binding ShowErrorMessage}"
+				Background="White"
+				Padding="10">
+
+				<Label 
+					Text="Coś poszło nie tak, zresetuj aplikację i spróbuj ponownie."
+					TextColor="Red"
+					LineBreakMode="WordWrap" />
 			</Border>
 
-			<!-- Pokaż więcej -->
-			<Button Grid.Row="4"
-                    Grid.ColumnSpan="2"
-                    Text="Wyświetl więcej"
-                    IsEnabled="{Binding EnableShowMore}"
-                    Command="{Binding ShowMoreCommand}"/>
+			<Button
+				Grid.Row="4"
+				Grid.ColumnSpan="2"
+				WidthRequest="300"
+				Margin="0,20,0,0"
+				ZIndex="-1"
+				Text="Wyświetl więcej"
+				IsEnabled="{Binding EnableShowMore}"
+				Command="{Binding ShowMoreCommand}"/>
+
 		</Grid>
 
-		<!-- Loading overlay -->
-		<Grid IsVisible="{Binding ShowLoadingIcon}"
-              BackgroundColor="#80000000">
-			<ActivityIndicator IsRunning="{Binding RunLoadingIcon}"
-                               Color="White"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"/>
+		<Grid
+			IsVisible="{Binding ShowLoadingIcon}"
+			BackgroundColor="#80000000"
+			ZIndex="999"
+			Padding="50">
+
+			<ActivityIndicator
+				IsRunning="{Binding RunLoadingIcon}"
+				Color="White"
+				WidthRequest="80"
+				HeightRequest="80"
+				HorizontalOptions="Center"
+				VerticalOptions="Start"/>
+
 		</Grid>
 	</Grid>
-
 </ContentPage>

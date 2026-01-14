@@ -1,6 +1,6 @@
 using SpendingTrackerApp.ViewModels.FundViewModels;
 
-namespace SpendingTrackerApp.Pages.LoginPages;
+namespace SpendingTrackerApp.Pages.FundsPages;
 
 public partial class AddFundPage : ContentPage
 {

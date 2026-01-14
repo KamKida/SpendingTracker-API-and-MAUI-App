@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
+using SpendingTrackerApp.AddShells;
 using SpendingTrackerApp.Contracts.Dtos.Responses;
 using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
@@ -112,7 +113,7 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 
 				_logger.LogInformation("Pobieranie danych użytkownika (UI) zakończone sukcesem. Przechodzę do MainPage.");
 
-				await Shell.Current.GoToAsync(nameof(MainPage));
+				Application.Current.MainPage = new AppShellMain();
 			}
 			catch (HttpRequestException httpEx)
 			{

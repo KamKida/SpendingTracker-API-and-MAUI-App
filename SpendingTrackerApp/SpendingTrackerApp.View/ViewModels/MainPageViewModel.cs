@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SpendingTrackerApp.Domain.Models;
-using SpendingTrackerApp.Pages.LoginPages;
+using SpendingTrackerApp.Pages.FundsPages;
+using SpendingTrackerApp.Pages.SpendingPages;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -8,13 +9,15 @@ namespace SpendingTrackerApp.ViewModels
 {
 	public class MainPageViewModel : INotifyPropertyChanged
 	{
-		public User _user { get; }
+		public User User { get; set; }
 		private readonly ILogger<MainPageViewModel> _logger;
 
 		private bool _showLoadingIcon = false;
 		private bool _runLoadingIcon = false;
 		private bool _blockInteraction = false;
 
+		private decimal _difference;
+		private Color _differenceColor;
 
 		public string Title { get; set; }
 
@@ -57,17 +60,60 @@ namespace SpendingTrackerApp.ViewModels
 			}
 		}
 
+		public decimal Difference
+		{
+			get => _difference;
+			set
+			{
+				if (_difference != value)
+				{
+					_difference = value;
+					OnPropertyChanged(nameof(Difference));
+				}
+			}
+		}
+
+		public Color DifferenceColor
+		{
+			get => _differenceColor;
+			set
+			{
+				if (_differenceColor != value)
+				{
+					_differenceColor = value;
+					OnPropertyChanged(nameof(DifferenceColor));
+				}
+			}
+		}
+
 		public MainPageViewModel(
 		User user,
 		ILogger<MainPageViewModel> logger)
 		{
-			_user = user;
+			User = user;
 			_logger = logger;
-			Title = $"Witaj {_user.FirstName} {_user.LastName}";
+			Title = $"Witaj {User.FirstName} {User.LastName}";
 
 			GoToFundsHistoryCommand = new Command(async () => await GoToFundsHistory());
+			GoToSpendingHistoryPageCommand = new Command(async () => await GoToSpendingHistoryPage());
 		}
 		public ICommand GoToFundsHistoryCommand { get; }
+		public ICommand GoToSpendingHistoryPageCommand { get; }
+
+		public async Task Reset()
+		{
+			Difference = User.ThisMonthFund - User.ThisMonthSpendings;
+
+			if (Difference < 0)
+			{
+				DifferenceColor = (Color)Application.Current.Resources["Negative"];
+			}
+			else
+			{
+				DifferenceColor = (Color)Application.Current.Resources["Positive"];
+			}
+
+		}
 
 		public async Task GoToFundsHistory()
 		{
@@ -102,6 +148,41 @@ namespace SpendingTrackerApp.ViewModels
 				BlockInteraction = false;
 			}
 		}
+
+		public async Task GoToSpendingHistoryPage()
+		{
+			_logger.LogInformation("Rozpoczynam nawigację do historii wydatków.");
+
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
+
+			try
+			{
+				await Shell.Current.GoToAsync(nameof(SpendingHistoryPage), true);
+
+				_logger.LogInformation(
+					"Nawigacja do historii wydatków zakończona sukcesem."
+				);
+
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(
+					ex,
+					"Błąd podczas nawigacji do historii wydatków."
+				);
+				throw;
+			}
+			finally
+			{
+
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+			}
+		}
+
 
 
 		public event PropertyChangedEventHandler PropertyChanged;

@@ -239,7 +239,9 @@
 										<Label Grid.Row="0" Grid.Column="0" Text="{Binding CreationDate, StringFormat='{0:dd.MM.yyyy HH:mm}'}"/>
 										<Label Grid.Row="1" Grid.Column="0" Text="{Binding Name}"/>
 										<Label Grid.Row="2" Grid.Column="0" Text="Powinno być:"/>
-										<Label Grid.Row="3" Grid.Column="0" Text="{Binding ShouldBe}" TextColor="{StaticResource Positive}"/>
+										<ScrollView Orientation="Horizontal" Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="End">
+											<Label Grid.Row="3" Grid.Column="0" Text="{Binding ShouldBe}" TextColor="{StaticResource Positive}"/>
+										</ScrollView>
 									</Grid>
 								</Border>
 							</DataTemplate>
