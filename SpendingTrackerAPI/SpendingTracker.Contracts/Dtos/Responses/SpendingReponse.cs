@@ -1,6 +1,4 @@
-﻿using SpendingTracker.Domain.Models;
-
-namespace SpendingTracker.Contracts.Dtos.Responses
+﻿namespace SpendingTracker.Contracts.Dtos.Responses
 {
 	public class SpendingReponse
 	{

@@ -46,11 +46,6 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddScoped<AddSpendingPageViewModel>();
             services.AddScoped<EditSpendingPageViewModel>();
 
-            services.AddScoped<SpendingCategoryListPageViewModel>();
-            services.AddScoped<AddSpendingCategoryPageViewModel>();
-            services.AddScoped<EditSpendingCategoryPageViewModel>();
-
-            services.AddScoped<EditUserPageViewModel>();
 
 			//Services
 			services.AddScoped<IUserService, UserService>();

@@ -104,32 +104,6 @@ namespace SpendingTrackerApp.Domain.Models
 			}
 		}
 
-		public ObservableCollection<Spending> Spendings
-		{
-			get => _spendings;
-			set
-			{
-				if (_spendings != value)
-				{
-					_spendings = value;
-					OnPropertyChanged(nameof(Spendings));
-				}
-			}
-		}
-
-		public ObservableCollection<SpendingCategory> SpendingCategorys
-		{
-			get => _spendingCategorys;
-			set
-			{
-				if (_spendingCategorys != value)
-				{
-					_spendingCategorys = value;
-					OnPropertyChanged(nameof(SpendingCategorys));
-				}
-			}
-		}
-
 		public event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string prop) =>
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));

@@ -21,7 +21,7 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 
 		public ObservableCollection<Spending> _spendings = new ObservableCollection<Spending>();
 
-		private JsonService _jsonService;
+		private readonly JsonService _jsonService;
 		private ISpendingService _spendingService;
 		private IMapper _mapper;
 		private ILogger<SpendingHistoryPageViewModel> _logger;
@@ -753,21 +753,14 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 				return false;
 			}
 
-			if (amountParts.Length == 2 && amountParts[1].Length > 2)
-			{
-				_logger.LogWarning(
-					"Kwota wydatku przekracza 2 miejsca po przecinku. Amount={Amount}",
-					amount
-				);
-				return false;
-			}
+		private async Task Filter()
+		{
+			var request = SpendingFilterRequest.Clone();
+			var response = await _spendingService.Get10(request, UseDateFilter);
+			var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingReponse>>(
+				await response.Content.ReadAsStringAsync());
 
-			_logger.LogInformation(
-				"Kwota wydatku jest poprawna. Amount={Amount}",
-				amount
-			);
-
-			return true;
+			_mapper.Map(spendingResponse, Spendings);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
