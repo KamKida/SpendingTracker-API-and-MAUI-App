@@ -11,9 +11,7 @@ namespace SpendingTrackerApp.Infrastructure.Mappings
         {
             //User mapping
             CreateMap<User, UserRequest>();
-            CreateMap<UserResponse, User>()
-                .ForMember(dest => dest.Spendings, opt => opt.MapFrom(src => src.SpendingReponses))
-				.ForMember(dest => dest.SpendingCategorys, opt => opt.MapFrom(src => src.SpendingCategoryResponses));
+            CreateMap<UserResponse, User>();
 
             CreateMap<UserRequest, User>();
 

@@ -17,7 +17,6 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 	[QueryProperty(nameof(Spending), nameof(Spending))]
 	public class EditSpendingPageViewModel : INotifyPropertyChanged
 	{
-		private User _user;
 		private SpendingRequest _spendingRequest = new SpendingRequest();
 		private SpendingCategoryRequest _spendingCategoryRequest = new SpendingCategoryRequest();
 		private ObservableCollection<SpendingCategory> _spendingCategories = new ObservableCollection<SpendingCategory>();
@@ -364,14 +363,12 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 		public int DescriptionCount => SpendingRequest.Description?.Length ?? 0;
 
 		public EditSpendingPageViewModel(
-			User user,
 			JsonService jsonService,
 			ISpendingService spendingService,
 			ISpendingCategoryService spendingCategoryService,
 			IMapper mapper,
 			ILogger<EditSpendingPageViewModel> logger)
 		{
-			_user = user;
 			_jsonService = jsonService;
 			_spendingService = spendingService;
 			_spendingCategoryService = spendingCategoryService;
@@ -487,7 +484,6 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 				}
 
 				Spending.Amount = SpendingRequest.Amount;
-				_user.ThisMonthSpendings = _user.ThisMonthSpendings - Spending.Amount + SpendingRequest.Amount;
 				SpendingDifference = (decimal)(SpendingCategoryRequest.WeeklyLimit == null ? SpendingRequest.Amount : SpendingCategoryRequest.WeeklyLimit - SpendingRequest.Amount);
 				DifferenceColor = SpendingDifference > 0 ? (Color)Application.Current.Resources["Positive"] : (Color)Application.Current.Resources["Negative"];
 

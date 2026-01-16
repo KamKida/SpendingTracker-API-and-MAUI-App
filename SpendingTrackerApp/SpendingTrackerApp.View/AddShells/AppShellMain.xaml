@@ -17,8 +17,7 @@
         Title="Meny główne">
 	<ShellContent
             ContentTemplate="{DataTemplate local:MainPage}"
-            Route="MainPage"
-            IsVisible="True" />
+            Route="MainPage"/>
 	</FlyoutItem>
 
 	<FlyoutItem
@@ -43,22 +42,6 @@
 		<ShellContent
         ContentTemplate="{DataTemplate spendings:SpendingHistoryPage}"
         Route="SpendingHistoryPage"/>
-	</FlyoutItem>
-
-	<FlyoutItem
-    Icon="spending_category.png"
-    Title="Lista kategori wydatków">
-		<ShellContent
-        ContentTemplate="{DataTemplate spendingCat:SpendingCategoryListPage}"
-        Route="SpendingCategoryListPage"/>
-	</FlyoutItem>
-
-	<FlyoutItem
-    Icon="user.png"
-    Title="Konto uzytkownika">
-		<ShellContent
-        ContentTemplate="{DataTemplate user:EditUserPage}"
-        Route="EditUserPage"/>
 	</FlyoutItem>
 
 </Shell>

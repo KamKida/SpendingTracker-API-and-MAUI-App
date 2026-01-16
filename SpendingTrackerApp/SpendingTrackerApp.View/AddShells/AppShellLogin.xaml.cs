@@ -9,8 +9,6 @@ namespace SpendingTrackerApp.AddShells
         {
             InitializeComponent();
 
-
-			Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
 			Routing.RegisterRoute(nameof(CreateAcountPage), typeof(CreateAcountPage));
 			Routing.RegisterRoute(nameof(ResetPasswordPage), typeof(ResetPasswordPage));
 

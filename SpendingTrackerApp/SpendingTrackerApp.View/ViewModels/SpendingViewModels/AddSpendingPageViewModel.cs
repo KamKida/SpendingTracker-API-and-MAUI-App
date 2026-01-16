@@ -15,7 +15,6 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 {
 	public class AddSpendingPageViewModel : INotifyPropertyChanged
 	{
-		private User _user;
 		private SpendingRequest _spendingRequest = new SpendingRequest();
 		private ObservableCollection<SpendingCategory> _spendingCategories = new ObservableCollection<SpendingCategory>();
 		private SpendingCategoryRequest _spendingCategoryRequest = new SpendingCategoryRequest();
@@ -321,14 +320,12 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 		}
 
 		public AddSpendingPageViewModel(
-			User user,
 			JsonService jsonService,
 			ISpendingService spendingService,
 			ISpendingCategoryService spendingCategoryService,
 			IMapper mapper,
 			ILogger<AddSpendingPageViewModel> logger)
 		{
-			_user = user;
 			_jsonService = jsonService;
 			_spendingService = spendingService;
 			_spendingCategoryService = spendingCategoryService;
@@ -404,7 +401,6 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 				}
 
 				Message = "Wydatek dodany pomyślnie.";
-				_user.ThisMonthSpendings += SpendingRequest.Amount;
 
 				_logger.LogInformation("Wydatek dodany pomyślnie. Amount={Amount}", SpendingRequest.Amount);
 			}

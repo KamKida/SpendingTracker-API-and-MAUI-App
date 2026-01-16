@@ -15,7 +15,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 {
 	public class AddFundPageViewModel : INotifyPropertyChanged
 	{
-		private User _user;
 		private FundRequest _fundRequest = new FundRequest();
 		private ObservableCollection<FundCategory> _fundCategorie = new ObservableCollection<FundCategory>();
 		private FundCategoryRequest _fundCategoryRequest = new FundCategoryRequest();
@@ -328,14 +327,12 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 
 
 		public AddFundPageViewModel(
-		User user,
 		JsonService jsonService,
 		IFundService fundService,
 		IFundCategoryService fundCategotuService,
 		IMapper mapper,
 		ILogger<AddFundPageViewModel> logger)
 		{
-			_user = user;
 			_jsonService = jsonService;
 			_fundService = fundService;
 			_fundCategotuService = fundCategotuService;
@@ -428,7 +425,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 				}
 
 				Message = "Fundusz dodany pomyślnie.";
-				_user.ThisMonthFund += FundRequest.Amount;
 
 				_logger.LogInformation(
 					"Fundusz dodany pomyślnie. Amount={Amount}",

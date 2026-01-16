@@ -17,7 +17,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 	{
 		private FundFilterRequest _filterRequest = new FundFilterRequest();
 
-		private User _user;
 
 		public ObservableCollection<Fund> _funds = new ObservableCollection<Fund>();
 
@@ -249,14 +248,11 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		}
 
 		public FundsHistoryPageViewModel(
-		User user,
 		JsonService jsonService,
 		IFundService fundService,
 		IMapper mapper,
 		ILogger<FundsHistoryPageViewModel> logger)
 		{
-
-			_user = user;
 			_jsonService = jsonService;
 			_fundService = fundService;
 			_mapper = mapper;
@@ -410,7 +406,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 					fund.Amount
 				);
 
-				_user.ThisMonthFund -= fund.Amount;
 				Funds.Remove(fund);
 			}
 			catch (HttpRequestException httpEx)

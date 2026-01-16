@@ -17,11 +17,9 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 	{
 		private SpendingFilterRequest _filterRequest = new SpendingFilterRequest();
 
-		private User _user;
-
 		public ObservableCollection<Spending> _spendings = new ObservableCollection<Spending>();
 
-		private JsonService _jsonService;
+		private readonly JsonService _jsonService;
 		private ISpendingService _spendingService;
 		private IMapper _mapper;
 		private ILogger<SpendingHistoryPageViewModel> _logger;
@@ -237,13 +235,11 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 		}
 
 		public SpendingHistoryPageViewModel(
-			User user,
 			JsonService jsonService,
 			ISpendingService spendingService,
 			IMapper mapper,
 			ILogger<SpendingHistoryPageViewModel> logger)
 		{
-			_user = user;
 			_jsonService = jsonService;
 			_spendingService = spendingService;
 			_mapper = mapper;
@@ -391,7 +387,6 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 					spending.Amount
 				);
 
-				_user.ThisMonthSpendings -= spending.Amount;
 				Spendings.Remove(spending);
 			}
 			catch (HttpRequestException httpEx)
@@ -753,22 +748,9 @@ namespace SpendingTrackerApp.ViewModels.SpendingViewModels
 				return false;
 			}
 
-			if (amountParts.Length == 2 && amountParts[1].Length > 2)
-			{
-				_logger.LogWarning(
-					"Kwota wydatku przekracza 2 miejsca po przecinku. Amount={Amount}",
-					amount
-				);
-				return false;
-			}
-
-			_logger.LogInformation(
-				"Kwota wydatku jest poprawna. Amount={Amount}",
-				amount
-			);
-
 			return true;
 		}
+
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string name)

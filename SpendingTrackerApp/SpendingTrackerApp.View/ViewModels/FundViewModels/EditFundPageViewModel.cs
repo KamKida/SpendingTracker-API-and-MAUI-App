@@ -17,7 +17,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 	[QueryProperty(nameof(Fund), nameof(Fund))]
 	public class EditFundPageViewModel : INotifyPropertyChanged
 	{
-		private User _user;
 		private FundRequest _fundRequest = new FundRequest();
 		private FundCategoryRequest _fundCategoryRequest = new FundCategoryRequest();
 		private ObservableCollection<FundCategory> _fundCategorie = new ObservableCollection<FundCategory>();
@@ -373,14 +372,12 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 		}
 
 		public EditFundPageViewModel(
-		User user,
 		JsonService jsonService,
 		IFundService fundService,
 		IFundCategoryService fundCategotuService,
 		IMapper mapper,
 		ILogger<AddFundPageViewModel> logger)
 		{
-			_user = user;
 			_jsonService = jsonService;
 			_fundService = fundService;
 			_fundCategotuService = fundCategotuService;
@@ -492,7 +489,6 @@ namespace SpendingTrackerApp.ViewModels.FundViewModels
 				}
 
 				Fund.Amount = FundRequest.Amount;
-				_user.ThisMonthFund = _user.ThisMonthFund - Fund.Amount + FundRequest.Amount;
 
 				MessageColor = (Color)Application.Current.Resources["Positive"];
 				Message = "Fundusz zaktualizowany pomyślnie.";

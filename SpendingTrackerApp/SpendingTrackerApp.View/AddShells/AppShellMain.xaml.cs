@@ -14,24 +14,17 @@ public partial class AppShellMain : Shell
 	{
 		InitializeComponent();
 
-		Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
-
 		Routing.RegisterRoute(nameof(AddFundPage), typeof(AddFundPage));
-		Routing.RegisterRoute(nameof(FundsHistoryPage), typeof(FundsHistoryPage));
 		Routing.RegisterRoute(nameof(EditFundPage), typeof(EditFundPage));
 
-		Routing.RegisterRoute(nameof(FundCategoryListPage), typeof(FundCategoryListPage));
 		Routing.RegisterRoute(nameof(AddFundCategoryPage), typeof(AddFundCategoryPage));
 		Routing.RegisterRoute(nameof(EditFundCategoryPage), typeof(EditFundCategoryPage));
 
-		Routing.RegisterRoute(nameof(SpendingHistoryPage), typeof(SpendingHistoryPage));
 		Routing.RegisterRoute(nameof(AddSpendingPage), typeof(AddSpendingPage));
 		Routing.RegisterRoute(nameof(EditSpendingPage), typeof(EditSpendingPage));
 
-		Routing.RegisterRoute(nameof(SpendingCategoryListPage), typeof(SpendingCategoryListPage));
 		Routing.RegisterRoute(nameof(AddSpendingCategoryPage), typeof(AddSpendingCategoryPage));
 		Routing.RegisterRoute(nameof(EditSpendingCategoryPage), typeof(EditSpendingCategoryPage));
 
-		Routing.RegisterRoute(nameof(EditUserPage), typeof(EditUserPage));
 	}
 }
