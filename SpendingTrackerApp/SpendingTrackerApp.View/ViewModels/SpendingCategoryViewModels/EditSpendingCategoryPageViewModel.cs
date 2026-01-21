@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using NLog;
 using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Contracts.Dtos.Requests.FiltersRequest;
 using SpendingTrackerApp.Contracts.Dtos.Responses;
 using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
-using SpendingTrackerApp.Pages.SpendingPages;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
@@ -15,40 +13,43 @@ using System.Windows.Input;
 
 namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 {
-	[QueryProperty(nameof(Domain.Models.SpendingCategory), nameof(Domain.Models.SpendingCategory))]
+	[QueryProperty(nameof(SpendingCategory), nameof(SpendingCategory))]
 	public class EditSpendingCategoryPageViewModel : INotifyPropertyChanged
 	{
-		private User _user;
+		// ====== PRIVATE VARIABLES ======
 		private SpendingCategoryRequest _spendingCategoryRequest = new SpendingCategoryRequest();
+		private SpendingFilterRequest _filterRequest = new SpendingFilterRequest();
+		private SpendingCategory _spendingCategory;
 		private JsonService _jsonService;
 		private ISpendingCategoryService _spendingCategoryService;
 		private ISpendingService _spendingService;
 		private IMapper _mapper;
 		private ILogger<EditSpendingCategoryPageViewModel> _logger;
 
-		private string _message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby pozytywne. Nazwa Wymagana";
-		private Color _messageColor = (Color)Application.Current.Resources["Positive"];
-		public bool _showLoadingIcon = false;
-		public bool _runLoadingIcon = false;
+		// ====== UI STATE VARIABLES ======
+		private string _message;
+		private Color _messageColor;
+		private bool _showLoadingIcon;
+		private bool _runLoadingIcon;
+		private bool _blockInteraction;
 
-		public bool _blockInteraction = false;
+		private ObservableCollection<Spending> _spendings = new ObservableCollection<Spending>();
 
-		public ObservableCollection<Spending> _spendings = new ObservableCollection<Spending>();
-
-		private bool _showErrorMessage = false;
-		private bool _filtersVisible = false;
-		public Color _dateColor = Colors.White;
-		private Color _filterEntryColorFrom = Colors.White;
-		private Color _filterEntryColorTo = Colors.White;
-		private Color _nameEntryColor = Colors.White;
-		private Color _weeklyLimitEntryColor = Colors.White;
-		private Color _monthlyLimitEntryColor = Colors.White;
-		private bool _useDateFilter = false;
-		private bool _enableShowMore = true;
-		private bool _enableFilters = true;
-
-		private bool _showFilterErrorMessage = false;
+		private bool _showErrorMessage;
+		private bool _filtersVisible;
+		private Color _dateColor;
+		private Color _filterEntryColorFrom;
+		private Color _filterEntryColorTo;
+		private Color _nameEntryColor;
+		private Color _weeklyLimitEntryColor;
+		private Color _monthlyLimitEntryColor;
+		private bool _useDateFilter;
+		private bool _enableShowMore;
+		private bool _enableFilters;
+		private bool _showFilterErrorMessage;
 		private string _filterErrorText;
+
+		// ====== MVVM PROPERTIES ======
 		public string FilterErrorText
 		{
 			get => _filterErrorText;
@@ -113,6 +114,7 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 				}
 			}
 		}
+
 		public bool ShowFilterErrorMessage
 		{
 			get => _showFilterErrorMessage;
@@ -125,6 +127,7 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 				}
 			}
 		}
+
 		public bool EnableFilters
 		{
 			get => _enableFilters;
@@ -137,6 +140,7 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 				}
 			}
 		}
+
 		public bool EnableShowMore
 		{
 			get => _enableShowMore;
@@ -176,8 +180,6 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 			}
 		}
 
-		private SpendingFilterRequest _filterRequest = new SpendingFilterRequest();
-
 		public SpendingFilterRequest SpendingFilterRequest
 		{
 			get => _filterRequest;
@@ -191,7 +193,6 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 			}
 		}
 
-		private SpendingCategory _spendingCategory;
 		public SpendingCategory SpendingCategory
 		{
 			get => _spendingCategory;
@@ -273,10 +274,7 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 			}
 		}
 
-		public int DescriptionCount
-		{
-			get => SpendingCategoryRequest.Description?.Length ?? 0;
-		}
+		public int DescriptionCount => SpendingCategoryRequest.Description?.Length ?? 0;
 
 		public string Message
 		{
@@ -303,7 +301,6 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 				}
 			}
 		}
-
 
 		public bool ShowLoadingIcon
 		{
@@ -357,64 +354,102 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 			}
 		}
 
+		// ====== CONSTRUCTOR ======
 		public EditSpendingCategoryPageViewModel(
-			User user,
 			JsonService jsonService,
 			ISpendingCategoryService spendingCategoryService,
 			ISpendingService spendingService,
 			IMapper mapper,
 			ILogger<EditSpendingCategoryPageViewModel> logger)
 		{
-			_user = user;
+			_logger = logger;
+			_logger.LogInformation("Inicjalizacja EditSpendingCategoryPageViewModel.");
+
 			_jsonService = jsonService;
 			_spendingCategoryService = spendingCategoryService;
 			_spendingService = spendingService;
 			_mapper = mapper;
-			_logger = logger;
 
+			// ====== COMMANDS ======
 			EditSpendingCategoryCommand = new Command(async () => await EditSpendingCategory());
 			CancelEditCommand = new Command(async () => await CancelEdit());
 
 			ShowHideFiltersCommand = new Command(async () => await ShowHideFilters());
 			ResetFilterCommand = new Command(async () => await ResetFilter());
 			FilterCommand = new Command(async () => await Filter());
-			DeleteSpendingCommand = new Command<Spending>(async (spending) => await DeleteSpending(spending));
 			ShowMoreCommand = new Command(async () => await ShowMore());
+
+			_logger.LogInformation("Konstruktor EditSpendingCategoryPageViewModel zakończony.");
 		}
 
+		// ====== COMMANDS ======
 		public ICommand EditSpendingCategoryCommand { get; }
 		public ICommand CancelEditCommand { get; }
-
 		public ICommand ShowHideFiltersCommand { get; }
 		public ICommand ResetFilterCommand { get; }
 		public ICommand FilterCommand { get; }
 		public ICommand DeleteSpendingCommand { get; }
 		public ICommand ShowMoreCommand { get; }
 
+		// ====== METHODS ======
+
 		public async Task Reset()
 		{
 			_logger.LogInformation("Rozpoczynam resetowanie formularza kategorii wydatku oraz stanu błędów UI.");
 
-			SpendingCategoryRequest = new SpendingCategoryRequest()
-			{
-				Name = SpendingCategory.Name,
-				Description = SpendingCategory.Description
-			};
-			Message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby dodatnie. Nazwa wymagana.";
-			MessageColor = WeeklyLimitEntryColor = MonthlyLimitEntryColor = (Color)Application.Current.Resources["Positive"];
-			SpendingFilterRequest.SpendingCategoryId = SpendingCategory.Id;
-			await SetBaseSpendingsInfo();
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
 
-			_logger.LogInformation("Zakończono resetowanie formularza kategorii wydatku oraz stanu błędów UI.");
+			try
+			{
+				// Reset danych modelowych
+				SpendingCategoryRequest.Name = SpendingCategory?.Name;
+				SpendingCategoryRequest.Description = SpendingCategory?.Description;
+				SpendingFilterRequest.SpendingCategoryId = SpendingCategory.Id;
+
+				// Reset stanu UI
+				Message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby dodatnie. Nazwa wymagana.";
+				MessageColor = WeeklyLimitEntryColor = MonthlyLimitEntryColor = (Color)Application.Current.Resources["Positive"];
+
+				ShowErrorMessage = false;
+				FiltersVisible = false;
+				DateColor = Colors.White;
+				FilterEntryColorFrom = Colors.White;
+				FilterEntryColorTo = Colors.White;
+				NameEntryColor = Colors.White;
+				UseDateFilter = false;
+				EnableShowMore = true;
+				EnableFilters = true;
+				ShowFilterErrorMessage = false;
+				FilterErrorText = string.Empty;
+
+				// Dodatkowe resetowanie stanu powiązanych informacji
+				await SetBaseSpendingsInfo();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Błąd podczas resetowania formularza kategorii wydatku.");
+				throw;
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+
+				_logger.LogInformation("Zakończono resetowanie formularza kategorii wydatku oraz stanu błędów UI.");
+			}
 		}
+
 
 		public async Task EditSpendingCategory()
 		{
 			_logger.LogInformation(
-				"Rozpoczynam dodawanie kategorii wydatków. Name={Name}, WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
+				"Rozpoczynam edycję kategorii wydatku. Name={Name}, WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
 				SpendingCategoryRequest.Name,
-					SpendingCategoryRequest.WeeklyLimit,
-					SpendingCategoryRequest.MonthlyLimit
+				SpendingCategoryRequest.WeeklyLimit,
+				SpendingCategoryRequest.MonthlyLimit
 			);
 
 			ShowLoadingIcon = true;
@@ -423,57 +458,39 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 
 			try
 			{
-				if (String.IsNullOrEmpty(SpendingCategoryRequest.Name))
+				if (string.IsNullOrEmpty(SpendingCategoryRequest.Name))
 				{
-					_logger.LogWarning(
-						"Brak nazwy kategorii. Name={Name}, WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
-						SpendingCategoryRequest.Name,
-						SpendingCategoryRequest.WeeklyLimit,
-						SpendingCategoryRequest.MonthlyLimit
-					);
-					Message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby pozytywne. Nazwa jest wymagana";
+					_logger.LogWarning("Brak nazwy kategorii. Name={Name}", SpendingCategoryRequest.Name);
+					Message = "Nazwa kategorii jest wymagana.";
 					MessageColor = NameEntryColor = (Color)Application.Current.Resources["Negative"];
 					return;
 				}
 
 				if (SpendingCategoryRequest.WeeklyLimit.HasValue && !CheckLimit((decimal)SpendingCategoryRequest.WeeklyLimit))
 				{
-					_logger.LogWarning(
-						"Niepoprawna limit tygodniowy kategorii wydatków. Name={Name}, WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
-						SpendingCategoryRequest.Name,
-						SpendingCategoryRequest.WeeklyLimit,
-						SpendingCategoryRequest.MonthlyLimit
-					);
-					Message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby pozytywne. Nazwa jest wymagana";
+					_logger.LogWarning("Niepoprawny limit tygodniowy. WeeklyLimit={WeeklyLimit}", SpendingCategoryRequest.WeeklyLimit);
+					Message = "Limit tygodniowy jest niepoprawny.";
 					MessageColor = WeeklyLimitEntryColor = (Color)Application.Current.Resources["Negative"];
 					return;
 				}
 
 				if (SpendingCategoryRequest.MonthlyLimit.HasValue && !CheckLimit((decimal)SpendingCategoryRequest.MonthlyLimit))
 				{
-					_logger.LogWarning(
-						"Niepoprawna limit tygodniowy kategorii wydatków. Name={Name}, WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
-						SpendingCategoryRequest.Name,
-						SpendingCategoryRequest.WeeklyLimit,
-						SpendingCategoryRequest.MonthlyLimit
-					);
-					Message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby pozytywne. Nazwa jest wymagana";
+					_logger.LogWarning("Niepoprawny limit miesięczny. MonthlyLimit={MonthlyLimit}", SpendingCategoryRequest.MonthlyLimit);
+					Message = "Limit miesięczny jest niepoprawny.";
 					MessageColor = MonthlyLimitEntryColor = (Color)Application.Current.Resources["Negative"];
 					return;
 				}
 
-					if (!CheckLimits())
-					{
-						_logger.LogWarning(
-						"Niepoprawna limity tygodniowe i miesięczne kategorii wydatków. Name={Name}, WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
-						SpendingCategoryRequest.Name,
+				if (!CheckLimits())
+				{
+					_logger.LogWarning("Limit tygodniowy nie może być większy od miesięcznego. WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
 						SpendingCategoryRequest.WeeklyLimit,
-						SpendingCategoryRequest.MonthlyLimit
-					);
-						Message = "Limit tygodniowy nie może być większy od limitu miesięcznego.";
-						MessageColor = MonthlyLimitEntryColor = WeeklyLimitEntryColor = (Color)Application.Current.Resources["Negative"];
-						return;
-					}
+						SpendingCategoryRequest.MonthlyLimit);
+					Message = "Limit tygodniowy nie może być większy od limitu miesięcznego.";
+					MessageColor = WeeklyLimitEntryColor = MonthlyLimitEntryColor = (Color)Application.Current.Resources["Negative"];
+					return;
+				}
 
 				SpendingCategoryRequest.Id = SpendingCategory.Id;
 
@@ -488,14 +505,10 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 				if (!response.IsSuccessStatusCode)
 				{
 					var content = await response.Content.ReadAsStringAsync();
-
 					_logger.LogWarning(
-						"Edycja kategorii wydatku nie powiodła się. SpendingCategoryId={SpendingCategoryId}, StatusCode={StatusCode}, Content={Content}",
-						SpendingCategory.Id,
-						response.StatusCode,
+						"Edycja kategorii wydatku nie powiodła się. Content={Content}",
 						content
 					);
-
 
 					MessageColor = (Color)Application.Current.Resources["Negative"];
 					Message = "Coś poszło nie tak. Spróbuj ponownie.";
@@ -517,28 +530,14 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 			}
 			catch (HttpRequestException httpEx)
 			{
-				_logger.LogError(
-					httpEx,
-					"Błąd HTTP podczas edycji kategorii wydatku. SpendingCategoryId={SpendingCategoryId}, WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
-					SpendingCategory.Id,
-					SpendingCategoryRequest.WeeklyLimit,
-					SpendingCategoryRequest.MonthlyLimit
-				);
-
+				_logger.LogError(httpEx, "Błąd HTTP podczas edycji kategorii wydatku. SpendingCategoryId={SpendingCategoryId}", SpendingCategory.Id);
 				MessageColor = (Color)Application.Current.Resources["Negative"];
 				Message = "Błąd sieci. Spróbuj ponownie.";
 				throw;
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(
-					ex,
-					"Nieoczekiwany błąd podczas edycji kategorii wydatku. SpendingCategoryId={SpendingCategoryId}, WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
-					SpendingCategory.Id,
-					SpendingCategoryRequest.WeeklyLimit,
-					SpendingCategoryRequest.MonthlyLimit
-				);
-
+				_logger.LogError(ex, "Nieoczekiwany błąd podczas edycji kategorii wydatku. SpendingCategoryId={SpendingCategoryId}", SpendingCategory.Id);
 				MessageColor = (Color)Application.Current.Resources["Negative"];
 				Message = "Wystąpił nieoczekiwany błąd.";
 				throw;
@@ -549,97 +548,81 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 				RunLoadingIcon = false;
 				BlockInteraction = false;
 
-				_logger.LogInformation(
-					"Zakończono proces edycji kategorii wydatku. SpendingCategoryId={SpendingCategoryId}",
-					SpendingCategory.Id
-				);
+				_logger.LogInformation("Zakończono proces edycji kategorii wydatku. SpendingCategoryId={SpendingCategoryId}", SpendingCategory.Id);
 			}
 		}
 
+		// ====== LIMIT CHECK METHODS ======
 		private bool CheckLimit(decimal limit)
 		{
-			_logger.LogInformation(
-				"Rozpoczynam sprawdzanie kwoty kategorii wydatków. Limit={limit}",
-				limit
-			);
+			_logger.LogInformation("Rozpoczynam sprawdzanie limitu kategorii wydatków. Limit={Limit}", limit);
 
 			if (limit <= 0)
 			{
-				_logger.LogWarning(
-					"Kwota kategorii wydatków jest mniejsza lub równa zero. Limit={limit}",
-					limit
-				);
+				_logger.LogWarning("Limit kategorii wydatków jest mniejszy lub równy zero. Limit={Limit}", limit);
 				return false;
 			}
 
-			string amountStr = limit.ToString();
+			string amountStr = limit.ToString(CultureInfo.InvariantCulture);
 			var amountParts = amountStr.Split('.');
 
 			if (amountParts[0].Length > 15)
 			{
-				_logger.LogWarning(
-					"Kwota kategorii wydatków przekracza 15 cyfr przed przecinkiem. Limit={limit}",
-					limit
-				);
+				_logger.LogWarning("Limit kategorii wydatków przekracza 15 cyfr przed przecinkiem. Limit={Limit}", limit);
 				return false;
 			}
 
 			if (amountParts.Length == 2 && amountParts[1].Length > 2)
 			{
-				_logger.LogWarning(
-					"Kwota kategorii wydatków przekracza 2 miejsca po przecinku. Limit={limit}",
-					limit
-				);
+				_logger.LogWarning("Limit kategorii wydatków przekracza 2 miejsca po przecinku. Limit={Limit}", limit);
 				return false;
 			}
 
-			_logger.LogInformation(
-				"Kwota kategorii wydatków jest poprawna. Limit={limit}",
-				limit
-			);
-
+			_logger.LogInformation("Limit kategorii wydatków jest poprawny. Limit={Limit}", limit);
 			return true;
 		}
 
 		private bool CheckLimits()
 		{
+			_logger.LogInformation(
+				"Sprawdzam zgodność limitów tygodniowego i miesięcznego. WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
+				SpendingCategoryRequest.WeeklyLimit,
+				SpendingCategoryRequest.MonthlyLimit
+			);
+
 			if (SpendingCategoryRequest.WeeklyLimit.HasValue && SpendingCategoryRequest.MonthlyLimit.HasValue)
 			{
 				if (SpendingCategoryRequest.WeeklyLimit > SpendingCategoryRequest.MonthlyLimit)
 					return false;
 			}
-
-			else if (SpendingCategoryRequest.WeeklyLimit.HasValue)
+			else if (SpendingCategoryRequest.WeeklyLimit.HasValue && SpendingCategory.MonthlyLimit.HasValue)
 			{
-				if (SpendingCategory.MonthlyLimit.HasValue && SpendingCategoryRequest.WeeklyLimit > SpendingCategory.MonthlyLimit)
+				if (SpendingCategoryRequest.WeeklyLimit > SpendingCategory.MonthlyLimit)
+					return false;
+			}
+			else if (SpendingCategoryRequest.MonthlyLimit.HasValue && SpendingCategory.WeeklyLimit.HasValue)
+			{
+				if (SpendingCategory.WeeklyLimit > SpendingCategoryRequest.MonthlyLimit)
 					return false;
 			}
 
-			else if (SpendingCategoryRequest.MonthlyLimit.HasValue)
-			{
-				if (SpendingCategory.WeeklyLimit.HasValue && SpendingCategory.WeeklyLimit > SpendingCategoryRequest.MonthlyLimit)
-					return false;
-			}
-
+			_logger.LogInformation("Limity są poprawne.");
 			return true;
 		}
 
+		// ====== CANCEL METHODS ======
 		public async Task CancelAdd()
 		{
-			_logger.LogInformation("Rozpoczynam anulowanie dodawania kategorii wydatków (powrót do historii wydatków).");
+			_logger.LogInformation("Rozpoczynam anulowanie dodawania kategorii wydatków.");
 
 			try
 			{
 				await Shell.Current.GoToAsync("..");
-
-				_logger.LogInformation("Nawigacja po anulowaniu dodawania kategorii wydatków zakończona sukcesem.");
+				_logger.LogInformation("Nawigacja po anulowaniu dodawania zakończona sukcesem.");
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(
-					ex,
-					"Nieoczekiwany błąd podczas anulowania dodawania kategorii wydatków."
-				);
+				_logger.LogError(ex, "Nieoczekiwany błąd podczas anulowania dodawania kategorii wydatków.");
 				throw;
 			}
 		}
@@ -647,131 +630,34 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 		public async Task CancelEdit()
 		{
 			_logger.LogInformation(
-				"Rozpoczynam anulowanie edycji wydatku (powrót do historii wydatków). SpendingCategoryId={SpendingCategoryId}, WeeklyLimit={WeeklyLimit}, MonthlyLimit={MonthlyLimit}",
-				SpendingCategory?.Id,
-				SpendingCategory?.WeeklyLimit,
-				SpendingCategory?.MonthlyLimit
+				"Rozpoczynam anulowanie edycji kategorii wydatków. SpendingCategoryId={SpendingCategoryId}",
+				SpendingCategory?.Id
 			);
 
 			try
 			{
 				await Shell.Current.GoToAsync("..");
-
 				_logger.LogInformation(
-				"Nawigacja po anulowaniu edycji wydatku zakończona sukcesem. SpendingCategoryId={SpendingCategoryId}",
+					"Nawigacja po anulowaniu edycji zakończona sukcesem. SpendingCategoryId={SpendingCategoryId}",
 					SpendingCategory?.Id
 				);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(
-					ex,
-					"Nieoczekiwany błąd podczas anulowania edycji wydatku. SpendingCategoryId={SpendingCategoryId}",
-					SpendingCategory?.Id
-				);
+				_logger.LogError(ex, "Nieoczekiwany błąd podczas anulowania edycji kategorii wydatków. SpendingCategoryId={SpendingCategoryId}", SpendingCategory?.Id);
 				throw;
 			}
 		}
 
-		private async Task DeleteSpending(Spending spending)
-		{
-			_logger.LogInformation(
-				"Rozpoczynam proces usuwania wydatku. SpendingId={SpendingId}, Amount={Amount}, CreationDate={CreationDate}",
-				spending.Id,
-				spending.Amount,
-				spending.CreationDate
-			);
-
-			bool answer = await Application.Current.MainPage.DisplayAlert(
-				"",
-				$"Czy na pewno usunąć wydatek z kwotą: {spending.Amount} zł. \n Dodanego: {spending.CreationDate} ?",
-				"Tak",
-				"Nie"
-			);
-
-			if (!answer)
-			{
-				_logger.LogInformation(
-					"Usuwanie wydatku anulowane przez użytkownika. SpendingId={SpendingId}",
-					spending.Id
-				);
-				return;
-			}
-
-			ShowLoadingIcon = true;
-			RunLoadingIcon = true;
-			BlockInteraction = true;
-
-			try
-			{
-				var response = await _spendingService.DeleteSpending(spending.Id);
-
-				if (!response.IsSuccessStatusCode)
-				{
-					var content = await response.Content.ReadAsStringAsync();
-
-					_logger.LogWarning(
-						"Usuwanie wydatku nie powiodło się. SpendingId={SpendingId}, StatusCode={StatusCode}, Content={Content}",
-						spending.Id,
-						response.StatusCode,
-						content
-					);
-
-					ShowErrorMessage = true;
-					return;
-				}
-
-				_logger.LogInformation(
-					"Wydatek usunięty pomyślnie. SpendingId={SpendingId}, Amount={Amount}",
-					spending.Id,
-					spending.Amount
-				);
-
-				_user.ThisMonthSpendings -= spending.Amount;
-				Spendings.Remove(spending);
-			}
-			catch (HttpRequestException httpEx)
-			{
-				_logger.LogError(
-					httpEx,
-					"Błąd HTTP podczas usuwania wydatku. SpendingId={SpendingId}",
-					spending.Id
-				);
-				ShowErrorMessage = true;
-				throw;
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(
-					ex,
-					"Nieoczekiwany błąd podczas usuwania wydatku. SpendingId={SpendingId}",
-					spending.Id
-				);
-				ShowErrorMessage = true;
-				throw;
-			}
-			finally
-			{
-				ShowLoadingIcon = false;
-				RunLoadingIcon = false;
-				BlockInteraction = false;
-
-				_logger.LogInformation(
-					"Zakończono proces usuwania wydatku. SpendingId={SpendingId}",
-					spending.Id
-				);
-			}
-		}
-
+		// ====== FILTER AND UI METHODS ======
 		private async Task ShowHideFilters()
 		{
-			_logger.LogInformation("Rozpoczynam pokazywanie filtrów wydatków.");
+			_logger.LogInformation("Rozpoczynam pokazywanie/ukrywanie filtrów wydatków.");
 
 			FiltersVisible = !FiltersVisible;
 
-			_logger.LogInformation("Filtry są widoczne. {FiltersVisible}", FiltersVisible);
+			_logger.LogInformation("Filtry widoczne: {FiltersVisible}", FiltersVisible);
 		}
-
 
 		private async Task ResetFilter()
 		{
@@ -780,11 +666,13 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 			ShowLoadingIcon = true;
 			RunLoadingIcon = true;
 			BlockInteraction = true;
+
 			try
 			{
 				SpendingFilterRequest.Reset();
 				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
 				UseDateFilter = false;
+
 				await SetBaseSpendingsInfo();
 				FiltersVisible = false;
 
@@ -807,26 +695,24 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 		{
 			_logger.LogInformation("Rozpoczynam pobieranie podstawowych informacji o wydatkach.");
 
-			SpendingFilterRequest.Reset();
-			DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
-			UseDateFilter = false;
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
 
 			try
 			{
+				SpendingFilterRequest.Reset();
+				DateColor = FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
+				UseDateFilter = false;
+
 				var response = await _spendingService.Get10(SpendingFilterRequest);
 
-				_logger.LogInformation(
-					"Wynik pobierania podstawowych informacji o wydatkach: StatusCode={StatusCode}",
-					response.StatusCode
-				);
+				_logger.LogInformation("Wynik pobierania podstawowych informacji o wydatkach: StatusCode={StatusCode}", response.StatusCode);
 
 				if (!response.IsSuccessStatusCode)
 				{
-					_logger.LogWarning(
-						"Pobieranie wydatków nie powiodło się. StatusCode={StatusCode}, Content={Content}",
-						response.StatusCode,
-						await response.Content.ReadAsStringAsync()
-					);
+					var content = await response.Content.ReadAsStringAsync();
+					_logger.LogWarning("Pobieranie wydatków nie powiodło się. StatusCode={StatusCode}, Content={Content}", response.StatusCode, content);
 
 					ShowErrorMessage = true;
 					EnableFilters = false;
@@ -836,45 +722,39 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 
 				ShowErrorMessage = false;
 
-				var content = await response.Content.ReadAsStringAsync();
-				var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingResponse>>(content);
+				var contentStr = await response.Content.ReadAsStringAsync();
+				var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingResponse>>(contentStr);
 
 				_mapper.Map(spendingResponse, Spendings);
 
-				if (Spendings.Count % 10 != 0)
-					EnableShowMore = false;
-				else
-					EnableShowMore = true;
+				EnableShowMore = Spendings.Count % 10 == 0;
 
-				_logger.LogInformation(
-					"Pobrano i zmapowano {Count} wydatków do kolekcji Spendings.",
-					spendingResponse.Count
-				);
+				_logger.LogInformation("Pobrano i zmapowano {Count} wydatków.", spendingResponse.Count);
 			}
 			catch (HttpRequestException httpEx)
 			{
-				_logger.LogError(
-					httpEx,
-					"Błąd HTTP podczas pobierania podstawowych informacji o wydatkach."
-				);
+				_logger.LogError(httpEx, "Błąd HTTP podczas pobierania podstawowych informacji o wydatkach.");
 				throw;
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(
-					ex,
-					"Nieoczekiwany błąd podczas pobierania podstawowych informacji o wydatkach."
-				);
+				_logger.LogError(ex, "Nieoczekiwany błąd podczas pobierania podstawowych informacji o wydatkach.");
 				throw;
 			}
 			finally
 			{
-				_logger.LogInformation("Zakończono proces pobierania podstawowych informacji o wydatkach.");
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+
+				_logger.LogInformation("Zakończono pobieranie podstawowych informacji o wydatkach.");
 			}
 		}
 
 		private async Task Filter()
 		{
+			_logger.LogInformation("Rozpoczynam filtrowanie wydatków.");
+
 			ShowLoadingIcon = true;
 			RunLoadingIcon = true;
 			BlockInteraction = true;
@@ -884,56 +764,41 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 				ShowFilterErrorMessage = false;
 				string errorMessage = null;
 
-				if (UseDateFilter)
+				if (UseDateFilter && !CheckDateFilter())
 				{
-					if (!CheckDateFilter())
-					{
-						DateColor = (Color)Application.Current.Resources["Negative"];
-						errorMessage = "Data 'Od' nie może być większa niż data 'Do'.";
-						_logger.LogWarning(errorMessage + " DateFrom={DateFrom}, DateTo={DateTo}",
-							SpendingFilterRequest.DateFrom, SpendingFilterRequest.DateTo);
-					}
-					else
-					{
-						DateColor = Colors.White;
-					}
+					DateColor = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Data 'Od' nie może być większa niż data 'Do'.";
+					_logger.LogWarning(errorMessage + " DateFrom={DateFrom}, DateTo={DateTo}", SpendingFilterRequest.DateFrom, SpendingFilterRequest.DateTo);
+				}
+				else
+				{
+					DateColor = Colors.White;
 				}
 
-				if (SpendingFilterRequest.AmountFrom != null && SpendingFilterRequest.AmountTo != null)
+				if (SpendingFilterRequest.AmountFrom.HasValue && SpendingFilterRequest.AmountTo.HasValue &&
+					SpendingFilterRequest.AmountFrom > SpendingFilterRequest.AmountTo)
 				{
-					if (SpendingFilterRequest.AmountFrom > SpendingFilterRequest.AmountTo)
-					{
-						FilterEntryColorFrom = FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
-						errorMessage = "Kwota 'Od' nie może być większa od kwoty 'Do'.";
-						_logger.LogWarning(errorMessage + " AmountFrom={AmountFrom}, AmountTo={AmountTo}",
-							SpendingFilterRequest.AmountFrom, SpendingFilterRequest.AmountTo);
-					}
-					else
-					{
-						FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
-					}
+					FilterEntryColorFrom = FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
+					errorMessage = "Kwota 'Od' nie może być większa niż kwota 'Do'.";
+					_logger.LogWarning(errorMessage + " AmountFrom={AmountFrom}, AmountTo={AmountTo}", SpendingFilterRequest.AmountFrom, SpendingFilterRequest.AmountTo);
+				}
+				else
+				{
+					FilterEntryColorFrom = FilterEntryColorTo = Colors.White;
 				}
 
-				if (SpendingFilterRequest.AmountFrom != null && !CheckAmountFilter((decimal)SpendingFilterRequest.AmountFrom))
+				if (SpendingFilterRequest.AmountFrom.HasValue && !CheckAmountFilter((decimal)SpendingFilterRequest.AmountFrom))
 				{
 					FilterEntryColorFrom = (Color)Application.Current.Resources["Negative"];
-					errorMessage = "Kwota 'Od' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					errorMessage = "Kwota 'Od' w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
 					_logger.LogWarning(errorMessage + " AmountFrom={AmountFrom}", SpendingFilterRequest.AmountFrom);
 				}
-				else
-				{
-					FilterEntryColorFrom = Colors.White;
-				}
 
-				if (SpendingFilterRequest.AmountTo != null && !CheckAmountFilter((decimal)SpendingFilterRequest.AmountTo))
+				if (SpendingFilterRequest.AmountTo.HasValue && !CheckAmountFilter((decimal)SpendingFilterRequest.AmountTo))
 				{
 					FilterEntryColorTo = (Color)Application.Current.Resources["Negative"];
-					errorMessage = "Kwota 'Do' jest w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
+					errorMessage = "Kwota 'Do' w złym formacie. Format: 00.00. Do 15 cyfr przed przecinkiem, 2 po przecinku.";
 					_logger.LogWarning(errorMessage + " AmountTo={AmountTo}", SpendingFilterRequest.AmountTo);
-				}
-				else
-				{
-					FilterEntryColorTo = Colors.White;
 				}
 
 				if (!string.IsNullOrEmpty(errorMessage))
@@ -947,22 +812,20 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 				FiltersVisible = false;
 
 				var request = SpendingFilterRequest.Clone();
-
 				var response = await _spendingService.Get10(request, useDatesFromToo: UseDateFilter);
+
 				if (!response.IsSuccessStatusCode)
 				{
 					var content = await response.Content.ReadAsStringAsync();
-					_logger.LogWarning(
-						"Pobieranie wydatków po filtrze nie powiodło się. StatusCode={StatusCode}, Content={Content}",
-						response.StatusCode,
-						content
-					);
+					_logger.LogWarning("Pobieranie wydatków po filtrze nie powiodło się. StatusCode={StatusCode}, Content={Content}", response.StatusCode, content);
 					ShowErrorMessage = true;
 					return;
 				}
 
 				var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingResponse>>(await response.Content.ReadAsStringAsync());
 				_mapper.Map(spendingResponse, Spendings);
+
+				_logger.LogInformation("Filtrowanie wydatków zakończone sukcesem. Pobrano {Count} wydatków.", spendingResponse.Count);
 			}
 			catch (Exception ex)
 			{
@@ -979,44 +842,25 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 
 		private bool CheckDateFilter()
 		{
-			_logger.LogInformation(
-				"Rozpoczynam sprawdzanie filtra dat wydatków. DateFrom={DateFrom}, DateTo={DateTo}",
-				SpendingFilterRequest.DateFrom,
-				SpendingFilterRequest.DateTo
-			);
+			_logger.LogInformation("Sprawdzam filtr dat. DateFrom={DateFrom}, DateTo={DateTo}", SpendingFilterRequest.DateFrom, SpendingFilterRequest.DateTo);
 
 			if (SpendingFilterRequest.DateFrom > SpendingFilterRequest.DateTo)
 			{
-				_logger.LogWarning(
-					"Niepoprawny zakres dat wydatków. DateFrom ({DateFrom}) jest późniejsza niż DateTo ({DateTo})",
-					SpendingFilterRequest.DateFrom,
-					SpendingFilterRequest.DateTo
-				);
+				_logger.LogWarning("Niepoprawny zakres dat. DateFrom ({DateFrom}) > DateTo ({DateTo})", SpendingFilterRequest.DateFrom, SpendingFilterRequest.DateTo);
 				return false;
 			}
 
-			_logger.LogInformation(
-				"Filtr dat wydatków jest poprawny. DateFrom={DateFrom}, DateTo={DateTo}",
-				SpendingFilterRequest.DateFrom,
-				SpendingFilterRequest.DateTo
-			);
-
+			_logger.LogInformation("Filtr dat jest poprawny.");
 			return true;
 		}
 
 		private bool CheckAmountFilter(decimal amount)
 		{
-			_logger.LogInformation(
-					"Rozpoczynam sprawdzanie kwoty wydatku. Amount={Amount}",
-					amount
-				);
+			_logger.LogInformation("Sprawdzam kwotę wydatku. Amount={Amount}", amount);
 
 			if (amount <= 0)
 			{
-				_logger.LogWarning(
-					"Kwota wydatku jest mniejsza lub równa zero. Amount={Amount}",
-					amount
-				);
+				_logger.LogWarning("Kwota wydatku jest mniejsza lub równa zero. Amount={Amount}", amount);
 				return false;
 			}
 
@@ -1025,27 +869,17 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 
 			if (amountParts[0].Length > 15)
 			{
-				_logger.LogWarning(
-					"Kwota wydatku przekracza 15 cyfr przed przecinkiem. Amount={Amount}",
-					amount
-				);
+				_logger.LogWarning("Kwota wydatku przekracza 15 cyfr przed przecinkiem. Amount={Amount}", amount);
 				return false;
 			}
 
 			if (amountParts.Length == 2 && amountParts[1].Length > 2)
 			{
-				_logger.LogWarning(
-					"Kwota wydatku przekracza 2 miejsca po przecinku. Amount={Amount}",
-					amount
-				);
+				_logger.LogWarning("Kwota wydatku przekracza 2 miejsca po przecinku. Amount={Amount}", amount);
 				return false;
 			}
 
-			_logger.LogInformation(
-				"Kwota wydatku jest poprawna. Amount={Amount}",
-				amount
-			);
-
+			_logger.LogInformation("Kwota wydatku jest poprawna.");
 			return true;
 		}
 
@@ -1070,42 +904,29 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 
 				var response = await _spendingService.Get10(request);
 
-				_logger.LogInformation(
-					"Wynik pobierania kolejnych wydatków: StatusCode={StatusCode}",
-					response.StatusCode
-				);
+				_logger.LogInformation("Wynik pobierania kolejnych wydatków: StatusCode={StatusCode}", response.StatusCode);
 
 				if (!response.IsSuccessStatusCode)
 				{
 					var content = await response.Content.ReadAsStringAsync();
-					_logger.LogWarning(
-						"Pobieranie kolejnych wydatków nie powiodło się. StatusCode={StatusCode}, Content={Content}",
-						response.StatusCode,
-						content
-					);
-
+					_logger.LogWarning("Pobieranie kolejnych wydatków nie powiodło się. StatusCode={StatusCode}, Content={Content}", response.StatusCode, content);
 					ShowErrorMessage = true;
 					return;
 				}
 
-				int oldSpendingCount = Spendings.Count;
-
+				int oldCount = Spendings.Count;
 				var spendingResponse = _jsonService.Deserialize<ObservableCollection<SpendingResponse>>(await response.Content.ReadAsStringAsync());
-				var next10Spendings = _mapper.Map<ObservableCollection<Spending>>(spendingResponse);
+				var nextSpendings = _mapper.Map<ObservableCollection<Spending>>(spendingResponse);
 
-				foreach (var spending in next10Spendings.OrderByDescending(s => s.CreationDate))
+				foreach (var spending in nextSpendings.OrderByDescending(s => s.CreationDate))
 				{
 					Spendings.Add(spending);
 				}
 
-				EnableShowMore = !(Spendings.Count % 10 != 0 || oldSpendingCount == Spendings.Count);
+				EnableShowMore = !(Spendings.Count % 10 != 0 || oldCount == Spendings.Count);
 
-				_logger.LogInformation(
-					"Pobrano {NewSpendings} kolejnych wydatków. Łączna liczba wydatków: {TotalSpendings}. EnableShowMore={EnableShowMore}",
-					next10Spendings.Count,
-					Spendings.Count,
-					EnableShowMore
-				);
+				_logger.LogInformation("Pobrano {NewSpendings} kolejnych wydatków. Łącznie: {TotalSpendings}. EnableShowMore={EnableShowMore}",
+					nextSpendings.Count, Spendings.Count, EnableShowMore);
 			}
 			catch (HttpRequestException httpEx)
 			{
@@ -1129,6 +950,9 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 			}
 		}
 
+		// ============================
+		// Event PropertyChanged
+		// ============================
 		public event PropertyChangedEventHandler PropertyChanged;
 		protected void OnPropertyChanged(string name)
 			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

@@ -4,18 +4,27 @@ using SpendingTrackerApp.Contracts.Dtos.Requests;
 using SpendingTrackerApp.Extensions;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
-using SpendingTrackerApp.Pages;
 using SpendingTrackerApp.Pages.LoginPages;
 using System.ComponentModel;
 using System.Windows.Input;
 
 public class LoginViewModel : INotifyPropertyChanged
 {
-    private readonly IUserService _userService;
-    private readonly ILogger<LoginViewModel> _logger;
-    BaseHttpService _htttp {  get; set; }
+	private readonly IUserService _userService;
+	private readonly ILogger<LoginViewModel> _logger;
+	private BaseHttpService _http;
 
 	private UserRequest _userRequest;
+
+	private bool _hidePassword;
+	private string _passwordIcon;
+
+	private bool _showErrorMessage;
+	private string _errorMessage;
+
+	private bool _showLoadingIcon;
+	private bool _runLoadingIcon;
+	private bool _blockInteraction;
 
 	public UserRequest UserRequest
 	{
@@ -30,155 +39,201 @@ public class LoginViewModel : INotifyPropertyChanged
 		}
 	}
 
-	private bool _hidePassword = true;
-    private string _passwordIcon = "hide_password.png";
+	public bool HidePassword
+	{
+		get => _hidePassword;
+		set
+		{
+			if (_hidePassword != value)
+			{
+				_hidePassword = value;
+				OnPropertyChanged(nameof(HidePassword));
+			}
+		}
+	}
 
-    private bool _showErrorMessage = false;
-    private string _errorMessage;
+	public string PasswordIcon
+	{
+		get => _passwordIcon;
+		set
+		{
+			if (_passwordIcon != value)
+			{
+				_passwordIcon = value;
+				OnPropertyChanged(nameof(PasswordIcon));
+			}
+		}
+	}
 
-    public bool _showLoadingIcon = false;
-    public bool _runLoadingIcon = false;
+	public string ErrorMessage
+	{
+		get => _errorMessage;
+		set
+		{
+			if (_errorMessage != value)
+			{
+				_errorMessage = value;
+				OnPropertyChanged(nameof(ErrorMessage));
+			}
+		}
+	}
 
-    public bool _blockInteraction = false;
+	public bool ShowErrorMessage
+	{
+		get => _showErrorMessage;
+		set
+		{
+			if (_showErrorMessage != value)
+			{
+				_showErrorMessage = value;
+				OnPropertyChanged(nameof(ShowErrorMessage));
+			}
+		}
+	}
 
-    public bool HidePassword
-    {
-        get => _hidePassword;
-        set
-        {
-            if (_hidePassword != value)
-            {
-                _hidePassword = value;
-                OnPropertyChanged(nameof(HidePassword));
-            }
-        }
-    }
+	public bool ShowLoadingIcon
+	{
+		get => _showLoadingIcon;
+		set
+		{
+			if (_showLoadingIcon != value)
+			{
+				_showLoadingIcon = value;
+				OnPropertyChanged(nameof(ShowLoadingIcon));
+			}
+		}
+	}
 
-    public string PasswordIcon
-    {
-        get => _passwordIcon;
-        set
-        {
-            if (_passwordIcon != value)
-            {
-                _passwordIcon = value;
-                OnPropertyChanged(nameof(PasswordIcon));
-            }
-        }
-    }
+	public bool RunLoadingIcon
+	{
+		get => _runLoadingIcon;
+		set
+		{
+			if (_runLoadingIcon != value)
+			{
+				_runLoadingIcon = value;
+				OnPropertyChanged(nameof(RunLoadingIcon));
+			}
+		}
+	}
 
-    public string ErrorMessage
-    {
-        get => _errorMessage;
-        set
-        {
-            if (_errorMessage != value)
-            {
-                _errorMessage = value;
-                OnPropertyChanged(nameof(ErrorMessage));
-            }
-        }
-    }
+	public bool BlockInteraction
+	{
+		get => _blockInteraction;
+		set
+		{
+			if (_blockInteraction != value)
+			{
+				_blockInteraction = value;
+				OnPropertyChanged(nameof(BlockInteraction));
+			}
+		}
+	}
 
-    public bool ShowErrorMessage
-    {
-        get => _showErrorMessage;
-        set
-        {
-            if (_showErrorMessage != value)
-            {
-                _showErrorMessage = value;
-                OnPropertyChanged(nameof(ShowErrorMessage));
-            }
-        }
-    }
+	public ICommand TogglePasswordCommand { get; }
+	public ICommand LoginUserCommand { get; }
+	public ICommand GoToCreateAccountPageCommand { get; }
+	public ICommand GoToResetPasswordPageCommand { get; }
 
-    public bool ShowLoadingIcon
-    {
-        get => _showLoadingIcon;
-        set
-        {
-            if (_showLoadingIcon != value)
-            {
-                _showLoadingIcon = value;
-                OnPropertyChanged(nameof(ShowLoadingIcon));
-            }
-        }
-    }
-
-    public bool RunLoadingIcon
-    {
-        get => _runLoadingIcon;
-        set
-        {
-            if (_runLoadingIcon != value)
-            {
-                _runLoadingIcon = value;
-                OnPropertyChanged(nameof(RunLoadingIcon));
-            }
-        }
-    }
-
-    public bool BlockInteraction
-    {
-        get => _blockInteraction;
-        set
-        {
-            if (_blockInteraction != value)
-            {
-                _blockInteraction = value;
-                OnPropertyChanged(nameof(BlockInteraction));
-            }
-        }
-    }
-
-    public ICommand TogglePasswordCommand { get; }
-    public ICommand LoginUserCommand { get; }
-    public ICommand GoToCreateAccountPageCommand {  get; }
-    public ICommand GoToResetPasswordPageCommand {  get; }
-
-    public LoginViewModel(
-        BaseHttpService http,
-        IUserService userService,
+	public LoginViewModel(
+		BaseHttpService http,
+		IUserService userService,
 		ILogger<LoginViewModel> logger)
-    {
-        _htttp = http;
-        _userService = userService;
-        _logger = logger;
+	{
+		_http = http;
+		_userService = userService;
+		_logger = logger;
 
-        TogglePasswordCommand = new Command(async () => await TogglePassword());
+		TogglePasswordCommand = new Command(async () => await TogglePassword());
 		LoginUserCommand = new Command(async () => await LoginUser());
-        GoToCreateAccountPageCommand = new Command(async () => await GoToCreateAccountPage());
-        GoToResetPasswordPageCommand = new Command(async () => await GoToResetPasswordPage());
-    }
+		GoToCreateAccountPageCommand = new Command(async () => await GoToCreateAccountPage());
+		GoToResetPasswordPageCommand = new Command(async () => await GoToResetPasswordPage());
+	}
 
 	public async Task Reset()
 	{
-	
-		UserRequest = new UserRequest() { Email = "test1@test.pl", Password = "inne22" };
-		ShowLoadingIcon = false;
-		RunLoadingIcon = false;
-		ShowErrorMessage = false;
-		BlockInteraction = false;
+		_logger.LogInformation("Rozpoczynam reset formularza logowania (UI).");
 
+		// Blokada interakcji i ikony ładowania
+		ShowLoadingIcon = true;
+		RunLoadingIcon = true;
+		BlockInteraction = true;
+
+		try
+		{
+			// Reset danych użytkownika
+			UserRequest = new UserRequest() { Email = "test@test.pl", Password = "inne22" };
+
+			// Reset stanu UI
+			HidePassword = true;              // powiązane z _hidePassword
+			PasswordIcon = "show_password.png";
+			ShowErrorMessage = false;
+			ErrorMessage = string.Empty;      // powiązane z _errorMessage
+		}
+		finally
+		{
+			ShowLoadingIcon = false;
+			RunLoadingIcon = false;
+			BlockInteraction = false;
+
+			_logger.LogInformation("Zakończono reset formularza logowania (UI).");
+		}
 	}
-	private async Task TogglePassword()
+
+
+	public async Task GoToCreateAccountPage()
 	{
-		_logger.LogInformation(
-			"Rozpoczynam przełączanie widoczności hasła. HidePassword: {HidePassword}",
-			HidePassword
-		);
+		_logger.LogInformation("Rozpoczynam nawigację do strony tworzenia konta.");
 
-		HidePassword = !HidePassword;
-		PasswordIcon = HidePassword ? "hide_password.png" : "show_password.png";
+		ShowLoadingIcon = true;
+		RunLoadingIcon = true;
+		BlockInteraction = true;
 
-		_logger.LogInformation(
-			"Zakończono przełączanie widoczności hasła. HidePassword: {HidePassword}, Icon: {Icon}",
-			HidePassword,
-			PasswordIcon
-		);
+		try
+		{
+			await Shell.Current.GoToAsync(nameof(CreateAcountPage));
+
+			_logger.LogInformation("Nawigacja do strony tworzenia konta zakończona sukcesem.");
+		}
+		catch (Exception ex)
+		{
+			_logger.LogError(ex, "Błąd podczas nawigacji do strony tworzenia konta.");
+			throw;
+		}
+		finally
+		{
+			ShowLoadingIcon = false;
+			RunLoadingIcon = false;
+			BlockInteraction = false;
+		}
 	}
 
+	public async Task GoToResetPasswordPage()
+	{
+		_logger.LogInformation("Rozpoczynam nawigację do strony resetu hasła.");
+
+		ShowLoadingIcon = true;
+		RunLoadingIcon = true;
+		BlockInteraction = true;
+
+		try
+		{
+			await Shell.Current.GoToAsync(nameof(ResetPasswordPage));
+
+			_logger.LogInformation("Nawigacja do strony resetu hasła zakończona sukcesem.");
+		}
+		catch (Exception ex)
+		{
+			_logger.LogError(ex, "Błąd podczas nawigacji do strony resetu hasła.");
+			throw;
+		}
+		finally
+		{
+			ShowLoadingIcon = false;
+			RunLoadingIcon = false;
+			BlockInteraction = false;
+		}
+	}
 
 	private async Task LoginUser()
 	{
@@ -211,7 +266,7 @@ public class LoginViewModel : INotifyPropertyChanged
 					response.StatusCode
 				);
 
-				ErrorMessage = "Coś poszło nie tak podczas logowania. Spróbuj później.";
+				ErrorMessage = "Nie znaleziono konta lub hasło nie spełnia wymagań (co najmniej 6 znaków). Spróbuj jeszcze raz lub później";
 				ShowErrorMessage = true;
 				return;
 			}
@@ -221,7 +276,7 @@ public class LoginViewModel : INotifyPropertyChanged
 				UserRequest.Email
 			);
 
-			_htttp.SetToken(await response.Content.ReadAsStringAsync());
+			_http.SetToken(await response.Content.ReadAsStringAsync());
 
 			Application.Current.MainPage = new AppShellMain();
 		}
@@ -257,53 +312,40 @@ public class LoginViewModel : INotifyPropertyChanged
 	}
 
 
-
-	public async Task GoToCreateAccountPage()
+	private async Task TogglePassword()
 	{
-		_logger.LogInformation("Rozpoczynam nawigację do strony tworzenia konta.");
+		_logger.LogInformation(
+			"Rozpoczynam przełączanie widoczności hasła. HidePassword: {HidePassword}",
+			HidePassword
+		);
+
+		ShowLoadingIcon = true;
+		RunLoadingIcon = true;
+		BlockInteraction = true;
 
 		try
 		{
-			await Shell.Current.GoToAsync(nameof(CreateAcountPage));
+			HidePassword = !HidePassword;
+			PasswordIcon = HidePassword ? "show_password.png" : "hide_password.png";
+		}
+		finally
+		{
+			ShowLoadingIcon = false;
+			RunLoadingIcon = false;
+			BlockInteraction = false;
 
 			_logger.LogInformation(
-				"Nawigacja do strony tworzenia konta zakończona sukcesem."
+				"Zakończono przełączanie widoczności hasła. HidePassword: {HidePassword}, Icon: {Icon}",
+				HidePassword,
+				PasswordIcon
 			);
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(
-				ex,
-				"Błąd podczas nawigacji do strony tworzenia konta."
-			);
-			throw;
 		}
 	}
-
-	public async Task GoToResetPasswordPage()
-	{
-		_logger.LogInformation("Rozpoczynam nawigację do strony resetu hasła.");
-
-		try
-		{
-			await Shell.Current.GoToAsync(nameof(ResetPasswordPage));
-
-			_logger.LogInformation(
-				"Nawigacja do strony resetu hasła zakończona sukcesem."
-			);
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(
-				ex,
-				"Błąd podczas nawigacji do strony resetu hasła."
-			);
-			throw;
-		}
-	}
-
 
 	public event PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged(string name)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+	protected void OnPropertyChanged(string propertyName)
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
 }

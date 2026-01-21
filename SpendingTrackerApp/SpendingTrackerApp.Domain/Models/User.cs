@@ -10,8 +10,10 @@ namespace SpendingTrackerApp.Domain.Models
 		private string _token;
 		private string _firstName;
 		private string _lastName;
-		private decimal _thisMonthFund;
-		private decimal _thisMonthSpendings;
+		private decimal _thisMonthFundSum;
+		private decimal _thisMonthSpendingsSum;
+		private List<SpendingCategory> _spendingCategories = new List<SpendingCategory>();
+		private List<Spending> _spendings = new List<Spending>();
 
 		public string Email
 		{
@@ -74,31 +76,58 @@ namespace SpendingTrackerApp.Domain.Models
 			}
 		}
 
-		public decimal ThisMonthFund
+		public decimal ThisMonthFundSum
 		{
-			get => _thisMonthFund;
+			get => _thisMonthFundSum;
 			set
 			{
-				if (_thisMonthFund != value)
+				if (_thisMonthFundSum != value)
 				{
-					_thisMonthFund = value;
-					OnPropertyChanged(nameof(ThisMonthFund));
+					_thisMonthFundSum = value;
+					OnPropertyChanged(nameof(ThisMonthFundSum));
 				}
 			}
 		}
 
-		public decimal ThisMonthSpendings
+		public decimal ThisMonthSpendingsSum
 		{
-			get => _thisMonthSpendings;
+			get => _thisMonthSpendingsSum;
 			set
 			{
-				if (_thisMonthSpendings != value)
+				if (_thisMonthSpendingsSum != value)
 				{
-					_thisMonthSpendings = value;
-					OnPropertyChanged(nameof(ThisMonthSpendings));
+					_thisMonthSpendingsSum = value;
+					OnPropertyChanged(nameof(ThisMonthSpendingsSum));
 				}
 			}
 		}
+
+		public List<SpendingCategory> SpendingCategories
+		{
+			get => _spendingCategories;
+			set
+			{
+				if (_spendingCategories != value)
+				{
+					_spendingCategories = value;
+					OnPropertyChanged(nameof(SpendingCategories));
+				}
+			}
+		}
+
+		public List<Spending> Spendings
+		{
+			get => _spendings;
+			set
+			{
+				if (_spendings != value)
+				{
+					_spendings = value;
+					OnPropertyChanged(nameof(Spendings));
+				}
+			}
+		}
+
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string prop) =>

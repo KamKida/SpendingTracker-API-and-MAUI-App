@@ -1,14 +1,7 @@
 ﻿using SpendingTrackerApp.Domain.HelpModels;
-using SpendingTrackerApp.Domain.Models;
 using SpendingTrackerApp.Infrastructure.BaseServices;
 using SpendingTrackerApp.Infrastructure.Interfaces;
 using SpendingTrackerApp.Infrastructure.Services;
-using SpendingTrackerApp.Pages;
-using SpendingTrackerApp.Pages.FundCategorysPages;
-using SpendingTrackerApp.Pages.FundsPages;
-using SpendingTrackerApp.Pages.LoginPages;
-using SpendingTrackerApp.Pages.SpendingPages;
-using SpendingTrackerApp.Pages.UserPages;
 using SpendingTrackerApp.ViewModels;
 using SpendingTrackerApp.ViewModels.FundCategoryViewModels;
 using SpendingTrackerApp.ViewModels.FundViewModels;
@@ -23,7 +16,6 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddSingleton<User>();
             services.AddSingleton<BaseHttpService>();
             services.AddSingleton<JsonService>();
             services.AddSingleton<FundsList>();
@@ -46,6 +38,11 @@ namespace SpendingTrackerApp.Infrastructure.Extensions
             services.AddScoped<AddSpendingPageViewModel>();
             services.AddScoped<EditSpendingPageViewModel>();
 
+            services.AddScoped<SpendingCategoryListPageViewModel>();
+            services.AddScoped<AddSpendingCategoryPageViewModel>();
+            services.AddScoped<EditSpendingCategoryPageViewModel>();
+
+            services.AddScoped<EditUserPageViewModel>();
 
 			//Services
 			services.AddScoped<IUserService, UserService>();

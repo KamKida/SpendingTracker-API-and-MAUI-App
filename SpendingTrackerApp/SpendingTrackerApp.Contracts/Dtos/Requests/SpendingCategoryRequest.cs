@@ -7,5 +7,6 @@
 		public decimal? WeeklyLimit { get; set; }
 		public decimal? MonthlyLimit { get; set; }
 		public string? Description { get; set; }
+
 	}
 }

@@ -9,8 +9,23 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 {
 	public class CreateAccountViewModel : INotifyPropertyChanged
 	{
+		// Pola prywatne
+		private readonly IUserService _service;
+		private readonly ILogger<CreateAccountViewModel> _logger;
+
 		private UserRequest _userRequest;
 
+		private bool _hidePassword;
+		private string _passwordIcon;
+
+		private string _message;
+		private Color _messageColor;
+
+		private bool _showLoadingIcon;
+		private bool _runLoadingIcon;
+		private bool _blockInteraction;
+
+		// Właściwości MVVM
 		public UserRequest UserRequest
 		{
 			get => _userRequest;
@@ -24,19 +39,6 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 			}
 		}
 
-		private readonly IUserService _service;
-		private readonly ILogger<CreateAccountViewModel> _logger;
-
-		private bool _hidePassword = true;
-		private string _passwordIcon = "hide_password.png";
-
-		private string _message = "Wypełnij wymagane pola.";
-		private Color _messageColor = Colors.Green;
-
-		public bool _showLoadingIcon = false;
-		public bool _runLoadingIcon = false;
-
-		public bool _blockInteraction = false;
 		public bool HidePassword
 		{
 			get => _hidePassword;
@@ -127,6 +129,7 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 				}
 			}
 		}
+
 		public ICommand TogglePasswordCommand { get; }
 		public ICommand CreateAccountCommand { get; }
 
@@ -141,6 +144,40 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 			CreateAccountCommand = new Command(async () => await CreateUser());
 		}
 
+		public async Task Reset()
+		{
+			_logger.LogInformation("Rozpoczynam reset formularza tworzenia konta (UI).");
+
+			// Blokada interakcji i pokazanie ładowania
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
+
+			try
+			{
+				// Reset danych użytkownika
+				UserRequest = new UserRequest();
+
+				// Reset widoczności hasła i ikony
+				HidePassword = false; // zakładam, że domyślnie hasło jest widoczne
+				PasswordIcon = "show_password.png";
+
+				// Reset komunikatów
+				Message = "Wypełnij wymagane pola: Email oraz Hasło. Hasło powinno się składać z conajmniej 6 znaków.";
+				MessageColor = (Color)Application.Current.Resources["Positive"];
+
+				// Reset stanu ikon ładowania i blokady interakcji
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+			}
+			finally
+			{
+				_logger.LogInformation("Zakończono reset formularza tworzenia konta (UI).");
+			}
+		}
+
+
 		private async Task TogglePassword()
 		{
 			_logger.LogInformation(
@@ -148,25 +185,27 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 				HidePassword
 			);
 
-			HidePassword = !HidePassword;
-			PasswordIcon = HidePassword ? "hide_password.png" : "show_password.png";
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
 
-			_logger.LogInformation(
-				"Zakończono przełączanie widoczności hasła. HidePassword: {HidePassword}, Ikona: {Icon}",
-				HidePassword,
-				PasswordIcon
-			);
-		}
+			try
+			{
+				HidePassword = !HidePassword;
+				PasswordIcon = HidePassword ? "hide_password.png" : "show_password.png";
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
 
-		public async Task Reset()
-		{
-			UserRequest = new UserRequest();
-			ShowLoadingIcon = false;
-			RunLoadingIcon = false;
-			Message = "Wypełnij wymagane pola.";
-			MessageColor = Colors.Green;
-			BlockInteraction = false;
-
+				_logger.LogInformation(
+					"Zakończono przełączanie widoczności hasła. HidePassword: {HidePassword}, Ikona: {Icon}",
+					HidePassword,
+					PasswordIcon
+				);
+			}
 		}
 
 		private async Task CreateUser()
@@ -245,13 +284,11 @@ namespace SpendingTrackerApp.ViewModels.LoginViewModels
 			}
 		}
 
-
-
 		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string name)
-			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-
-
+		protected void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
 	}
 }

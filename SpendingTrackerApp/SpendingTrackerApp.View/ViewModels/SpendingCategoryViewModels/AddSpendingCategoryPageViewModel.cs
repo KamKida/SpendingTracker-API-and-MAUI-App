@@ -12,15 +12,15 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 		private ISpendingCategoryService _spendingCategoryService;
 		private ILogger<AddSpendingCategoryPageViewModel> _logger;
 
-		private string _message = "";
-		private Color _messageColor = (Color)Application.Current.Resources["Positive"];
-		private Color _nameEntryColor = Colors.White;
-		private Color _weeklyLimitEntryColor = Colors.White;
-		private Color _monthlyLimitEntryColor = Colors.White;
-		public bool _showLoadingIcon = false;
-		public bool _runLoadingIcon = false;
+		private string _message;
+		private Color _messageColor;
+		private Color _nameEntryColor;
+		private Color _weeklyLimitEntryColor;
+		private Color _monthlyLimitEntryColor;
+		public bool _showLoadingIcon;
+		public bool _runLoadingIcon;
 
-		public bool _blockInteraction = false;
+		public bool _blockInteraction;
 
 		public SpendingCategoryRequest SpendingCategoryRequest
 		{
@@ -175,13 +175,32 @@ namespace SpendingTrackerApp.ViewModels.SpendingCategoryViewModels
 		{
 			_logger.LogInformation("Rozpoczynam resetowanie stanu kategorii wydatków i błędów UI.");
 
-			SpendingCategoryRequest = new SpendingCategoryRequest();
-			Message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby pozytywne. Nazwa jest wymagana";
-			MessageColor = WeeklyLimitEntryColor = (Color)Application.Current.Resources["Positive"];
-			NameEntryColor = Colors.White;
+			// Blokada interakcji i ikony ładowania
+			ShowLoadingIcon = true;
+			RunLoadingIcon = true;
+			BlockInteraction = true;
 
-			_logger.LogInformation("Zakończono resetowanie stanu kategorii wydatków i błędów UI.");
+			try
+			{
+				// Reset danych formularza
+				SpendingCategoryRequest = new SpendingCategoryRequest();
+
+				// Reset stanu UI
+				Message = "Format: 00.00. Do 15 przed przecinkiem, 2 po przecinku. Jedynie liczby pozytywne. Nazwa jest wymagana";
+				MessageColor = WeeklyLimitEntryColor = (Color)Application.Current.Resources["Positive"];
+				NameEntryColor = Colors.White;
+				MonthlyLimitEntryColor = Colors.White; // powiązane z _monthlyLimitEntryColor
+			}
+			finally
+			{
+				ShowLoadingIcon = false;
+				RunLoadingIcon = false;
+				BlockInteraction = false;
+
+				_logger.LogInformation("Zakończono resetowanie stanu kategorii wydatków i błędów UI.");
+			}
 		}
+
 		public async Task AddSpendingCategory()
 		{
 			_logger.LogInformation(

@@ -615,7 +615,7 @@ namespace SpendingTrackerApp.ViewModels.FundCategoryViewModels
 					fund.Amount
 				);
 
-				_user.ThisMonthFund -= fund.Amount;
+				_user.ThisMonthFundSum -= fund.Amount;
 				Funds.Remove(fund);
 			}
 			catch (HttpRequestException httpEx)

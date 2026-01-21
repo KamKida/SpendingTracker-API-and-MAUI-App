@@ -190,11 +190,11 @@ namespace SpendingTracker.Application.Services
 									Email = u.Email,
 									FirstName = u.FirstName,
 									LastName = u.LastName,
-									ThisMonthFund = u.Funds
+									ThisMonthFundSum = u.Funds
 		.Where(f => f.CreationDate.Month == today.Month
 				&& f.CreationDate.Year == today.Year)
 		.Sum(f => f.Amount),
-									ThisMonthSpendings = u.Spendings
+									ThisMonthSpendingsSum = u.Spendings
 		.Where(s => s.CreationDate.Month == today.Month
 				&& s.CreationDate.Year == today.Year)
 		.Sum(s => s.Amount),
@@ -210,7 +210,6 @@ namespace SpendingTracker.Application.Services
 		}).ToList(),
 									SpendingCategoryResponses = u.SpendingCategories
 	.Where(s =>
-		s.CreationDate.Month == today.Month &&
 		s.CreationDate.Year == today.Year &&
 		s.MonthlyLimit.HasValue
 	)
@@ -220,7 +219,7 @@ namespace SpendingTracker.Application.Services
 		Name = s.Name,
 		MonthlyLimit = s.MonthlyLimit,
 		WeeklyLimit = s.WeeklyLimit,
-
+		CreationDate = s.CreationDate,
 		MonthlyLimitDiffrence =
 			s.MonthlyLimit.Value -
 			s.Spendings

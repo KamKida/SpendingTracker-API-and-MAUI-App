@@ -17,7 +17,7 @@ public partial class SpendingCategoryListPage : ContentPage
 		var vm = BindingContext as SpendingCategoryListPageViewModel;
 		if (vm != null)
 		{
-			await vm.SetBaseInfo();
+			await vm.Reset();
 		}
 	}
 

@@ -2,71 +2,73 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SpendingTrackerApp.Pages.LoginPages.LoginPage"
-             Title=""
-             Shell.FlyoutBehavior="Disabled">
+             Shell.FlyoutBehavior="Disabled"
+             Title="">
 
 	<Grid
-        RowDefinitions="*,Auto"
         InputTransparent="{Binding BlockInteraction}">
 
+		<!-- Formularz logowania -->
 		<Grid
-			Grid.Row="0"
             RowDefinitions="Auto,Auto,Auto"
             RowSpacing="30"
             Padding="30">
 
-			<Border
-                Grid.Row="0">
-			<Entry 
-            BackgroundColor="Transparent"
-                Placeholder="email@email.com"
-                Text ="{Binding UserRequest.Email}"
-                TextColor="White"
-                HorizontalTextAlignment="End"
-                FontSize="25"/>
+			<!-- Email -->
+			<Border Grid.Row="0">
+				<Entry
+                    Grid.Row="0"
+                    BackgroundColor="Transparent"
+                    Placeholder="email@email.com"
+                    Text="{Binding UserRequest.Email}"
+                    TextColor="White"
+                    FontSize="25"
+                    HorizontalTextAlignment="End"/>
 			</Border>
 
-			<Border
-                    
-                Grid.Row="1">
-				<Entry 
+			<!-- Hasło -->
+			<Border Grid.Row="1">
+				<Entry
+                    Grid.Row="1"
+                    BackgroundColor="Transparent"
                     Placeholder="hasło"
-                    
-            BackgroundColor="Transparent"
-                    IsPassword="{Binding HidePassword}" 
                     Text="{Binding UserRequest.Password}"
                     TextColor="White"
+                    FontSize="25"
                     HorizontalTextAlignment="End"
-                    FontSize="25"/>
-
+                    IsPassword="{Binding HidePassword}"/>
 			</Border>
 
+			<!-- Przycisk logowania, toggle hasła, komunikat błędu, przyciski dodatkowe -->
 			<Grid
                 Grid.Row="2"
-                RowDefinitions="Auto, Auto, *"
-                ColumnDefinitions="*, *"
+                RowDefinitions="Auto,Auto,Auto"
+                ColumnDefinitions="*,*"
                 ColumnSpacing="30"
                 RowSpacing="30">
 
+				<!-- Przycisk logowania -->
 				<Button
-                    
                     Grid.Row="0"
                     Grid.Column="0"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Start"
                     Text="Zaloguj"
                     FontSize="20"
                     WidthRequest="200"
-                    Command ="{Binding LoginUserCommand}"/>
+                    VerticalOptions="Center"
+                    HorizontalOptions="Start"
+                    Command="{Binding LoginUserCommand}"/>
 
+				<!-- Toggle hasła -->
 				<Border
                     Grid.Row="0"
                     Grid.Column="1"
                     HeightRequest="75"
                     WidthRequest="75"
                     Padding="0"
-                    StrokeShape="RoundRectangle 50,50,50,50" >
+                    StrokeShape="RoundRectangle 50,50,50,50">
 					<ImageButton
+                        Grid.Row="0"
+                        Grid.Column="0"
                         HeightRequest="50"
                         WidthRequest="50"
                         HorizontalOptions="Center"
@@ -75,59 +77,50 @@
                         Command="{Binding TogglePasswordCommand}"/>
 				</Border>
 
-				<Border 
+				<!-- Komunikat błędu -->
+				<Border
                     Grid.Row="1"
                     Grid.ColumnSpan="2"
                     IsVisible="{Binding ShowErrorMessage}"
                     Background="White"
                     Padding="10">
-
-					<Label 
+					<Label
+                        Grid.Row="1"
                         Text="{Binding ErrorMessage}"
                         TextColor="Red"
                         FontSize="30"
-                        LineBreakMode="WordWrap" />
+                        LineBreakMode="WordWrap"/>
 				</Border>
 
-
+				<!-- Przycisk Utwórz konto i Resetuj hasło -->
 				<Grid
                     Grid.Row="2"
                     Grid.ColumnSpan="2"
-                    ColumnDefinitions="Auto, Auto"
+                    ColumnDefinitions="Auto,Auto"
                     ColumnSpacing="20">
-					<Button 
-                    
+					<Button
                         Grid.Column="0"
-                        Text="Utwórz konto" 
-                        FontSize="17" 
+                        Text="Utwórz konto"
+                        FontSize="17"
                         WidthRequest="150"
                         Command="{Binding GoToCreateAccountPageCommand}"/>
-
-
 					<Button
                         Grid.Column="1"
-                        Text="Resetuj hasło" 
-                        FontSize="17" 
+                        Text="Resetuj hasło"
+                        FontSize="17"
                         WidthRequest="150"
                         Command="{Binding GoToResetPasswordPageCommand}"/>
-
-
-
-
 				</Grid>
 
-
-				
 			</Grid>
 
-
-
 		</Grid>
+
+		<!-- Overlay ładowania -->
 		<Grid
             IsVisible="{Binding ShowLoadingIcon}"
             BackgroundColor="#80000000"
             ZIndex="999">
-
 			<ActivityIndicator
                 IsRunning="{Binding RunLoadingIcon}"
                 Color="White"
@@ -135,10 +128,8 @@
                 HeightRequest="80"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"/>
-
 		</Grid>
 
 	</Grid>
-
 
 </ContentPage>

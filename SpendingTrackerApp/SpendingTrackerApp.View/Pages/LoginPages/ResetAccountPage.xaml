@@ -2,91 +2,102 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SpendingTrackerApp.Pages.LoginPages.ResetPasswordPage"
+             xmlns:converters="clr-namespace:SpendingTrackerApp.Converters"
              Title="Resetuj hasło">
 
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<converters:InverseBoolConverter x:Key="InverseBool"/>
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<Shell.BackButtonBehavior>
+		<BackButtonBehavior IsVisible="{Binding BlockInteraction, Converter={StaticResource InverseBool}}"/>
+	</Shell.BackButtonBehavior>
+
 	<Grid
-        RowDefinitions="*,Auto"
         InputTransparent="{Binding BlockInteraction}">
 
+		<!-- Formularz -->
 		<Grid
-			Grid.Row="0"
             RowDefinitions="Auto,Auto,Auto"
             RowSpacing="30"
             Padding="30">
 
-			<Border
-                Grid.Row="0">
-				<Entry 
-                Background="Transparent"
-                Placeholder="email@email.com"
-                Text ="{Binding UserRequest.Email}"
-                TextColor="White"
-                HorizontalTextAlignment="End"
-                FontSize="25"/>
+			<!-- Email -->
+			<Border Grid.Row="0">
+				<Entry
+                    Grid.Row="0"
+                    Background="Transparent"
+                    Placeholder="email@email.com"
+                    Text="{Binding UserRequest.Email}"
+                    TextColor="White"
+                    FontSize="25"
+                    HorizontalTextAlignment="End"/>
 			</Border>
 
-			<Border
-                    
-                Grid.Row="1">
-				<Entry 
+			<!-- Hasło -->
+			<Border Grid.Row="1">
+				<Entry
+                    Grid.Row="1"
+                    Background="Transparent"
                     Placeholder="hasło"
                     Text="{Binding UserRequest.Password}"
-                    BackgroundColor="Transparent"
                     TextColor="White"
+                    FontSize="25"
                     HorizontalTextAlignment="End"
-                    FontSize="25"/>
-
+                    IsPassword="{Binding HidePassword}"/>
 			</Border>
 
+			<!-- Przycisk i komunikat -->
 			<Grid
                 Grid.Row="2"
-                RowDefinitions="Auto, Auto, *"
+                RowDefinitions="Auto,Auto"
                 ColumnSpacing="30"
                 RowSpacing="30">
 
 				<Button
-                    
                     Grid.Row="0"
                     Text="Resetuj hasło"
                     FontSize="20"
                     WidthRequest="200"
-                    Command ="{Binding ResetAccountCommand}"/>
+                    Command="{Binding ResetAccountCommand}"/>
 
-				<Border 
+				<Border
                     Grid.Row="1"
                     Grid.ColumnSpan="2"
-                    IsVisible="{Binding ShowErrorMessage}"
+                    IsVisible="{Binding Message, Converter={StaticResource InverseBool}}"
                     Background="White"
                     Padding="10">
 
-					<Label 
+					<Label
+                        Grid.Row="1"
                         Text="{Binding Message}"
                         TextColor="{Binding MessageColor}"
                         FontSize="30"
-                        LineBreakMode="WordWrap" />
+                        LineBreakMode="WordWrap"/>
 				</Border>
 
 			</Grid>
 
-
-
 		</Grid>
+
+		<!-- Overlay ładowania -->
 		<Grid
             IsVisible="{Binding ShowLoadingIcon}"
             BackgroundColor="#80000000"
             ZIndex="999">
 
 			<ActivityIndicator
+                Grid.Row="0"
                 IsRunning="{Binding RunLoadingIcon}"
                 Color="White"
                 WidthRequest="80"
                 HeightRequest="80"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"/>
-
 		</Grid>
 
 	</Grid>
-
 
 </ContentPage>

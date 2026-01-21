@@ -44,4 +44,12 @@
         Route="SpendingHistoryPage"/>
 	</FlyoutItem>
 
+	<FlyoutItem
+    Icon="spending_category.png"
+    Title="Lista kategori wydatków">
+		    <ShellContent
+        ContentTemplate="{DataTemplate spendingCat:SpendingCategoryListPage}"
+        Route="SpendingCategoryListPage"/>
+	</FlyoutItem>
+
 </Shell>

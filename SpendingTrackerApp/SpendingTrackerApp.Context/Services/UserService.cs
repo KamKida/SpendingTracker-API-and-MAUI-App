@@ -10,16 +10,13 @@ namespace SpendingTrackerApp.Infrastructure.Services
 	public class UserService : IUserService
 	{
 		private readonly BaseHttpService _http;
-		public User _user;
 		private readonly ILogger<UserService> _logger;
 
 
 		public UserService(
-		User user,
 		BaseHttpService http,
 		ILogger<UserService> logger)
 		{
-			_user = user;
 			_http = http;
 			_logger = logger;
 
