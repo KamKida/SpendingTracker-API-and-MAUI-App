@@ -7,3 +7,4 @@ obj/
 *.log                
 *.nlog
 *.vsidx               
+/README.md
