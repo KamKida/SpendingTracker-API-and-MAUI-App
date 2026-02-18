@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SpendingTracker.Contracts\SpendingTracker.Contracts.csproj" />
+    <ProjectReference Include="..\SpendingTracker.Domain\SpendingTracker.Domain.csproj" />
+    <ProjectReference Include="..\SpendingTracker.Infrastructure\SpendingTracker.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
