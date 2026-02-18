@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SpendingTrackerApp.Pages.MainPage"
+             Title="{Binding Title}"
+             Shell.FlyoutItemIsVisible="True">
+
+	<Grid>
+		<ScrollView
+		Padding="20"
+        InputTransparent="{Binding BlockInteraction}">
+
+			<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+              RowSpacing="20">
+
+				<ImageButton
+                Grid.Row="0"
+                Source="log_off.png"
+                WidthRequest="75"
+                HeightRequest="75"
+                HorizontalOptions="End"
+                Command="{Binding LogOffCommand}"/>
+
+				<Border Grid.Row="1">
+					<Border.GestureRecognizers>
+						<TapGestureRecognizer Command="{Binding GoToFundsHistoryCommand}"/>
+					</Border.GestureRecognizers>
+
+					<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                      ColumnDefinitions="*,*"
+                      RowSpacing="10"
+                      ColumnSpacing="20">
+
+						<Label Grid.Row="0" Grid.Column="0"
+                           Text="Zł."
+                           FontSize="35"
+                           TextColor="{StaticResource Positive}"/>
+
+						<ScrollView Orientation="Horizontal"
+                                Grid.Row="0" Grid.Column="1">
+							<Label Text="{Binding User.ThisMonthFundSum, StringFormat='{}+ {0} '}"
+                               FontSize="35"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               TextColor="{StaticResource Positive}"/>
+						</ScrollView>
+
+						<Label Grid.Row="1" Grid.Column="0"
+                           Text="Wydatki:"
+                           TextColor="{StaticResource Negative}"/>
+
+						<Label Grid.Row="2" Grid.Column="0"
+                           Text="Zł."
+                           TextColor="{StaticResource Negative}"/>
+
+						<ScrollView Orientation="Horizontal"
+                                Grid.Row="2" Grid.Column="1">
+							<Label Text="{Binding User.ThisMonthSpendingsSum, StringFormat='{}- {0}'}"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               TextColor="{StaticResource Negative}"/>
+						</ScrollView>
+
+						<Label Grid.Row="3" Grid.Column="0"
+                           Text="Różnica:"/>
+
+						<Label Grid.Row="5" Grid.Column="0"
+                           Text="Zł."
+                           TextColor="{Binding DifferenceColor}"/>
+
+						<ScrollView Orientation="Horizontal"
+                                Grid.Row="5" Grid.Column="1">
+							<Label Text="{Binding Difference}"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               TextColor="{Binding DifferenceColor}"/>
+						</ScrollView>
+
+					</Grid>
+				</Border>
+
+				<Grid Grid.Row="2"
+                  RowDefinitions="Auto,Auto,Auto,Auto"
+                  RowSpacing="20">
+
+					<Label Grid.Row="0"
+                       FontSize="50"
+                       Text="Limity:"/>
+
+					<ScrollView Grid.Row="2" Grid.ColumnSpan="2">
+						<CollectionView ItemsSource="{Binding SpendingCategories}">
+							<CollectionView.ItemTemplate>
+								<DataTemplate>
+									<Border Margin="0,10,0,0">
+										<Grid RowDefinitions="Auto,Auto,Auto"
+                                          ColumnSpacing="30">
+
+											<Label Grid.Row="0" Grid.Column="0"
+                                               Text="{Binding CreationDate, StringFormat='{0:dd.MM.yyyy}'}"/>
+
+											<Label Grid.Row="1"
+                                               Text="{Binding Name}"/>
+
+											<ScrollView Orientation="Horizontal"
+                                                    Grid.Row="2">
+												<Label Text="{Binding MonthlyLimitDiffrence, StringFormat='{} {0} zł'}"
+                                                   TextColor="{StaticResource Negative}"/>
+											</ScrollView>
+
+										</Grid>
+									</Border>
+								</DataTemplate>
+							</CollectionView.ItemTemplate>
+						</CollectionView>
+					</ScrollView>
+
+					<Button Grid.Row="3"
+                        Text="Więcej"
+                        FontSize="35"
+                        WidthRequest="200"
+                        HeightRequest="75"
+                        Command="{Binding GoToSpendingCategoryyListPageCommand}"/>
+				</Grid>
+
+				<Grid Grid.Row="3"
+                  RowDefinitions="Auto,Auto,Auto,Auto"
+                  RowSpacing="20">
+
+					<Label Grid.Row="0"
+                       FontSize="50"
+                       Text="Wydatki:"/>
+
+					<ScrollView Grid.Row="2" Grid.ColumnSpan="2">
+						<CollectionView ItemsSource="{Binding Spendings}">
+							<CollectionView.ItemTemplate>
+								<DataTemplate>
+									<Border Margin="0,10,0,0">
+										<Grid RowDefinitions="Auto,Auto"
+                                          ColumnDefinitions="*,*"
+                                          ColumnSpacing="30">
+
+											<Label Grid.Row="0" Grid.Column="0"
+                                               Text="{Binding CreationDate, StringFormat='{0:dd.MM.yyyy HH:mm}'}"/>
+
+											<ScrollView Orientation="Horizontal"
+                                                    Grid.Row="1" Grid.Column="0">
+												<Label Text="{Binding Amount, StringFormat='{}- {0} zł'}"
+                                                   TextColor="{StaticResource Negative}"/>
+											</ScrollView>
+
+										</Grid>
+									</Border>
+								</DataTemplate>
+							</CollectionView.ItemTemplate>
+						</CollectionView>
+					</ScrollView>
+
+					<Button Grid.Row="3"
+                        Text="Więcej"
+                        FontSize="35"
+                        WidthRequest="200"
+                        HeightRequest="75"
+                        Command="{Binding GoToSpendingHistoryPageCommand}"/>
+				</Grid>
+
+
+			</Grid>
+
+		</ScrollView>
+
+	<Grid IsVisible="{Binding ShowLoadingIcon}"
+                  BackgroundColor="#80000000"
+                  ZIndex="999">
+		<ActivityIndicator IsRunning="{Binding RunLoadingIcon}"
+                                   Color="White"
+                                   WidthRequest="80"
+                                   HeightRequest="80"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+
+
+		</Grid>
+	</Grid>
+</ContentPage>

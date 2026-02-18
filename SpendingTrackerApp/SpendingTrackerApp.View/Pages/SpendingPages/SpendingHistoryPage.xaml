@@ -1,0 +1,239 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SpendingTrackerApp.Pages.SpendingPages"
+             xmlns:converters="clr-namespace:SpendingTrackerApp.Converters"
+             x:Class="SpendingTrackerApp.Pages.SpendingPages.SpendingHistoryPage"
+             Title="Historia wydatków">
+
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<converters:DecimalNullableConverter x:Key="DecimalNullableConverter"/>
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<Grid InputTransparent="{Binding BlockInteraction}">
+		<ScrollView>
+			<Grid RowDefinitions="Auto, Auto, *, Auto, Auto"
+              ColumnDefinitions="Auto, *"
+              RowSpacing="10"
+              Padding="20">
+
+				<ImageButton Source="add.png"
+                         Command="{Binding GoToAddSpendingPageCommand}"
+                         Grid.Row="0"
+                         Grid.Column="0"
+                         WidthRequest="75"
+                         HeightRequest="75"/>
+
+				<Button Text="Filtry"
+                    Command="{Binding ShowHideFiltersCommand}"
+                    IsEnabled="{Binding EnableFilters}"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    WidthRequest="200"
+                    HeightRequest="75"
+                    HorizontalOptions="End"/>
+
+				<Border IsVisible="{Binding FiltersVisible}"
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2">
+					<Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, *"
+                      ColumnDefinitions="Auto, *, Auto"
+                      ColumnSpacing="10"
+                      ZIndex="10">
+
+						<Label Text="Data:"
+                           Grid.Row="0"
+                           Grid.Column="0"
+                           FontSize="33"/>
+
+						<Label Text="Uwzględnić"
+                           Grid.Row="1"
+                           Grid.Column="0"
+                           FontSize="33"/>
+						<Switch IsToggled="{Binding UseDateFilter}"
+                            OnColor="{StaticResource Positive}"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Scale="2"/>
+
+						<Label Text="Od:"
+                           FontSize="25"
+                           VerticalOptions="Center"
+                           Grid.Row="2"
+                           Grid.Column="0"/>
+						<DatePicker Date="{Binding SpendingFilterRequest.DateFrom, Mode=TwoWay}"
+                                Format="dd.MM.yyyy"
+                                HorizontalOptions="End"
+                                IsEnabled="{Binding UseDateFilter}"
+                                TextColor="{Binding DateColor}"
+                                FontSize="25"
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"/>
+
+						<Label Text="Do:"
+                           FontSize="25"
+                           VerticalOptions="Center"
+                           Grid.Row="3"
+                           Grid.Column="0"/>
+						<DatePicker Date="{Binding SpendingFilterRequest.DateTo, Mode=TwoWay}"
+                                Format="dd.MM.yyyy"
+                                HorizontalOptions="End"
+                                IsEnabled="{Binding UseDateFilter}"
+                                TextColor="{Binding DateColor}"
+                                FontSize="25"
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"/>
+
+						<Label Text="Kwota:"
+                           FontSize="33"
+                           Grid.Row="4"
+                           Grid.Column="0"/>
+
+						<Label Text="Od:"
+                           FontSize="25"
+                           VerticalOptions="Center"
+                           Grid.Row="5"
+                           Grid.Column="0"/>
+						<Entry Text="{Binding SpendingFilterRequest.AmountFrom, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
+                           Keyboard="Numeric"
+                           HorizontalTextAlignment="End"
+                           Placeholder="00.00"
+                           TextColor="{Binding FilterEntryColorFrom}"
+                           BackgroundColor="Transparent"
+                           FontSize="25"
+                           Grid.Row="5"
+                           Grid.Column="1"/>
+						<Label Text="zł."
+                           FontSize="25"
+                           VerticalOptions="Center"
+                           Grid.Row="5"
+                           Grid.Column="2"/>
+
+						<Label Text="Do:"
+                           FontSize="25"
+                           VerticalOptions="Center"
+                           Grid.Row="6"
+                           Grid.Column="0"/>
+						<Entry Text="{Binding SpendingFilterRequest.AmountTo, Mode=TwoWay, Converter={StaticResource DecimalNullableConverter}}"
+                           Keyboard="Numeric"
+                           HorizontalTextAlignment="End"
+                           Placeholder="00.00"
+                           TextColor="{Binding FilterEntryColorTo}"
+                           BackgroundColor="Transparent"
+                           FontSize="25"
+                           Grid.Row="6"
+                           Grid.Column="1"/>
+						<Label Text="zł."
+                           FontSize="25"
+                           VerticalOptions="Center"
+                           Grid.Row="6"
+                           Grid.Column="2"/>
+
+						<Border IsVisible="{Binding ShowFilterErrorMessage}"
+                            Background="White"
+                            Margin="0,10,0,0"
+                            Grid.Row="7"
+                            Grid.ColumnSpan="3">
+							<Label Text="{Binding FilterErrorText}"
+                               FontSize="20"
+                               TextColor="{StaticResource Negative}"/>
+						</Border>
+
+						<Grid ColumnDefinitions="*,*"
+                          Margin="0,30,0,0"
+                          Grid.Row="8"
+                          Grid.ColumnSpan="3">
+							<Button Text="Resetuj"
+                                WidthRequest="100"
+                                FontSize="20"
+                                Command="{Binding ResetFilterCommand}"
+                                Grid.Column="0"/>
+							<Button Text="Filtruj"
+                                WidthRequest="100"
+                                FontSize="20"
+                                Command="{Binding FilterCommand}"
+                                Grid.Column="1"/>
+						</Grid>
+
+					</Grid>
+				</Border>
+
+				<ScrollView Grid.Row="2"
+                        Grid.ColumnSpan="2">
+					<CollectionView ItemsSource="{Binding Spendings}">
+						<CollectionView.ItemTemplate>
+							<DataTemplate>
+								<Border Margin="0,10,0,0">
+									<Border.GestureRecognizers>
+										<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:SpendingHistoryPage}}, Path=BindingContext.GoToEditSpendingPageCommand}"
+                                                          CommandParameter="{Binding .}"/>
+									</Border.GestureRecognizers>
+									<Grid RowDefinitions="Auto, Auto"
+                                      ColumnDefinitions="*, Auto"
+                                      ColumnSpacing="30">
+										<Label Text="{Binding CreationDate, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
+                                           Grid.Row="0"
+                                           Grid.Column="0"/>
+
+										<ScrollView Orientation="Horizontal"
+                                                Grid.Row="1"
+                                                Grid.Column="0">
+											<Label Text="{Binding Amount, StringFormat='{}- {0} zł'}"
+                                               TextColor="{StaticResource Negative}"/>
+										</ScrollView>
+
+										<ImageButton Source="delete.png"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type local:SpendingHistoryPage}}, Path=BindingContext.DeleteSpendingCommand}"
+                                                 CommandParameter="{Binding .}"
+                                                 InputTransparent="False"
+                                                 Grid.Row="0"
+                                                 Grid.RowSpan="2"
+                                                 Grid.Column="1"
+                                                 WidthRequest="70"
+                                                 HeightRequest="70"/>
+									</Grid>
+								</Border>
+							</DataTemplate>
+						</CollectionView.ItemTemplate>
+					</CollectionView>
+				</ScrollView>
+
+				<Border IsVisible="{Binding ShowErrorMessage}"
+                    Background="White"
+                    Padding="10"
+                    Grid.Row="3"
+                    Grid.ColumnSpan="2">
+					<Label Text="Coś poszło nie tak, zresetuj aplikację i spróbuj ponownie."
+                       TextColor="Red"
+                       LineBreakMode="WordWrap"/>
+				</Border>
+
+				<Button Text="Wyświetl więcej"
+                    Command="{Binding ShowMoreCommand}"
+                    IsEnabled="{Binding EnableShowMore}"
+                    WidthRequest="300"
+                    Margin="0,20,0,0"
+                    ZIndex="-1"
+                    Grid.Row="4"
+                    Grid.ColumnSpan="2"/>
+
+			</Grid>
+		</ScrollView>
+		<Grid IsVisible="{Binding ShowLoadingIcon}"
+          BackgroundColor="#80000000"
+          ZIndex="999"
+          Padding="50">
+			<ActivityIndicator IsRunning="{Binding RunLoadingIcon}"
+                       Color="White"
+                       WidthRequest="80"
+                       HeightRequest="80"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Start"/>
+		</Grid>
+
+	</Grid>
+</ContentPage>
+
